@@ -549,9 +549,6 @@ export function calculateSurface(config: ConfigInputs): CalculationResult {
   const wallFasteners = q.wallTracks * wallFastenersPerTrack;
 
   // Validation
-  if (topReveal > 8) {
-    warnings.push('Glass reveals over 8 inches — must use at least 12mm glass.');
-  }
   if (bottomGap > 3.875) {
     warnings.push('Warning: Large bottom gap. Ensure no code violations.');
   }
@@ -832,9 +829,6 @@ export function calculateFascia(config: ConfigInputs): CalculationResult {
   const wallFasteners = q.wallTracks * wallFastenersPerTrack;
 
   // Validation
-  if (topReveal > 8) {
-    warnings.push('Glass reveals over 8 inches — must use at least 12mm glass.');
-  }
   if (distToDeck > 3.875) {
     warnings.push('Warning: Large bottom gap. Ensure no code violations.');
   }
