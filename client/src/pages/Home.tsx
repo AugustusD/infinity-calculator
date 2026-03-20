@@ -517,7 +517,13 @@ export default function Home() {
                     {(['tall', 'short'] as PostConfig[]).map(pc => (
                       <button
                         key={pc}
-                        onClick={() => update('postConfig', pc)}
+                        onClick={() => {
+                          update('postConfig', pc as PostConfig);
+                          if (config.country === 'CA') {
+                            update('topGlassReveal', pc === 'short' ? 18.125 : 2.125);
+                            setRevealUnlocked(false);
+                          }
+                        }}
                         className="flex-1 py-1.5 text-sm font-bold capitalize transition-all"
                         style={{
                           borderRadius: '2px',
