@@ -222,6 +222,49 @@ function UnlockableField({
   );
 }
 
+function DiscountInput({ value, onChange }: { value: number; onChange: (v: number) => void }) {
+  // Display as percentage string while editing; accept both "43.5" and "0.435" on blur
+  const [raw, setRaw] = useState(() => value > 0 ? (value * 100).toFixed(3).replace(/\.?0+$/, '') : '');
+  const [focused, setFocused] = useState(false);
+
+  // Keep display in sync when value changes externally (e.g. on load)
+  useEffect(() => {
+    if (!focused) {
+      setRaw(value > 0 ? (value * 100).toFixed(3).replace(/\.?0+$/, '') : '');
+    }
+  }, [value, focused]);
+
+  const commit = (input: string) => {
+    const trimmed = input.trim();
+    if (trimmed === '' || trimmed === '0') { onChange(0); setRaw(''); return; }
+    let n = parseFloat(trimmed);
+    if (isNaN(n)) { setRaw(value > 0 ? (value * 100).toFixed(3).replace(/\.?0+$/, '') : ''); return; }
+    // If user typed a decimal < 1 treat as already a fraction (e.g. 0.435)
+    if (n > 0 && n < 1) { /* already fractional */ }
+    else { n = n / 100; } // convert percentage to decimal
+    n = Math.max(0, Math.min(0.99, n));
+    onChange(n);
+    setRaw((n * 100).toFixed(3).replace(/\.?0+$/, ''));
+  };
+
+  return (
+    <div className="relative">
+      <input
+        type="text"
+        inputMode="decimal"
+        value={focused ? raw : (value > 0 ? (value * 100).toFixed(3).replace(/\.?0+$/, '') : '')}
+        placeholder="e.g. 43.5"
+        onFocus={e => { setFocused(true); e.target.select(); }}
+        onBlur={e => { setFocused(false); commit(e.target.value); }}
+        onChange={e => setRaw(e.target.value)}
+        onKeyDown={e => { if (e.key === 'Enter') { (e.target as HTMLInputElement).blur(); } }}
+        className="mono w-full rounded border border-[#D8D8D8] px-3 py-1.5 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-[#B69A5A] bg-white"
+      />
+      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm font-bold pointer-events-none" style={{ color: '#B69A5A' }}>%</span>
+    </div>
+  );
+}
+
 function DimBadge({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex flex-col items-center">
@@ -464,13 +507,10 @@ export default function Home() {
             <div className="calc-card p-5 no-print">
               <SectionHeader title="Discount" />
               <div className="space-y-0">
-                <FieldRow label="Discount Level" hint="e.g. 0.435 = 43.5%">
-                  <NumInput
+                <FieldRow label="Discount Level" hint="Enter as % (e.g. 43.5) or decimal (e.g. 0.435)">
+                  <DiscountInput
                     value={config.discountLevel}
-                    onChange={v => update('discountLevel', Math.max(0, Math.min(0.99, v)))}
-                    min={0}
-                    max={0.99}
-                    step={0.005}
+                    onChange={v => update('discountLevel', v)}
                   />
                 </FieldRow>
                 <FieldRow label="Ship Via Courier">
