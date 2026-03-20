@@ -1,6 +1,7 @@
 /**
  * Infinity Glass Railing Calculator — Main Page
- * Design: Clean Professional (Sora + IBM Plex Mono, warm white, navy/blue/red)
+ * Brand: Innovative Aluminum Systems
+ * Design: Helvetica, gold (#B69A5A), black, grey, white, yellow highlight (#f4ce47)
  * Three-panel layout: Job Info (left) | Configuration (center) | Live Results (right)
  */
 
@@ -21,6 +22,10 @@ import {
   type FasciaOffset,
 } from '@/lib/calculator';
 import { Lock, Unlock, AlertTriangle, AlertCircle, Printer, ChevronDown, ChevronUp, Info } from 'lucide-react';
+
+// CDN URLs for logos
+const IAS_LOGO_URL = 'https://d2xsxph8kpxj0f.cloudfront.net/310519663093943154/Vxc6ufyoD2HuhTpJtdEazX/ias-logo_4e058ff8.png';
+const INFINITY_LOGO_URL = 'https://d2xsxph8kpxj0f.cloudfront.net/310519663093943154/Vxc6ufyoD2HuhTpJtdEazX/infinity-logo_2a84a66e.png';
 
 // ============================================================
 // HELPERS
@@ -45,18 +50,18 @@ function fmtIn(n: number): string {
 function SectionHeader({ title, subtitle }: { title: string; subtitle?: string }) {
   return (
     <div className="mb-4">
-      <h3 className="text-sm font-semibold uppercase tracking-widest text-[oklch(0.52_0.018_255)] mb-0.5">{title}</h3>
-      {subtitle && <p className="text-xs text-[oklch(0.6_0.01_255)]">{subtitle}</p>}
+      <h3 className="section-label mb-0.5">{title}</h3>
+      {subtitle && <p className="text-xs text-[#6B6B6B]">{subtitle}</p>}
     </div>
   );
 }
 
 function FieldRow({ label, children, hint }: { label: string; children: React.ReactNode; hint?: string }) {
   return (
-    <div className="flex items-center gap-3 py-2.5 border-b border-[oklch(0.93_0.004_90)] last:border-0">
+    <div className="flex items-center gap-3 py-2.5 border-b border-[#EBEBEB] last:border-0">
       <div className="w-44 flex-shrink-0">
-        <span className="text-sm text-[oklch(0.35_0.02_250)]">{label}</span>
-        {hint && <p className="text-xs text-[oklch(0.6_0.01_255)] mt-0.5">{hint}</p>}
+        <span className="text-sm text-[#3A3A3A]">{label}</span>
+        {hint && <p className="text-xs text-[#6B6B6B] mt-0.5">{hint}</p>}
       </div>
       <div className="flex-1">{children}</div>
     </div>
@@ -83,7 +88,6 @@ function NumInput({
   const [localVal, setLocalVal] = useState(String(value));
   const [focused, setFocused] = useState(false);
 
-  // Sync external value when not focused
   if (!focused && String(value) !== localVal && !isNaN(value)) {
     setLocalVal(String(value));
   }
@@ -117,7 +121,7 @@ function NumInput({
         const v = parseFloat(e.target.value);
         if (!isNaN(v)) onChange(v);
       }}
-      className={`mono w-full rounded border border-[oklch(0.89_0.006_90)] px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[oklch(0.45_0.12_255)] disabled:bg-[oklch(0.95_0.003_90)] disabled:cursor-not-allowed ${className}`}
+      className={`mono w-full rounded border border-[#D8D8D8] px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#B69A5A] disabled:bg-[#F5F5F5] disabled:cursor-not-allowed bg-white ${className}`}
     />
   );
 }
@@ -135,7 +139,7 @@ function SelectInput({
     <select
       value={value}
       onChange={e => onChange(e.target.value)}
-      className="w-full rounded border border-[oklch(0.89_0.006_90)] px-3 py-1.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[oklch(0.45_0.12_255)]"
+      className="w-full rounded border border-[#D8D8D8] px-3 py-1.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#B69A5A]"
     >
       {options.map(o => (
         <option key={o.value} value={o.value}>{o.label}</option>
@@ -157,11 +161,11 @@ function Toggle({
     <label className="flex items-center gap-2 cursor-pointer select-none">
       <div
         onClick={() => onChange(!checked)}
-        className={`relative w-10 h-5 rounded-full transition-colors ${checked ? 'bg-[oklch(0.28_0.08_255)]' : 'bg-[oklch(0.82_0.01_255)]'}`}
+        className={`relative w-10 h-5 rounded-full transition-colors ${checked ? 'bg-[#B69A5A]' : 'bg-[#D8D8D8]'}`}
       >
         <div className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform ${checked ? 'translate-x-5' : 'translate-x-0'}`} />
       </div>
-      {label && <span className="text-sm text-[oklch(0.35_0.02_250)]">{label}</span>}
+      {label && <span className="text-sm text-[#3A3A3A]">{label}</span>}
     </label>
   );
 }
@@ -201,12 +205,12 @@ function UnlockableField({
             step={step}
             disabled={!unlocked}
           />
-          <span className="absolute right-8 top-1/2 -translate-y-1/2 text-xs text-[oklch(0.6_0.01_255)]">{unit}</span>
+          <span className="absolute right-8 top-1/2 -translate-y-1/2 text-xs text-[#6B6B6B]">{unit}</span>
         </div>
         <button
           onClick={onUnlock}
           title={unlocked ? 'Lock to default' : 'Unlock to customize'}
-          className={`p-1.5 rounded transition-colors ${unlocked ? 'text-amber-600 bg-amber-50 hover:bg-amber-100' : 'text-[oklch(0.52_0.018_255)] bg-[oklch(0.95_0.003_90)] hover:bg-[oklch(0.92_0.006_90)]'}`}
+          className={`p-1.5 rounded transition-colors ${unlocked ? 'text-[#8A7240] bg-[#F5F0E8] hover:bg-[#EDE5D0]' : 'text-[#6B6B6B] bg-[#F5F5F5] hover:bg-[#EBEBEB]'}`}
         >
           {unlocked ? <Unlock size={14} /> : <Lock size={14} />}
         </button>
@@ -218,7 +222,7 @@ function UnlockableField({
 function DimBadge({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex flex-col items-center">
-      <span className="text-[10px] text-[oklch(0.52_0.018_255)] uppercase tracking-wide mb-0.5">{label}</span>
+      <span className="text-[10px] text-[#6B6B6B] uppercase tracking-wide mb-0.5">{label}</span>
       <span className="dim-badge">{value}</span>
     </div>
   );
@@ -253,7 +257,6 @@ export default function Home() {
     }));
   }, []);
 
-  // Compute constraints
   const constraints = useMemo(() =>
     computeRevealConstraints(
       config.country,
@@ -267,17 +270,13 @@ export default function Home() {
     [config.country, config.mountType, config.railHeight, config.postConfig, config.topGlassReveal, config.bottomGlassGap, config.distTopBasePlateToDeck]
   );
 
-  // Run calculation
   const result: CalculationResult = useMemo(() => calculate(config), [config]);
 
-  // Country-specific reveal max
-  const topRevealMax = constraints.topRevealMax;
   const isUS = config.country === 'US';
   const isCA = config.country === 'CA';
   const isFascia = config.mountType === 'fascia';
   const isSurface = config.mountType === 'surface';
 
-  // Handle country change — reset reveal to default
   const handleCountryChange = (c: Country) => {
     update('country', c);
     update('topGlassReveal', 2.125);
@@ -285,7 +284,6 @@ export default function Home() {
     setRevealUnlocked(false);
   };
 
-  // Handle rail height change — recalculate constraints
   const handleRailHeightChange = (rh: RailHeight) => {
     update('railHeight', rh);
     update('topGlassReveal', 2.125);
@@ -299,44 +297,63 @@ export default function Home() {
 
   const handleUnlockReveal = () => {
     if (revealUnlocked) {
-      // Lock: reset to default
       update('topGlassReveal', 2.125);
     }
     setRevealUnlocked(!revealUnlocked);
   };
 
-  const totalLineItems = result.lineItems.length;
   const hasContent = config.quantities.midPosts + config.quantities.endPosts +
     config.quantities.outsideCornerPosts + config.quantities.insideCornerPosts +
     config.quantities.wallTracks + config.quantities.endPostsLeft25 + config.quantities.endPostsRight25 > 0;
 
   return (
-    <div className="min-h-screen bg-[oklch(0.99_0.003_90)]">
-      {/* Header */}
-      <header className="bg-[oklch(0.22_0.06_255)] text-white no-print">
-        <div className="container py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-2xl font-bold tracking-tight" style={{ fontFamily: 'Sora, sans-serif' }}>
-                  <span className="text-white">|</span>nfinity
-                </span>
-                <span className="text-[oklch(0.65_0.14_255)] text-xs font-medium tracking-widest uppercase mt-1">Railing Calculator</span>
-              </div>
-              <p className="text-[oklch(0.7_0.05_255)] text-xs mt-0.5">Railings for million dollar views · 2026 Pricing</p>
+    <div className="min-h-screen" style={{ background: '#F5F5F5', fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif" }}>
+
+      {/* ====== HEADER ====== */}
+      <header className="no-print" style={{ background: '#111111', borderBottom: '3px solid #B69A5A' }}>
+        <div className="container py-3 flex items-center justify-between">
+          {/* Left: IAS logo + Infinity logo */}
+          <div className="flex items-center gap-5">
+            <div style={{ background: '#FFFFFF', borderRadius: '3px', padding: '3px 6px', display: 'inline-flex', alignItems: 'center' }}>
+              <img
+                src={IAS_LOGO_URL}
+                alt="Innovative Aluminum Systems"
+                className="h-8 w-auto object-contain"
+              />
+            </div>
+            <div style={{ width: '1px', height: '36px', background: '#B69A5A', opacity: 0.6 }} />
+            <div className="flex flex-col justify-center">
+              <img
+                src={INFINITY_LOGO_URL}
+                alt="Infinity"
+                className="h-7 w-auto object-contain"
+                style={{ filter: 'invert(1) brightness(2)' }}
+              />
+              <span className="text-[10px] tracking-[0.18em] uppercase mt-0.5" style={{ color: '#B69A5A', letterSpacing: '0.18em' }}>
+                Railing Calculator
+              </span>
             </div>
           </div>
-          <div className="flex items-center gap-3">
+
+          {/* Right: tagline + print */}
+          <div className="flex items-center gap-4">
+            <span className="text-xs hidden sm:block" style={{ color: '#6B6B6B', letterSpacing: '0.06em' }}>
+              2026 Dealer Pricing
+            </span>
             <button
               onClick={() => window.print()}
-              className="flex items-center gap-2 px-3 py-1.5 rounded bg-[oklch(0.30_0.07_255)] hover:bg-[oklch(0.35_0.07_255)] text-sm transition-colors"
+              className="flex items-center gap-2 px-4 py-2 text-sm font-semibold transition-all"
+              style={{ background: '#B69A5A', color: '#111111', borderRadius: '2px', letterSpacing: '0.04em' }}
             >
-              <Printer size={14} />
+              <Printer size={13} />
               Print Quote
             </button>
           </div>
         </div>
       </header>
+
+      {/* ====== GOLD ACCENT BAR ====== */}
+      <div className="no-print" style={{ background: '#B69A5A', height: '2px' }} />
 
       <div className="container py-6">
         <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr_380px] gap-6">
@@ -349,34 +366,36 @@ export default function Home() {
               <SectionHeader title="Job Information" />
               <div className="space-y-3">
                 <div>
-                  <label className="text-xs font-medium text-[oklch(0.52_0.018_255)] uppercase tracking-wide block mb-1">Dealer Name</label>
+                  <label className="text-[10px] font-bold text-[#6B6B6B] uppercase tracking-widest block mb-1">Dealer Name</label>
                   <input
                     type="text"
                     value={jobInfo.dealerName}
                     onChange={e => setJobInfo(p => ({ ...p, dealerName: e.target.value }))}
                     placeholder="Enter dealer name"
-                    className="w-full rounded border border-[oklch(0.89_0.006_90)] px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[oklch(0.45_0.12_255)]"
+                    className="w-full px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#B69A5A] bg-white"
+                    style={{ border: '1px solid #D8D8D8', borderRadius: '2px' }}
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-[oklch(0.52_0.018_255)] uppercase tracking-wide block mb-1">Job Reference</label>
+                  <label className="text-[10px] font-bold text-[#6B6B6B] uppercase tracking-widest block mb-1">Job Reference</label>
                   <input
                     type="text"
                     value={jobInfo.jobReference}
                     onChange={e => setJobInfo(p => ({ ...p, jobReference: e.target.value }))}
                     placeholder="Project / job name"
-                    className="w-full rounded border border-[oklch(0.89_0.006_90)] px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[oklch(0.45_0.12_255)]"
+                    className="w-full px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#B69A5A] bg-white"
+                    style={{ border: '1px solid #D8D8D8', borderRadius: '2px' }}
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-[oklch(0.52_0.018_255)] uppercase tracking-wide block mb-1">Color</label>
+                  <label className="text-[10px] font-bold text-[#6B6B6B] uppercase tracking-widest block mb-1">Color</label>
                   <SelectInput
                     value={jobInfo.color}
                     onChange={v => setJobInfo(p => ({ ...p, color: v }))}
                     options={COLOR_OPTIONS.map(c => ({ value: c, label: c }))}
                   />
                   {jobInfo.color === 'Custom' && (
-                    <p className="text-xs text-amber-600 mt-1 flex items-center gap-1">
+                    <p className="text-xs mt-1 flex items-center gap-1" style={{ color: '#8A7240' }}>
                       <AlertTriangle size={11} /> Contact IAS for custom color pricing
                     </p>
                   )}
@@ -390,19 +409,37 @@ export default function Home() {
               <div className="grid grid-cols-2 gap-3">
                 <button
                   onClick={() => handleCountryChange('US')}
-                  className={`rounded-lg p-4 text-center border-2 transition-all ${config.country === 'US' ? 'bg-[oklch(0.52_0.22_255)] border-[oklch(0.52_0.22_255)] text-white shadow-md' : 'bg-[oklch(0.96_0.015_255)] border-[oklch(0.75_0.12_255)] text-[oklch(0.35_0.18_255)] hover:border-[oklch(0.52_0.22_255)]'}`}
+                  className="p-4 text-center transition-all"
+                  style={{
+                    borderRadius: '2px',
+                    border: config.country === 'US' ? '2px solid #B69A5A' : '2px solid #D8D8D8',
+                    background: config.country === 'US' ? '#111111' : '#FFFFFF',
+                    color: config.country === 'US' ? '#FFFFFF' : '#3A3A3A',
+                  }}
                 >
                   <div className="text-2xl mb-1">🇺🇸</div>
-                  <div className="font-semibold text-sm">United States</div>
-                  <div className="text-xs mt-0.5 opacity-75">IBC / IRC Code</div>
+                  <div className="font-bold text-sm" style={{ letterSpacing: '0.02em' }}>United States</div>
+                  <div className="text-xs mt-0.5 opacity-70">IBC / IRC Code</div>
+                  {config.country === 'US' && (
+                    <div className="mt-1.5 text-[10px] font-bold tracking-widest uppercase" style={{ color: '#B69A5A' }}>US</div>
+                  )}
                 </button>
                 <button
                   onClick={() => handleCountryChange('CA')}
-                  className={`rounded-lg p-4 text-center border-2 transition-all ${config.country === 'CA' ? 'bg-[oklch(0.52_0.22_27)] border-[oklch(0.52_0.22_27)] text-white shadow-md' : 'bg-[oklch(0.97_0.015_27)] border-[oklch(0.75_0.12_27)] text-[oklch(0.35_0.18_27)] hover:border-[oklch(0.52_0.22_27)]'}`}
+                  className="p-4 text-center transition-all"
+                  style={{
+                    borderRadius: '2px',
+                    border: config.country === 'CA' ? '2px solid #B69A5A' : '2px solid #D8D8D8',
+                    background: config.country === 'CA' ? '#111111' : '#FFFFFF',
+                    color: config.country === 'CA' ? '#FFFFFF' : '#3A3A3A',
+                  }}
                 >
                   <div className="text-2xl mb-1">🇨🇦</div>
-                  <div className="font-semibold text-sm">Canada</div>
-                  <div className="text-xs mt-0.5 opacity-75">NBC Code</div>
+                  <div className="font-bold text-sm" style={{ letterSpacing: '0.02em' }}>Canada</div>
+                  <div className="text-xs mt-0.5 opacity-70">NBC Code</div>
+                  {config.country === 'CA' && (
+                    <div className="mt-1.5 text-[10px] font-bold tracking-widest uppercase" style={{ color: '#B69A5A' }}>CA</div>
+                  )}
                 </button>
               </div>
             </div>
@@ -438,10 +475,16 @@ export default function Home() {
                   <button
                     key={mt}
                     onClick={() => update('mountType', mt)}
-                    className={`rounded-lg p-4 border-2 transition-all text-left ${config.mountType === mt ? 'bg-[oklch(0.28_0.08_255)] border-[oklch(0.28_0.08_255)] text-white shadow-md' : 'bg-white border-[oklch(0.89_0.006_90)] hover:border-[oklch(0.45_0.12_255)]'}`}
+                    className="p-4 text-left transition-all"
+                    style={{
+                      borderRadius: '2px',
+                      border: config.mountType === mt ? '2px solid #B69A5A' : '2px solid #D8D8D8',
+                      background: config.mountType === mt ? '#111111' : '#FFFFFF',
+                      color: config.mountType === mt ? '#FFFFFF' : '#3A3A3A',
+                    }}
                   >
-                    <div className="font-semibold text-sm capitalize">{mt} Mount</div>
-                    <div className={`text-xs mt-1 ${config.mountType === mt ? 'text-[oklch(0.75_0.05_255)]' : 'text-[oklch(0.52_0.018_255)]'}`}>
+                    <div className="font-bold text-sm capitalize" style={{ letterSpacing: '0.02em' }}>{mt} Mount</div>
+                    <div className="text-xs mt-1" style={{ color: config.mountType === mt ? '#B69A5A' : '#6B6B6B' }}>
                       {mt === 'surface' ? 'Post bolted through deck surface' : 'Post attached to fascia board'}
                     </div>
                   </button>
@@ -459,7 +502,13 @@ export default function Home() {
                     <button
                       key={rh}
                       onClick={() => handleRailHeightChange(rh)}
-                      className={`flex-1 py-1.5 rounded border-2 text-sm font-semibold transition-all ${config.railHeight === rh ? 'bg-[oklch(0.28_0.08_255)] border-[oklch(0.28_0.08_255)] text-white' : 'border-[oklch(0.89_0.006_90)] hover:border-[oklch(0.45_0.12_255)]'}`}
+                      className="flex-1 py-1.5 text-sm font-bold transition-all"
+                      style={{
+                        borderRadius: '2px',
+                        border: config.railHeight === rh ? '2px solid #B69A5A' : '2px solid #D8D8D8',
+                        background: config.railHeight === rh ? '#111111' : '#FFFFFF',
+                        color: config.railHeight === rh ? '#f4ce47' : '#3A3A3A',
+                      }}
                     >
                       {rh}"
                     </button>
@@ -475,7 +524,13 @@ export default function Home() {
                       <button
                         key={pc}
                         onClick={() => update('postConfig', pc)}
-                        className={`flex-1 py-1.5 rounded border-2 text-sm font-semibold capitalize transition-all ${config.postConfig === pc ? 'bg-[oklch(0.52_0.22_27)] border-[oklch(0.52_0.22_27)] text-white' : 'border-[oklch(0.89_0.006_90)] hover:border-[oklch(0.52_0.22_27)]'}`}
+                        className="flex-1 py-1.5 text-sm font-bold capitalize transition-all"
+                        style={{
+                          borderRadius: '2px',
+                          border: config.postConfig === pc ? '2px solid #B69A5A' : '2px solid #D8D8D8',
+                          background: config.postConfig === pc ? '#B69A5A' : '#FFFFFF',
+                          color: config.postConfig === pc ? '#111111' : '#3A3A3A',
+                        }}
                       >
                         {pc} Post
                       </button>
@@ -490,7 +545,13 @@ export default function Home() {
                     <button
                       key={t}
                       onClick={() => update('glassThickness', t)}
-                      className={`flex-1 py-1.5 rounded border-2 text-sm font-semibold transition-all ${config.glassThickness === t ? 'bg-[oklch(0.28_0.08_255)] border-[oklch(0.28_0.08_255)] text-white' : 'border-[oklch(0.89_0.006_90)] hover:border-[oklch(0.45_0.12_255)]'}`}
+                      className="flex-1 py-1.5 text-sm font-bold transition-all"
+                      style={{
+                        borderRadius: '2px',
+                        border: config.glassThickness === t ? '2px solid #B69A5A' : '2px solid #D8D8D8',
+                        background: config.glassThickness === t ? '#111111' : '#FFFFFF',
+                        color: config.glassThickness === t ? '#f4ce47' : '#3A3A3A',
+                      }}
                     >
                       {t}mm
                     </button>
@@ -509,8 +570,8 @@ export default function Home() {
                 max={constraints.topRevealMax}
                 step={0.125}
                 hint={revealUnlocked
-                  ? `Range: ${fmt(constraints.topRevealMin, 3)}" – ${fmt(constraints.topRevealMax, 3)}"`
-                  : `Default 2⅛". Click 🔓 to customize`}
+                  ? `Range: ${fmt(constraints.topRevealMin, 3)}" - ${fmt(constraints.topRevealMax, 3)}"`
+                  : `Default 2-1/8". Click lock to customize`}
               />
 
               {/* Bottom Glass Gap */}
@@ -523,7 +584,7 @@ export default function Home() {
                 min={0}
                 max={6}
                 step={0.125}
-                hint={bottomGapUnlocked ? 'Gap from deck to bottom of glass' : 'Default 2". Click 🔓 to customize'}
+                hint={bottomGapUnlocked ? 'Gap from deck to bottom of glass' : 'Default 2". Click lock to customize'}
               />
 
               {/* Fascia-specific */}
@@ -531,11 +592,17 @@ export default function Home() {
                 <>
                   <FieldRow label="Fascia Offset">
                     <div className="flex gap-2">
-                      {([{ v: 0.4375, l: '7/16" Standard' }, { v: 1.5, l: '1½" Extended' }] as { v: FasciaOffset; l: string }[]).map(o => (
+                      {([{ v: 0.4375, l: '7/16" Standard' }, { v: 1.5, l: '1-1/2" Extended' }] as { v: FasciaOffset; l: string }[]).map(o => (
                         <button
                           key={o.v}
                           onClick={() => update('fasciaOffset', o.v)}
-                          className={`flex-1 py-1.5 rounded border-2 text-xs font-semibold transition-all ${config.fasciaOffset === o.v ? 'bg-[oklch(0.28_0.08_255)] border-[oklch(0.28_0.08_255)] text-white' : 'border-[oklch(0.89_0.006_90)] hover:border-[oklch(0.45_0.12_255)]'}`}
+                          className="flex-1 py-1.5 text-xs font-bold transition-all"
+                          style={{
+                            borderRadius: '2px',
+                            border: config.fasciaOffset === o.v ? '2px solid #B69A5A' : '2px solid #D8D8D8',
+                            background: config.fasciaOffset === o.v ? '#111111' : '#FFFFFF',
+                            color: config.fasciaOffset === o.v ? '#f4ce47' : '#3A3A3A',
+                          }}
                         >
                           {o.l}
                         </button>
@@ -584,7 +651,7 @@ export default function Home() {
                 </div>
               )}
               {isCA && constraints.isShortPost && (
-                <div className="mt-3 flex items-start gap-2 text-xs text-[oklch(0.35_0.18_27)] bg-[oklch(0.97_0.015_27)] border border-[oklch(0.75_0.12_27)] rounded p-2.5">
+                <div className="mt-3 flex items-start gap-2 text-xs rounded p-2.5" style={{ background: '#FFFBEB', border: '1px solid #D4B97A', color: '#5C4A1E' }}>
                   <Info size={13} className="mt-0.5 flex-shrink-0" />
                   <span>Short post configuration active — post finishes {fmt(result.postHeightAboveDeck, 2)}" above deck.</span>
                 </div>
@@ -623,7 +690,9 @@ export default function Home() {
                 className="flex items-center justify-between w-full"
               >
                 <SectionHeader title="Add-Ons & Accessories" />
-                {showAddOns ? <ChevronUp size={16} className="text-[oklch(0.52_0.018_255)]" /> : <ChevronDown size={16} className="text-[oklch(0.52_0.018_255)]" />}
+                {showAddOns
+                  ? <ChevronUp size={16} style={{ color: '#B69A5A' }} />
+                  : <ChevronDown size={16} style={{ color: '#B69A5A' }} />}
               </button>
               <AnimatePresence>
                 {showAddOns && (
@@ -638,7 +707,7 @@ export default function Home() {
                       {isSurface && [
                         { key: 'removeTrackFromPost', label: 'Remove Track From Post' },
                         { key: 'cutDownTrack', label: 'Cut Down One Track' },
-                        { key: 'add5x5BasePlate', label: 'Add 5"×5"×0.5" Base Plate (Infinity Post)' },
+                        { key: 'add5x5BasePlate', label: 'Add 5"x5"x0.5" Base Plate (Infinity Post)' },
                         { key: 'addWeldedSurfaceBase', label: 'Add Welded Surface Base' },
                         { key: 'addWeldedExtrudedSideMount', label: 'Add Welded Extruded Side Mount 1.9 Pipe' },
                       ].map(({ key, label }) => (
@@ -708,29 +777,31 @@ export default function Home() {
 
             {/* Quote Header */}
             <div className="calc-card p-5">
-              <div className="flex items-start justify-between mb-4">
+              {/* Quote title bar */}
+              <div className="flex items-start justify-between mb-4 pb-3" style={{ borderBottom: '2px solid #B69A5A' }}>
                 <div>
-                  <h2 className="text-lg font-bold text-[oklch(0.18_0.025_250)]">Material Quote</h2>
-                  <p className="text-xs text-[oklch(0.52_0.018_255)] mt-0.5">
-                    {config.country === 'US' ? '🇺🇸 United States' : '🇨🇦 Canada'} ·{' '}
-                    {config.mountType === 'surface' ? 'Surface Mount' : 'Fascia Mount'} ·{' '}
-                    {config.railHeight}" Rail Height ·{' '}
-                    {config.glassThickness}mm Glass
+                  <h2 className="text-base font-black uppercase tracking-widest" style={{ color: '#111111', letterSpacing: '0.12em' }}>
+                    Material Quote
+                  </h2>
+                  <p className="text-xs mt-0.5" style={{ color: '#6B6B6B' }}>
+                    {config.country === 'US' ? '🇺🇸 United States' : '🇨🇦 Canada'} &middot;{' '}
+                    {config.mountType === 'surface' ? 'Surface Mount' : 'Fascia Mount'} &middot;{' '}
+                    {config.railHeight}" Rail &middot; {config.glassThickness}mm Glass
                   </p>
                   {jobInfo.jobReference && (
-                    <p className="text-xs text-[oklch(0.52_0.018_255)] mt-0.5">Ref: {jobInfo.jobReference}</p>
+                    <p className="text-xs mt-0.5" style={{ color: '#6B6B6B' }}>Ref: {jobInfo.jobReference}</p>
                   )}
                   {jobInfo.dealerName && (
-                    <p className="text-xs text-[oklch(0.52_0.018_255)]">Dealer: {jobInfo.dealerName}</p>
+                    <p className="text-xs" style={{ color: '#6B6B6B' }}>Dealer: {jobInfo.dealerName}</p>
                   )}
                 </div>
                 <div className="text-right">
-                  <div className="text-xs text-[oklch(0.52_0.018_255)] uppercase tracking-wide">Job Cost</div>
-                  <div className="mono text-2xl font-bold text-[oklch(0.28_0.08_255)]">
+                  <div className="text-[10px] font-bold uppercase tracking-widest mb-0.5" style={{ color: '#6B6B6B' }}>Job Cost</div>
+                  <div className="mono text-2xl font-black" style={{ color: '#111111', letterSpacing: '-0.02em' }}>
                     {fmtCurrency(result.jobCost)}
                   </div>
                   {config.discountLevel > 0 && (
-                    <div className="text-xs text-[oklch(0.52_0.018_255)]">
+                    <div className="text-xs" style={{ color: '#B69A5A' }}>
                       {(config.discountLevel * 100).toFixed(1)}% discount applied
                     </div>
                   )}
@@ -739,17 +810,17 @@ export default function Home() {
 
               {/* Fastener info */}
               {hasContent && (
-                <div className="grid grid-cols-2 gap-3 mb-4 p-3 bg-[oklch(0.96_0.004_90)] rounded">
+                <div className="grid grid-cols-2 gap-3 mb-4 p-3 rounded" style={{ background: '#F5F5F5', border: '1px solid #EBEBEB' }}>
                   <div>
-                    <div className="text-xs text-[oklch(0.52_0.018_255)] uppercase tracking-wide">Deck Fasteners</div>
-                    <div className="mono font-semibold text-sm">{result.deckFasteners} required</div>
-                    <div className="text-xs text-[oklch(0.6_0.01_255)]">Not included</div>
+                    <div className="text-[10px] font-bold uppercase tracking-widest mb-0.5" style={{ color: '#6B6B6B' }}>Deck Fasteners</div>
+                    <div className="mono font-bold text-sm" style={{ color: '#111111' }}>{result.deckFasteners} required</div>
+                    <div className="text-xs" style={{ color: '#6B6B6B' }}>Not included</div>
                   </div>
                   {result.wallFasteners > 0 && (
                     <div>
-                      <div className="text-xs text-[oklch(0.52_0.018_255)] uppercase tracking-wide">Wall Fasteners</div>
-                      <div className="mono font-semibold text-sm">{result.wallFasteners} required</div>
-                      <div className="text-xs text-[oklch(0.6_0.01_255)]">Not included</div>
+                      <div className="text-[10px] font-bold uppercase tracking-widest mb-0.5" style={{ color: '#6B6B6B' }}>Wall Fasteners</div>
+                      <div className="mono font-bold text-sm" style={{ color: '#111111' }}>{result.wallFasteners} required</div>
+                      <div className="text-xs" style={{ color: '#6B6B6B' }}>Not included</div>
                     </div>
                   )}
                 </div>
@@ -760,11 +831,11 @@ export default function Home() {
                 <div className="overflow-x-auto">
                   <table className="results-table w-full text-left">
                     <thead>
-                      <tr>
-                        <th>Description</th>
-                        <th className="text-right">QTY</th>
-                        <th className="text-right">Unit</th>
-                        <th className="text-right">Total</th>
+                      <tr style={{ background: '#111111' }}>
+                        <th style={{ color: '#B69A5A' }}>Description</th>
+                        <th className="text-right" style={{ color: '#B69A5A' }}>QTY</th>
+                        <th className="text-right" style={{ color: '#B69A5A' }}>Unit</th>
+                        <th className="text-right" style={{ color: '#B69A5A' }}>Total</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -773,13 +844,13 @@ export default function Home() {
                           <td className="text-xs">{item.description}</td>
                           <td className="mono text-right text-xs">{item.qty % 1 === 0 ? item.qty : fmt(item.qty, 2)}</td>
                           <td className="mono text-right text-xs">{fmtCurrency(item.unitCost)}</td>
-                          <td className="mono text-right text-xs font-medium">{fmtCurrency(item.total)}</td>
+                          <td className="mono text-right text-xs font-bold">{fmtCurrency(item.total)}</td>
                         </tr>
                       ))}
                       {result.lineItems.some(i => i.paintCost) && (
                         <tr>
-                          <td className="text-xs text-[oklch(0.52_0.018_255)] italic" colSpan={3}>Paint costs included in totals</td>
-                          <td className="mono text-right text-xs text-[oklch(0.52_0.018_255)]">
+                          <td className="text-xs italic" colSpan={3} style={{ color: '#6B6B6B' }}>Paint costs included in totals</td>
+                          <td className="mono text-right text-xs" style={{ color: '#6B6B6B' }}>
                             {fmtCurrency(result.lineItems.reduce((s, i) => s + (i.paintCost || 0), 0))}
                           </td>
                         </tr>
@@ -787,17 +858,21 @@ export default function Home() {
                     </tbody>
                     <tfoot>
                       <tr className="total-row">
-                        <td colSpan={3} className="text-sm font-bold">
+                        <td colSpan={3} className="text-sm font-black uppercase tracking-wide" style={{ color: '#111111' }}>
                           {config.glassThickness === 12 ? '12mm' : '13mm'} Job Cost
                         </td>
-                        <td className="mono text-right text-sm font-bold">{fmtCurrency(result.jobCost)}</td>
+                        <td className="mono text-right text-sm font-black" style={{ color: '#111111' }}>{fmtCurrency(result.jobCost)}</td>
                       </tr>
                     </tfoot>
                   </table>
                 </div>
               ) : (
-                <div className="text-center py-8 text-[oklch(0.6_0.01_255)]">
-                  <div className="text-3xl mb-2">📐</div>
+                <div className="text-center py-8" style={{ color: '#6B6B6B' }}>
+                  <div className="mb-3">
+                    <div className="inline-flex items-center justify-center w-12 h-12 rounded" style={{ background: '#F5F0E8', border: '1px solid #D4B97A' }}>
+                      <span style={{ color: '#B69A5A', fontSize: '1.25rem' }}>&#9656;</span>
+                    </div>
+                  </div>
                   <p className="text-sm">Enter post quantities above to generate your material list and pricing.</p>
                 </div>
               )}
@@ -807,7 +882,7 @@ export default function Home() {
             {hasContent && (
               <div className="calc-card p-5">
                 <SectionHeader title="Material Details" subtitle="Cut lengths and quantities for ordering" />
-                <div className="space-y-2 text-xs">
+                <div className="space-y-0 text-xs">
                   {[
                     { label: 'Glass Insert — Post', value: fmtIn(result.glassInsertLength) },
                     { label: 'Glass Insert — End Post', value: fmtIn(result.endPostInsertLength) },
@@ -817,14 +892,14 @@ export default function Home() {
                     { label: 'Setting Block — Per Ft', value: `${fmt(result.settingBlockFt, 2)} ft` },
                     ...(result.settingBlock15Pieces > 0 ? [{ label: 'Setting Block — 1.5" Pieces', value: `${result.settingBlock15Pieces} pcs` }] : []),
                     { label: 'Glass Wedge Pieces', value: `${result.glassWedgeQty} pcs` },
-                    { label: 'Gasket Lengths', value: `${result.gasketLengths} × ${result.gasketDescription}` },
+                    { label: 'Gasket Lengths', value: `${result.gasketLengths} x ${result.gasketDescription}` },
                     ...(result.useWedgeInsteadOfBlock ? [
-                      { label: '⚠ Extra Wedge (each side)', value: fmtIn(result.extraWedgeLength || 0) },
+                      { label: 'Extra Wedge (each side)', value: fmtIn(result.extraWedgeLength || 0) },
                     ] : []),
                   ].map(({ label, value }) => (
-                    <div key={label} className="flex justify-between py-1.5 border-b border-[oklch(0.93_0.004_90)] last:border-0">
-                      <span className="text-[oklch(0.52_0.018_255)]">{label}</span>
-                      <span className="mono font-medium text-[oklch(0.18_0.025_250)]">{value}</span>
+                    <div key={label} className="flex justify-between py-1.5" style={{ borderBottom: '1px solid #EBEBEB' }}>
+                      <span style={{ color: '#6B6B6B' }}>{label}</span>
+                      <span className="mono font-bold" style={{ color: '#111111' }}>{value}</span>
                     </div>
                   ))}
                 </div>
@@ -832,8 +907,14 @@ export default function Home() {
             )}
 
             {/* Disclaimer */}
-            <div className="text-xs text-[oklch(0.6_0.01_255)] p-3 bg-[oklch(0.96_0.004_90)] rounded border border-[oklch(0.89_0.006_90)]">
-              <strong>Note:</strong> Glass is not included with the Infinity system. Pricing based on 2026 Dealer Price List. Please ensure topless rail fastening details are acceptable to local building authorities. This calculator is for material estimation purposes — verify final sales order for accuracy.
+            <div className="text-xs p-3 rounded" style={{ color: '#6B6B6B', background: '#F5F5F5', border: '1px solid #D8D8D8' }}>
+              <strong style={{ color: '#3A3A3A' }}>Note:</strong> Glass is not included with the Infinity system. Pricing based on 2026 Dealer Price List. Please ensure topless rail fastening details are acceptable to local building authorities. This calculator is for material estimation purposes — verify final sales order for accuracy.
+            </div>
+
+            {/* IAS footer branding */}
+            <div className="flex items-center justify-center gap-3 py-2 no-print">
+              <img src={IAS_LOGO_URL} alt="Innovative Aluminum Systems" className="h-6 w-auto opacity-60" />
+              <span className="text-[10px] tracking-widest uppercase" style={{ color: '#B69A5A' }}>Innovative Aluminum Systems</span>
             </div>
           </div>
         </div>

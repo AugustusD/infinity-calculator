@@ -4,13 +4,16 @@
 @custom-variant dark (&:is(.dark *));
 
 /* 
-  Design: Clean Professional — Infinity Glass Railing Calculator
-  Font: Sora (display + body) + IBM Plex Mono (numbers)
-  Background: Warm white (#FAFAF8)
-  Primary: Deep navy (#1E3A5F)
-  US accent: Steel blue (#2563EB)
-  Canada accent: Crimson (#DC2626)
-  Warning: Amber (#D97706)
+  Design: Innovative Aluminum Systems — Infinity Glass Railing Calculator
+  Brand: Innovative Aluminum Systems
+  Font: Helvetica Neue / Helvetica / Arial (system stack — no external load)
+  Background: Off-white / light grey (#F5F5F5)
+  Primary: Black (#111111)
+  Gold: #B69A5A (IAS brand gold)
+  Highlight: #f4ce47 (yellow accent)
+  Muted: mid-grey (#6B6B6B)
+  Card: white (#FFFFFF)
+  Border: light grey (#D8D8D8)
 */
 
 @theme inline {
@@ -50,52 +53,65 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+
+  /* IAS brand tokens */
+  --ias-gold: #B69A5A;
+  --ias-gold-light: #D4B97A;
+  --ias-gold-dark: #8A7240;
+  --ias-yellow: #f4ce47;
+  --ias-black: #111111;
+  --ias-dark: #1A1A1A;
+  --ias-grey-dark: #3A3A3A;
+  --ias-grey-mid: #6B6B6B;
+  --ias-grey-light: #D8D8D8;
+  --ias-grey-bg: #F5F5F5;
+  --ias-white: #FFFFFF;
 }
 
 :root {
-  --radius: 0.5rem;
-  /* Warm white background */
-  --background: oklch(0.99 0.003 90);
-  --foreground: oklch(0.18 0.025 250);
-  /* Cards: pure white with soft shadow */
+  --radius: 0.25rem;
+  /* Light grey background */
+  --background: oklch(0.965 0 0);
+  --foreground: oklch(0.1 0 0);
+  /* Cards: white */
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.18 0.025 250);
+  --card-foreground: oklch(0.1 0 0);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.18 0.025 250);
-  /* Primary: deep navy */
-  --primary: oklch(0.28 0.08 255);
-  --primary-foreground: oklch(0.97 0.005 255);
-  /* Secondary: light warm grey */
-  --secondary: oklch(0.96 0.004 90);
-  --secondary-foreground: oklch(0.35 0.02 250);
+  --popover-foreground: oklch(0.1 0 0);
+  /* Primary: black */
+  --primary: oklch(0.1 0 0);
+  --primary-foreground: oklch(1 0 0);
+  /* Secondary: light grey */
+  --secondary: oklch(0.93 0 0);
+  --secondary-foreground: oklch(0.22 0 0);
   /* Muted */
-  --muted: oklch(0.95 0.004 90);
-  --muted-foreground: oklch(0.52 0.018 255);
-  /* Accent: steel blue */
-  --accent: oklch(0.94 0.015 255);
-  --accent-foreground: oklch(0.28 0.08 255);
-  /* Destructive: crimson */
+  --muted: oklch(0.93 0 0);
+  --muted-foreground: oklch(0.45 0 0);
+  /* Accent: IAS gold */
+  --accent: oklch(0.69 0.07 80);
+  --accent-foreground: oklch(0.1 0 0);
+  /* Destructive */
   --destructive: oklch(0.55 0.22 27);
   --destructive-foreground: oklch(0.97 0 0);
   /* Borders */
-  --border: oklch(0.89 0.006 90);
-  --input: oklch(0.89 0.006 90);
-  --ring: oklch(0.45 0.12 255);
+  --border: oklch(0.86 0 0);
+  --input: oklch(0.86 0 0);
+  --ring: oklch(0.69 0.07 80);
   /* Charts */
-  --chart-1: oklch(0.45 0.12 255);
-  --chart-2: oklch(0.55 0.18 27);
-  --chart-3: oklch(0.65 0.14 90);
-  --chart-4: oklch(0.55 0.08 160);
-  --chart-5: oklch(0.45 0.08 255);
-  /* Sidebar */
-  --sidebar: oklch(0.22 0.06 255);
-  --sidebar-foreground: oklch(0.92 0.01 255);
-  --sidebar-primary: oklch(0.65 0.14 255);
-  --sidebar-primary-foreground: oklch(0.97 0 0);
-  --sidebar-accent: oklch(0.30 0.07 255);
-  --sidebar-accent-foreground: oklch(0.92 0.01 255);
-  --sidebar-border: oklch(0.32 0.06 255);
-  --sidebar-ring: oklch(0.55 0.14 255);
+  --chart-1: oklch(0.69 0.07 80);
+  --chart-2: oklch(0.55 0.05 80);
+  --chart-3: oklch(0.45 0 0);
+  --chart-4: oklch(0.65 0.10 80);
+  --chart-5: oklch(0.80 0.12 85);
+  /* Sidebar: dark */
+  --sidebar: oklch(0.1 0 0);
+  --sidebar-foreground: oklch(0.92 0 0);
+  --sidebar-primary: oklch(0.69 0.07 80);
+  --sidebar-primary-foreground: oklch(0.1 0 0);
+  --sidebar-accent: oklch(0.18 0 0);
+  --sidebar-accent-foreground: oklch(0.92 0 0);
+  --sidebar-border: oklch(0.22 0 0);
+  --sidebar-ring: oklch(0.69 0.07 80);
 }
 
 @layer base {
@@ -104,7 +120,8 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: 'Sora', sans-serif;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
   }
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]),
@@ -148,56 +165,58 @@
     }
   }
 
-  /* Mono number display */
+  /* Mono number display — use Helvetica Neue condensed for numbers */
   .mono {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
   }
 
-  /* Country badge */
+  /* Country badge — US: dark navy-ish, CA: dark red */
   .country-us {
-    background: oklch(0.94 0.04 255);
-    border: 2px solid oklch(0.52 0.22 255);
-    color: oklch(0.30 0.18 255);
+    background: #EEF2FF;
+    border: 2px solid #4A6FA5;
+    color: #1E3A6E;
   }
   .country-us.selected {
-    background: oklch(0.52 0.22 255);
+    background: #1E3A6E;
     color: white;
   }
   .country-ca {
-    background: oklch(0.96 0.03 27);
-    border: 2px solid oklch(0.52 0.22 27);
-    color: oklch(0.35 0.18 27);
+    background: #FFF0F0;
+    border: 2px solid #B22222;
+    color: #7A1010;
   }
   .country-ca.selected {
-    background: oklch(0.52 0.22 27);
+    background: #B22222;
     color: white;
   }
 
   /* Section card */
   .calc-card {
     background: white;
-    border: 1px solid oklch(0.89 0.006 90);
-    border-radius: 0.5rem;
-    box-shadow: 0 1px 3px oklch(0 0 0 / 0.06), 0 1px 2px oklch(0 0 0 / 0.04);
+    border: 1px solid #D8D8D8;
+    border-radius: 0.25rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
   }
 
   /* Warning banner */
   .warning-banner {
-    background: oklch(0.97 0.04 85);
-    border: 1px solid oklch(0.75 0.12 85);
-    border-left: 4px solid oklch(0.65 0.18 85);
-    color: oklch(0.35 0.12 85);
-    border-radius: 0.375rem;
+    background: #FFFBEB;
+    border: 1px solid #D4B97A;
+    border-left: 4px solid #B69A5A;
+    color: #5C4A1E;
+    border-radius: 0.25rem;
     padding: 0.75rem 1rem;
   }
 
   /* Error banner */
   .error-banner {
-    background: oklch(0.97 0.03 27);
-    border: 1px solid oklch(0.75 0.15 27);
-    border-left: 4px solid oklch(0.55 0.22 27);
-    color: oklch(0.35 0.15 27);
-    border-radius: 0.375rem;
+    background: #FFF0F0;
+    border: 1px solid #E88;
+    border-left: 4px solid #B22222;
+    color: #7A1010;
+    border-radius: 0.25rem;
     padding: 0.75rem 1rem;
   }
 
@@ -206,35 +225,35 @@
     position: relative;
   }
   .unlock-field input:disabled {
-    background: oklch(0.95 0.003 90);
+    background: #F5F5F5;
     cursor: not-allowed;
   }
 
   /* Results table */
   .results-table th {
-    font-size: 0.7rem;
-    font-weight: 600;
-    letter-spacing: 0.08em;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: oklch(0.52 0.018 255);
+    color: #6B6B6B;
     padding: 0.5rem 0.75rem;
-    border-bottom: 2px solid oklch(0.89 0.006 90);
+    border-bottom: 2px solid #D8D8D8;
   }
   .results-table td {
     padding: 0.5rem 0.75rem;
     font-size: 0.875rem;
-    border-bottom: 1px solid oklch(0.93 0.004 90);
+    border-bottom: 1px solid #EBEBEB;
   }
   .results-table tr:last-child td {
     border-bottom: none;
   }
   .results-table tr:hover td {
-    background: oklch(0.97 0.003 90);
+    background: #FAFAFA;
   }
   .results-table .total-row td {
     font-weight: 700;
-    background: oklch(0.96 0.008 255);
-    border-top: 2px solid oklch(0.89 0.006 90);
+    background: #FFFBEB;
+    border-top: 2px solid #D8D8D8;
   }
 
   /* Dimension badge */
@@ -242,20 +261,56 @@
     display: inline-flex;
     align-items: center;
     gap: 0.25rem;
-    background: oklch(0.94 0.015 255);
-    color: oklch(0.28 0.08 255);
-    border-radius: 0.25rem;
+    background: #F5F0E8;
+    color: #5C4A1E;
+    border-radius: 0.2rem;
     padding: 0.125rem 0.5rem;
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-variant-numeric: tabular-nums;
     font-size: 0.8rem;
-    font-weight: 600;
+    font-weight: 700;
+    border: 1px solid #D4B97A;
+  }
+
+  /* IAS gold button */
+  .btn-gold {
+    background: #B69A5A;
+    color: #111111;
+    font-weight: 700;
+    border: none;
+    transition: background 0.15s;
+  }
+  .btn-gold:hover {
+    background: #D4B97A;
+  }
+
+  /* IAS gold outline */
+  .btn-gold-outline {
+    background: transparent;
+    color: #B69A5A;
+    border: 2px solid #B69A5A;
+    font-weight: 700;
+    transition: all 0.15s;
+  }
+  .btn-gold-outline:hover {
+    background: #B69A5A;
+    color: #111111;
+  }
+
+  /* Section header label */
+  .section-label {
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #B69A5A;
   }
 
   /* Print styles */
   @media print {
     .no-print { display: none !important; }
     .print-full { width: 100% !important; }
-    body { background: white; }
+    body { background: white; font-family: Helvetica, Arial, sans-serif; }
     .calc-card { box-shadow: none; border: 1px solid #ddd; }
   }
 }
