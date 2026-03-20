@@ -314,13 +314,11 @@ export default function Home() {
         <div className="container py-3 flex items-center justify-between">
           {/* Left: IAS logo + Infinity logo */}
           <div className="flex items-center gap-5">
-            <div style={{ background: '#FFFFFF', borderRadius: '3px', padding: '3px 6px', display: 'inline-flex', alignItems: 'center' }}>
-              <img
-                src={IAS_LOGO_URL}
-                alt="Innovative Aluminum Systems"
-                className="h-8 w-auto object-contain"
-              />
-            </div>
+            <img
+              src={IAS_LOGO_URL}
+              alt="Innovative Aluminum Systems"
+              className="h-10 w-auto object-contain"
+            />
             <div style={{ width: '1px', height: '36px', background: '#B69A5A', opacity: 0.6 }} />
             <div className="flex flex-col justify-center">
               <img
