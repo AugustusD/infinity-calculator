@@ -2,7 +2,7 @@
  * Infinity Glass Railing Calculator — Main Page
  * Brand: Innovative Aluminum Systems
  * Design: Helvetica, gold (#B69A5A), black, grey, white, yellow highlight (#f4ce47)
- * Layout: 2-column — Left (job info, market, discount, quote) | Right (configuration)
+ * Layout: 3-column — Left (job info, market, discount, diagram) | Centre (configuration) | Right (quote, details, disclaimer)
  * Discount level persisted via localStorage key "ias-infinity-discount"
  */
 
@@ -23,6 +23,7 @@ import {
   type FasciaOffset,
 } from '@/lib/calculator';
 import { Lock, Unlock, AlertTriangle, AlertCircle, Printer, ChevronDown, ChevronUp, Info } from 'lucide-react';
+import PostDiagram from '@/components/PostDiagram';
 
 const DISCOUNT_STORAGE_KEY = 'ias-infinity-discount';
 
@@ -417,8 +418,8 @@ export default function Home() {
       <div className="no-print" style={{ background: '#B69A5A', height: '2px' }} />
 
       <div className="container py-6">
-        {/* 2-column layout: left sidebar (360px) | right config panel */}
-        <div className="grid grid-cols-1 lg:grid-cols-[360px_1fr] gap-6">
+        {/* 3-column layout: left sidebar (320px) | centre config | right quote (360px) */}
+        <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr_360px] gap-6">
 
           {/* ====== LEFT COLUMN ====== */}
           <div className="space-y-4">
@@ -519,170 +520,23 @@ export default function Home() {
               </div>
             </div>
 
-            {/* ====== MATERIAL QUOTE (moved here from right panel) ====== */}
-
-            {/* Warnings & Errors */}
-            {(result.warnings.length > 0 || result.errors.length > 0 || constraints.warningMessages.length > 0) && (
-              <div className="space-y-2">
-                {result.errors.map((e, i) => (
-                  <div key={i} className="error-banner flex items-start gap-2">
-                    <AlertCircle size={14} className="mt-0.5 flex-shrink-0" />
-                    <span className="text-xs">{e}</span>
-                  </div>
-                ))}
-                {[...result.warnings, ...constraints.warningMessages].map((w, i) => (
-                  <div key={i} className="warning-banner flex items-start gap-2">
-                    <AlertTriangle size={14} className="mt-0.5 flex-shrink-0" />
-                    <span className="text-xs">{w}</span>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {/* Quote Card */}
-            <div className="calc-card p-5">
-              {/* Quote title bar */}
-              <div className="flex items-start justify-between mb-4 pb-3" style={{ borderBottom: '2px solid #B69A5A' }}>
-                <div>
-                  <h2 className="text-base font-black uppercase tracking-widest" style={{ color: '#111111', letterSpacing: '0.12em' }}>
-                    Material Quote
-                  </h2>
-                  <p className="text-xs mt-0.5" style={{ color: '#6B6B6B' }}>
-                    {config.country === 'US' ? '🇺🇸 United States' : '🇨🇦 Canada'} &middot;{' '}
-                    {config.mountType === 'surface' ? 'Surface Mount' : 'Fascia Mount'} &middot;{' '}
-                    {config.railHeight}" Rail &middot; {config.glassThickness}mm Glass
-                  </p>
-                  {jobInfo.jobReference && (
-                    <p className="text-xs mt-0.5" style={{ color: '#6B6B6B' }}>Ref: {jobInfo.jobReference}</p>
-                  )}
-                  {jobInfo.dealerName && (
-                    <p className="text-xs" style={{ color: '#6B6B6B' }}>Dealer: {jobInfo.dealerName}</p>
-                  )}
-                </div>
-                <div className="text-right">
-                  <div className="text-[10px] font-bold uppercase tracking-widest mb-0.5" style={{ color: '#6B6B6B' }}>Job Cost</div>
-                  <div className="mono text-2xl font-black" style={{ color: '#111111' }}>
-                    {fmtCurrency(result.jobCost)}
-                  </div>
-                  {config.discountLevel > 0 && (
-                    <div className="text-xs" style={{ color: '#B69A5A' }}>
-                      {(config.discountLevel * 100).toFixed(1)}% discount applied
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Fastener info */}
-              {hasContent && (
-                <div className="grid grid-cols-2 gap-3 mb-4 p-3 rounded" style={{ background: '#F5F5F5', border: '1px solid #EBEBEB' }}>
-                  <div>
-                    <div className="text-[10px] font-bold uppercase tracking-widest mb-0.5" style={{ color: '#6B6B6B' }}>Deck Fasteners</div>
-                    <div className="mono font-bold text-sm" style={{ color: '#111111' }}>{result.deckFasteners} required</div>
-                    <div className="text-xs" style={{ color: '#6B6B6B' }}>Not included</div>
-                  </div>
-                  {result.wallFasteners > 0 && (
-                    <div>
-                      <div className="text-[10px] font-bold uppercase tracking-widest mb-0.5" style={{ color: '#6B6B6B' }}>Wall Fasteners</div>
-                      <div className="mono font-bold text-sm" style={{ color: '#111111' }}>{result.wallFasteners} required</div>
-                      <div className="text-xs" style={{ color: '#6B6B6B' }}>Not included</div>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* Bill of Materials */}
-              {hasContent ? (
-                <div className="overflow-x-auto">
-                  <table className="results-table w-full text-left">
-                    <thead>
-                      <tr style={{ background: '#111111' }}>
-                        <th style={{ color: '#B69A5A' }}>Description</th>
-                        <th className="text-right" style={{ color: '#B69A5A' }}>QTY</th>
-                        <th className="text-right" style={{ color: '#B69A5A' }}>Unit</th>
-                        <th className="text-right" style={{ color: '#B69A5A' }}>Total</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {result.lineItems.map((item, i) => (
-                        <tr key={i}>
-                          <td className="text-xs">{item.description}</td>
-                          <td className="mono text-right text-xs">{item.qty % 1 === 0 ? item.qty : fmt(item.qty, 2)}</td>
-                          <td className="mono text-right text-xs">{fmtCurrency(item.unitCost)}</td>
-                          <td className="mono text-right text-xs font-bold">{fmtCurrency(item.total)}</td>
-                        </tr>
-                      ))}
-                      {result.lineItems.some(i => i.paintCost) && (
-                        <tr>
-                          <td className="text-xs italic" colSpan={3} style={{ color: '#6B6B6B' }}>Paint costs included in totals</td>
-                          <td className="mono text-right text-xs" style={{ color: '#6B6B6B' }}>
-                            {fmtCurrency(result.lineItems.reduce((s, i) => s + (i.paintCost || 0), 0))}
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                    <tfoot>
-                      <tr className="total-row">
-                        <td colSpan={3} className="text-sm font-black uppercase tracking-wide" style={{ color: '#111111' }}>
-                          {config.glassThickness === 12 ? '12mm' : '13mm'} Job Cost
-                        </td>
-                        <td className="mono text-right text-sm font-black" style={{ color: '#111111' }}>{fmtCurrency(result.jobCost)}</td>
-                      </tr>
-                    </tfoot>
-                  </table>
-                </div>
-              ) : (
-                <div className="text-center py-8" style={{ color: '#6B6B6B' }}>
-                  <div className="mb-3">
-                    <div className="inline-flex items-center justify-center w-12 h-12 rounded" style={{ background: '#F5F0E8', border: '1px solid #D4B97A' }}>
-                      <span style={{ color: '#B69A5A', fontSize: '1.25rem' }}>&#9656;</span>
-                    </div>
-                  </div>
-                  <p className="text-sm">Enter post quantities above to generate your material list and pricing.</p>
-                </div>
-              )}
-            </div>
-
-            {/* Material Details Summary */}
-            {hasContent && (
-              <div className="calc-card p-5">
-                <SectionHeader title="Material Details" subtitle="Cut lengths and quantities for ordering" />
-                <div className="space-y-0 text-xs">
-                  {[
-                    { label: 'Glass Insert — Post', value: fmtIn(result.glassInsertLength) },
-                    { label: 'Glass Insert — End Post', value: fmtIn(result.endPostInsertLength) },
-                    { label: 'Glass Insert — Wall Track', value: fmtIn(result.glassInsertLengthTrack) },
-                    { label: 'Setting Block Height', value: fmtIn(result.settingBlockHeight) },
-                    { label: 'Setting Block — 10 Ft Lengths', value: `${result.settingBlockLengths} lengths` },
-                    { label: 'Setting Block — Per Ft', value: `${fmt(result.settingBlockFt, 2)} ft` },
-                    ...(result.settingBlock15Pieces > 0 ? [{ label: 'Setting Block — 1.5" Pieces', value: `${result.settingBlock15Pieces} pcs` }] : []),
-                    { label: 'Glass Wedge Pieces', value: `${result.glassWedgeQty} pcs` },
-                    { label: 'Gasket Lengths', value: `${result.gasketLengths} x ${result.gasketDescription}` },
-                    ...(result.useWedgeInsteadOfBlock ? [
-                      { label: 'Extra Wedge (each side)', value: fmtIn(result.extraWedgeLength || 0) },
-                    ] : []),
-                  ].map(({ label, value }) => (
-                    <div key={label} className="flex justify-between py-1.5" style={{ borderBottom: '1px solid #EBEBEB' }}>
-                      <span style={{ color: '#6B6B6B' }}>{label}</span>
-                      <span className="mono font-bold" style={{ color: '#111111' }}>{value}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Disclaimer */}
-            <div className="text-xs p-3 rounded" style={{ color: '#6B6B6B', background: '#F5F5F5', border: '1px solid #D8D8D8' }}>
-              <strong style={{ color: '#3A3A3A' }}>Note:</strong> Glass is not included with the Infinity system. Pricing based on 2026 Dealer Price List. Please ensure topless rail fastening details are acceptable to local building authorities. This calculator is for material estimation purposes — verify final sales order for accuracy.
-            </div>
-
-            {/* IAS footer branding */}
-            <div className="flex items-center justify-center gap-3 py-2 no-print">
-              <img src={IAS_LOGO_URL} alt="Innovative Aluminum Systems" className="h-6 w-auto opacity-60" />
-              <span className="text-[10px] tracking-widest uppercase" style={{ color: '#B69A5A' }}>Innovative Aluminum Systems</span>
-            </div>
+            {/* ====== POST DIAGRAM ====== */}
+            <PostDiagram
+              mountType={config.mountType}
+              railHeightActual={result.railHeightActual}
+              postHeightAboveDeck={result.postHeightAboveDeck}
+              topGlassReveal={config.topGlassReveal}
+              bottomGlassGap={config.bottomGlassGap}
+              glassInsertLength={result.glassInsertLength}
+              settingBlockHeight={result.settingBlockHeight}
+              physicalPostLength={result.physicalPostLength}
+              fasciaOffset={config.fasciaOffset}
+              distTopBasePlateToDeck={config.distTopBasePlateToDeck}
+              isShortPost={constraints.isShortPost}
+            />
           </div>
 
-          {/* ====== RIGHT COLUMN: Configuration ====== */}
+          {/* ====== CENTRE COLUMN: Configuration ====== */}
           <div className="space-y-4">
 
             {/* Mount Type */}
@@ -974,6 +828,169 @@ export default function Home() {
                   </motion.div>
                 )}
               </AnimatePresence>
+            </div>
+          </div>
+
+          {/* ====== RIGHT COLUMN: Quote & Details ====== */}
+          <div className="space-y-4">
+
+            {/* Warnings & Errors */}
+            {(result.warnings.length > 0 || result.errors.length > 0 || constraints.warningMessages.length > 0) && (
+              <div className="space-y-2">
+                {result.errors.map((e, i) => (
+                  <div key={i} className="error-banner flex items-start gap-2">
+                    <AlertCircle size={14} className="mt-0.5 flex-shrink-0" />
+                    <span className="text-xs">{e}</span>
+                  </div>
+                ))}
+                {[...result.warnings, ...constraints.warningMessages].map((w, i) => (
+                  <div key={i} className="warning-banner flex items-start gap-2">
+                    <AlertTriangle size={14} className="mt-0.5 flex-shrink-0" />
+                    <span className="text-xs">{w}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Quote Card */}
+            <div className="calc-card p-5">
+              <div className="flex items-start justify-between mb-4 pb-3" style={{ borderBottom: '2px solid #B69A5A' }}>
+                <div>
+                  <h2 className="text-base font-black uppercase tracking-widest" style={{ color: '#111111', letterSpacing: '0.12em' }}>
+                    Material Quote
+                  </h2>
+                  <p className="text-xs mt-0.5" style={{ color: '#6B6B6B' }}>
+                    {config.country === 'US' ? '🇺🇸 United States' : '🇨🇦 Canada'} &middot;{' '}
+                    {config.mountType === 'surface' ? 'Surface Mount' : 'Fascia Mount'} &middot;{' '}
+                    {config.railHeight}" Rail &middot; {config.glassThickness}mm Glass
+                  </p>
+                  {jobInfo.jobReference && (
+                    <p className="text-xs mt-0.5" style={{ color: '#6B6B6B' }}>Ref: {jobInfo.jobReference}</p>
+                  )}
+                  {jobInfo.dealerName && (
+                    <p className="text-xs" style={{ color: '#6B6B6B' }}>Dealer: {jobInfo.dealerName}</p>
+                  )}
+                </div>
+                <div className="text-right">
+                  <div className="text-[10px] font-bold uppercase tracking-widest mb-0.5" style={{ color: '#6B6B6B' }}>Job Cost</div>
+                  <div className="mono text-2xl font-black" style={{ color: '#111111' }}>
+                    {fmtCurrency(result.jobCost)}
+                  </div>
+                  {config.discountLevel > 0 && (
+                    <div className="text-xs" style={{ color: '#B69A5A' }}>
+                      {(config.discountLevel * 100).toFixed(1)}% discount applied
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Fastener info */}
+              {hasContent && (
+                <div className="grid grid-cols-2 gap-3 mb-4 p-3 rounded" style={{ background: '#F5F5F5', border: '1px solid #EBEBEB' }}>
+                  <div>
+                    <div className="text-[10px] font-bold uppercase tracking-widest mb-0.5" style={{ color: '#6B6B6B' }}>Deck Fasteners</div>
+                    <div className="mono font-bold text-sm" style={{ color: '#111111' }}>{result.deckFasteners} required</div>
+                    <div className="text-xs" style={{ color: '#6B6B6B' }}>Not included</div>
+                  </div>
+                  {result.wallFasteners > 0 && (
+                    <div>
+                      <div className="text-[10px] font-bold uppercase tracking-widest mb-0.5" style={{ color: '#6B6B6B' }}>Wall Fasteners</div>
+                      <div className="mono font-bold text-sm" style={{ color: '#111111' }}>{result.wallFasteners} required</div>
+                      <div className="text-xs" style={{ color: '#6B6B6B' }}>Not included</div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Bill of Materials */}
+              {hasContent ? (
+                <div className="overflow-x-auto">
+                  <table className="results-table w-full text-left">
+                    <thead>
+                      <tr style={{ background: '#111111' }}>
+                        <th style={{ color: '#B69A5A' }}>Description</th>
+                        <th className="text-right" style={{ color: '#B69A5A' }}>QTY</th>
+                        <th className="text-right" style={{ color: '#B69A5A' }}>Unit</th>
+                        <th className="text-right" style={{ color: '#B69A5A' }}>Total</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {result.lineItems.map((item, i) => (
+                        <tr key={i}>
+                          <td className="text-xs">{item.description}</td>
+                          <td className="mono text-right text-xs">{item.qty % 1 === 0 ? item.qty : fmt(item.qty, 2)}</td>
+                          <td className="mono text-right text-xs">{fmtCurrency(item.unitCost)}</td>
+                          <td className="mono text-right text-xs font-bold">{fmtCurrency(item.total)}</td>
+                        </tr>
+                      ))}
+                      {result.lineItems.some(i => i.paintCost) && (
+                        <tr>
+                          <td className="text-xs italic" colSpan={3} style={{ color: '#6B6B6B' }}>Paint costs included in totals</td>
+                          <td className="mono text-right text-xs" style={{ color: '#6B6B6B' }}>
+                            {fmtCurrency(result.lineItems.reduce((s, i) => s + (i.paintCost || 0), 0))}
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                    <tfoot>
+                      <tr className="total-row">
+                        <td colSpan={3} className="text-sm font-black uppercase tracking-wide" style={{ color: '#111111' }}>
+                          {config.glassThickness === 12 ? '12mm' : '13mm'} Job Cost
+                        </td>
+                        <td className="mono text-right text-sm font-black" style={{ color: '#111111' }}>{fmtCurrency(result.jobCost)}</td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              ) : (
+                <div className="text-center py-8" style={{ color: '#6B6B6B' }}>
+                  <div className="mb-3">
+                    <div className="inline-flex items-center justify-center w-12 h-12 rounded" style={{ background: '#F5F0E8', border: '1px solid #D4B97A' }}>
+                      <span style={{ color: '#B69A5A', fontSize: '1.25rem' }}>&#9656;</span>
+                    </div>
+                  </div>
+                  <p className="text-sm">Enter post quantities above to generate your material list and pricing.</p>
+                </div>
+              )}
+            </div>
+
+            {/* Material Details Summary */}
+            {hasContent && (
+              <div className="calc-card p-5">
+                <SectionHeader title="Material Details" subtitle="Cut lengths and quantities for ordering" />
+                <div className="space-y-0 text-xs">
+                  {[
+                    { label: 'Glass Insert — Post', value: fmtIn(result.glassInsertLength) },
+                    { label: 'Glass Insert — End Post', value: fmtIn(result.endPostInsertLength) },
+                    { label: 'Glass Insert — Wall Track', value: fmtIn(result.glassInsertLengthTrack) },
+                    { label: 'Setting Block Height', value: fmtIn(result.settingBlockHeight) },
+                    { label: 'Setting Block — 10 Ft Lengths', value: `${result.settingBlockLengths} lengths` },
+                    { label: 'Setting Block — Per Ft', value: `${fmt(result.settingBlockFt, 2)} ft` },
+                    ...(result.settingBlock15Pieces > 0 ? [{ label: 'Setting Block — 1.5" Pieces', value: `${result.settingBlock15Pieces} pcs` }] : []),
+                    { label: 'Glass Wedge Pieces', value: `${result.glassWedgeQty} pcs` },
+                    { label: 'Gasket Lengths', value: `${result.gasketLengths} x ${result.gasketDescription}` },
+                    ...(result.useWedgeInsteadOfBlock ? [
+                      { label: 'Extra Wedge (each side)', value: fmtIn(result.extraWedgeLength || 0) },
+                    ] : []),
+                  ].map(({ label, value }) => (
+                    <div key={label} className="flex justify-between py-1.5" style={{ borderBottom: '1px solid #EBEBEB' }}>
+                      <span style={{ color: '#6B6B6B' }}>{label}</span>
+                      <span className="mono font-bold" style={{ color: '#111111' }}>{value}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Disclaimer */}
+            <div className="text-xs p-3 rounded" style={{ color: '#6B6B6B', background: '#F5F5F5', border: '1px solid #D8D8D8' }}>
+              <strong style={{ color: '#3A3A3A' }}>Note:</strong> Glass is not included with the Infinity system. Pricing based on 2026 Dealer Price List. Please ensure topless rail fastening details are acceptable to local building authorities. This calculator is for material estimation purposes — verify final sales order for accuracy.
+            </div>
+
+            {/* IAS footer branding */}
+            <div className="flex items-center justify-center gap-3 py-2 no-print">
+              <img src={IAS_LOGO_URL} alt="Innovative Aluminum Systems" className="h-6 w-auto opacity-60" />
+              <span className="text-[10px] tracking-widest uppercase" style={{ color: '#B69A5A' }}>Innovative Aluminum Systems</span>
             </div>
           </div>
         </div>
