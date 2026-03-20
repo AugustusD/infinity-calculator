@@ -416,7 +416,7 @@ export default function Home() {
                 >
                   <div className="text-2xl mb-1">🇺🇸</div>
                   <div className="font-bold text-sm" style={{ letterSpacing: '0.02em' }}>United States</div>
-                  <div className="text-xs mt-0.5 opacity-70">Residential / Small Projects</div>
+                  <div className="text-xs mt-0.5 opacity-70">IRC Code</div>
                   {config.country === 'US' && (
                     <div className="mt-1.5 text-[10px] font-bold tracking-widest uppercase" style={{ color: '#B69A5A' }}>US</div>
                   )}
@@ -434,9 +434,6 @@ export default function Home() {
                   <div className="text-2xl mb-1">🇨🇦</div>
                   <div className="font-bold text-sm" style={{ letterSpacing: '0.02em' }}>Canada</div>
                   <div className="text-xs mt-0.5 opacity-70">NBC Code</div>
-                  {config.country === 'CA' && (
-                    <div className="mt-1.5 text-[10px] font-bold tracking-widest uppercase" style={{ color: '#B69A5A' }}>CA</div>
-                  )}
                 </button>
               </div>
             </div>

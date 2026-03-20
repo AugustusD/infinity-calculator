@@ -1016,5 +1016,7 @@ export const COLOR_OPTIONS = [
   'Innovative Series Silver Matte',
   'Innovative Series Textured Black',
   'Innovative Series White',
+  'Innovative Series Sparrow Grey',
+  'Innovative Series Flat Black',
   'Custom',
 ];
