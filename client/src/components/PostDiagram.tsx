@@ -1,9 +1,8 @@
 /**
- * PostDiagram — Live SVG technical drawing of Infinity post configuration
- * Renders a dimensioned engineering-style diagram matching the installation guide details.
- * Updates dynamically based on mount type, rail height, glass reveal, post height, etc.
+ * PostDiagram — Simple scaled illustration of post, glass, and deck relationship.
+ * No dimension callouts — just a clean visual showing proportional heights.
  *
- * Design: black/white engineering drawing style with gold (#B69A5A) dimension lines
+ * Design: minimal engineering sketch style, gold/black/grey palette.
  */
 
 import React from 'react';
@@ -17,80 +16,9 @@ interface PostDiagramProps {
   glassInsertLength: number;      // glass inside post
   settingBlockHeight: number;
   physicalPostLength?: number;    // fascia only
-  fasciaOffset?: number;          // fascia only (0.4375 or 1.5)
+  fasciaOffset?: number;          // fascia only
   distTopBasePlateToDeck?: number;// fascia only
   isShortPost?: boolean;
-}
-
-// Dimension line arrow marker
-const ARROW_SIZE = 5;
-
-function fmt(n: number): string {
-  // Format as fractional inches string for labels
-  const whole = Math.floor(n);
-  const frac = n - whole;
-  const fracs: [number, string][] = [
-    [0, ''],
-    [0.0625, '1/16"'],
-    [0.125, '1/8"'],
-    [0.1875, '3/16"'],
-    [0.25, '1/4"'],
-    [0.3125, '5/16"'],
-    [0.375, '3/8"'],
-    [0.4375, '7/16"'],
-    [0.5, '1/2"'],
-    [0.5625, '9/16"'],
-    [0.625, '5/8"'],
-    [0.6875, '11/16"'],
-    [0.75, '3/4"'],
-    [0.8125, '13/16"'],
-    [0.875, '7/8"'],
-    [0.9375, '15/16"'],
-    [1, ''],
-  ];
-  let closest = fracs[0];
-  for (const f of fracs) {
-    if (Math.abs(f[0] - frac) < Math.abs(closest[0] - frac)) closest = f;
-  }
-  const fracStr = closest[1];
-  if (fracStr === '') {
-    const w = whole + (closest[0] === 1 ? 1 : 0);
-    return `${w}"`;
-  }
-  return whole > 0 ? `${whole}-${fracStr}` : fracStr;
-}
-
-interface DimLineProps {
-  x1: number; y1: number;
-  x2: number; y2: number;
-  label: string;
-  labelX: number; labelY: number;
-  labelAnchor?: 'start' | 'middle' | 'end';
-  labelAngle?: number;
-  color?: string;
-  extLine?: boolean; // draw extension lines
-}
-
-function DimLine({ x1, y1, x2, y2, label, labelX, labelY, labelAnchor = 'middle', labelAngle = 0, color = '#B69A5A', extLine = true }: DimLineProps) {
-  return (
-    <g>
-      {/* Main dimension line */}
-      <line x1={x1} y1={y1} x2={x2} y2={y2} stroke={color} strokeWidth="0.8" markerStart="url(#arrowStart)" markerEnd="url(#arrowEnd)" />
-      {/* Label */}
-      <text
-        x={labelX}
-        y={labelY}
-        fontSize="8"
-        fill={color}
-        textAnchor={labelAnchor}
-        fontFamily="'Helvetica Neue', Helvetica, Arial, sans-serif"
-        fontWeight="600"
-        transform={labelAngle ? `rotate(${labelAngle}, ${labelX}, ${labelY})` : undefined}
-      >
-        {label}
-      </text>
-    </g>
-  );
 }
 
 export default function PostDiagram({
@@ -108,386 +36,326 @@ export default function PostDiagram({
 }: PostDiagramProps) {
   const isFascia = mountType === 'fascia';
 
-  // ── SVG coordinate system ──────────────────────────────────────────────────
-  // We draw the diagram in a 200×420 viewBox.
-  // The "deck level" is at a fixed Y position; everything scales proportionally.
-  // Scale: 1 real inch ≈ some pixels. We fit the full rail height + some margin.
+  // ── SVG canvas ─────────────────────────────────────────────────────────────
+  const W = 160;
+  const H = 320;
+  const MT = 20; // margin top
+  const MB = 50; // margin bottom (below deck for base plate / fascia board)
 
-  const SVG_W = 260;
-  const SVG_H = 480;
-  const MARGIN_TOP = 35;
-  const MARGIN_BOTTOM = 65;
+  // Scale: fit rail height into the drawable area
+  const drawH = H - MT - MB;
+  const scale = drawH / railHeightActual; // px per inch
 
-  // Total real height to display: rail height + base plate below deck
-  const basePlateDepth = isFascia ? 8 : 6; // approximate below-deck depth
-  const totalRealHeight = railHeightActual + basePlateDepth;
-  const drawHeight = SVG_H - MARGIN_TOP - MARGIN_BOTTOM;
-  const scale = drawHeight / totalRealHeight; // px per inch
+  // Key Y coords
+  const deckY = MT + railHeightActual * scale;
+  const topGlassY = MT; // glass top = rail height top
+  const topPostY = deckY - postHeightAboveDeck * scale;
+  const bottomGlassY = deckY - bottomGlassGap * scale;
 
-  // Deck Y in SVG coords
-  const deckY = MARGIN_TOP + (railHeightActual * scale);
+  // Horizontal layout — post left, glass right
+  const postX = 52;
+  const postW = 14;
+  const glassX = postX + postW + 4;
+  const glassW = 7;
 
-  // Post positions (centered horizontally)
-  const postCX = 105; // center x of post
-  const postW = 12;   // post width
-  const glassW = 6;   // glass panel width
-  const glassOffsetFromPost = 2; // glass sits just outside post
+  // Base plate / fascia board below deck
+  const bpH = 5;
+  const bpW = isFascia ? 14 : 22;
 
-  // Key Y positions
-  const topOfRailY = MARGIN_TOP; // rail top = top of SVG content
-  const topOfPostY = deckY - (postHeightAboveDeck * scale);
-  const topOfGlassY = topOfRailY; // glass top = rail height top
-  const bottomOfGlassY = deckY - (bottomGlassGap * scale);
-  const bottomOfPostY = isFascia
-    ? deckY + ((physicalPostLength || postHeightAboveDeck + 10) - postHeightAboveDeck) * scale
-    : deckY + (basePlateDepth * scale);
+  // Fascia board
+  const fasciaH = isFascia
+    ? (physicalPostLength ? (physicalPostLength - postHeightAboveDeck) * scale : 40)
+    : 0;
+  const fasciaW = 12;
+  const fasciaX = postX - fasciaW - 2;
 
-  // Base plate
-  const bpW = isFascia ? 16 : 22;
-  const bpH = 4;
-  const bpY = isFascia ? deckY - (distTopBasePlateToDeck * scale) : deckY;
+  // Setting block inside post (yellow band near bottom of glass)
+  const sbH = Math.max(2, settingBlockHeight * scale);
+  const sbY = bottomGlassY - sbH;
 
-  // Glass top reveal marker
-  const glassTopRevealY = topOfPostY + (topGlassReveal * scale);
-
-  // Dimension line X positions (left side and right side)
-  const leftDim1X = 18;
-  const leftDim2X = 34;
-  const leftDim3X = 50;
-  const rightDim1X = 158;
-  const rightDim2X = 178;
-  const rightDim3X = 198;
-  const rightDim4X = 218;
-
-  const title = isFascia ? 'Fascia Mount Detail' : 'Surface Mount Detail';
+  const title = isFascia ? 'FASCIA MOUNT' : 'SURFACE MOUNT';
 
   return (
     <div className="calc-card p-4 flex flex-col items-center">
       <h3 className="section-label mb-3 self-start">{title}</h3>
       <svg
-        viewBox={`0 0 ${SVG_W} ${SVG_H}`}
+        viewBox={`0 0 ${W} ${H}`}
         width="100%"
-        style={{ maxHeight: '600px', fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif" }}
+        style={{ maxHeight: '360px' }}
         aria-label={title}
       >
-        <defs>
-          <marker id="arrowEnd" markerWidth={ARROW_SIZE} markerHeight={ARROW_SIZE} refX={ARROW_SIZE} refY={ARROW_SIZE / 2} orient="auto">
-            <path d={`M0,0 L0,${ARROW_SIZE} L${ARROW_SIZE},${ARROW_SIZE / 2} z`} fill="#B69A5A" />
-          </marker>
-          <marker id="arrowStart" markerWidth={ARROW_SIZE} markerHeight={ARROW_SIZE} refX="0" refY={ARROW_SIZE / 2} orient="auto-start-reverse">
-            <path d={`M0,0 L0,${ARROW_SIZE} L${ARROW_SIZE},${ARROW_SIZE / 2} z`} fill="#B69A5A" />
-          </marker>
-          <marker id="arrowEndBlack" markerWidth={ARROW_SIZE} markerHeight={ARROW_SIZE} refX={ARROW_SIZE} refY={ARROW_SIZE / 2} orient="auto">
-            <path d={`M0,0 L0,${ARROW_SIZE} L${ARROW_SIZE},${ARROW_SIZE / 2} z`} fill="#333" />
-          </marker>
-          <marker id="arrowStartBlack" markerWidth={ARROW_SIZE} markerHeight={ARROW_SIZE} refX="0" refY={ARROW_SIZE / 2} orient="auto-start-reverse">
-            <path d={`M0,0 L0,${ARROW_SIZE} L${ARROW_SIZE},${ARROW_SIZE / 2} z`} fill="#333" />
-          </marker>
-        </defs>
-
-        {/* ── Background ── */}
-        <rect x="0" y="0" width={SVG_W} height={SVG_H} fill="#FAFAFA" />
+        {/* Background */}
+        <rect x="0" y="0" width={W} height={H} fill="#F8F7F5" />
 
         {/* ── DECK LINE ── */}
-        <line x1="10" y1={deckY} x2={SVG_W - 10} y2={deckY} stroke="#555" strokeWidth="2.5" strokeDasharray="none" />
-        <text x="12" y={deckY + 11} fontSize="8" fill="#555" fontWeight="700">DECK LEVEL</text>
+        <rect x="8" y={deckY} width={W - 16} height="3" fill="#555" rx="1" />
 
-        {/* ── HATCHING below deck (deck material) ── */}
-        {Array.from({ length: 6 }).map((_, i) => (
+        {/* Deck hatching */}
+        {Array.from({ length: 10 }).map((_, i) => (
           <line
             key={i}
-            x1={postCX - 30 + i * 10}
-            y1={deckY}
-            x2={postCX - 40 + i * 10}
-            y2={deckY + 12}
+            x1={12 + i * 14}
+            y1={deckY + 3}
+            x2={6 + i * 14}
+            y2={deckY + 14}
             stroke="#999"
-            strokeWidth="0.8"
+            strokeWidth="1"
           />
         ))}
 
-        {/* ── BASE PLATE ── */}
-        {isFascia ? (
-          // Fascia base plate (side-mounted)
+        {/* ── SURFACE MOUNT: Base plate + anchor bolts ── */}
+        {!isFascia && (
           <>
+            {/* Base plate */}
             <rect
-              x={postCX - bpW / 2}
-              y={bpY}
-              width={bpW}
-              height={bpH + Math.abs(deckY - bpY)}
-              fill="#CCC"
-              stroke="#333"
-              strokeWidth="0.8"
-            />
-            {/* Fascia board */}
-            <rect x={postCX - bpW / 2 - 8} y={bpY - 4} width={8} height={Math.abs(deckY - bpY) + bpH + 8} fill="#D4A96A" stroke="#8B6914" strokeWidth="0.8" />
-            <text x={postCX - bpW / 2 - 14} y={deckY + 12} fontSize="6" fill="#555" textAnchor="middle">Fascia</text>
-          </>
-        ) : (
-          // Surface base plate
-          <>
-            <rect
-              x={postCX - bpW / 2}
-              y={bpY}
+              x={postX - (bpW - postW) / 2}
+              y={deckY}
               width={bpW}
               height={bpH}
-              fill="#CCC"
-              stroke="#333"
-              strokeWidth="0.8"
-            />
-            {/* Gasket below base plate */}
-            <rect
-              x={postCX - bpW / 2 + 2}
-              y={bpY + bpH}
-              width={bpW - 4}
-              height={2}
-              fill="#888"
+              fill="#CCCCCC"
               stroke="#555"
-              strokeWidth="0.5"
+              strokeWidth="1"
+              rx="1"
+            />
+            {/* Gasket strip */}
+            <rect
+              x={postX - (bpW - postW) / 2 + 3}
+              y={deckY + bpH}
+              width={bpW - 6}
+              height={2.5}
+              fill="#888"
+              rx="0.5"
             />
             {/* Anchor bolts */}
-            <line x1={postCX - 7} y1={bpY + bpH + 2} x2={postCX - 7} y2={bpY + bpH + 14} stroke="#555" strokeWidth="1.2" />
-            <line x1={postCX + 7} y1={bpY + bpH + 2} x2={postCX + 7} y2={bpY + bpH + 14} stroke="#555" strokeWidth="1.2" />
-            <text x={postCX} y={bpY + bpH + 22} fontSize="7" fill="#555" textAnchor="middle">Base Plate Gasket</text>
-            <text x={postCX} y={bpY + bpH + 31} fontSize="7" fill="#555" textAnchor="middle">Deck Fasteners</text>
+            <line
+              x1={postX - (bpW - postW) / 2 + 4}
+              y1={deckY + bpH + 2.5}
+              x2={postX - (bpW - postW) / 2 + 4}
+              y2={deckY + bpH + 16}
+              stroke="#666"
+              strokeWidth="2"
+            />
+            <line
+              x1={postX + (bpW + postW) / 2 - 4}
+              y1={deckY + bpH + 2.5}
+              x2={postX + (bpW + postW) / 2 - 4}
+              y2={deckY + bpH + 16}
+              stroke="#666"
+              strokeWidth="2"
+            />
+            {/* Bolt heads */}
+            <rect
+              x={postX - (bpW - postW) / 2 + 2}
+              y={deckY + bpH + 16}
+              width={4}
+              height={3}
+              fill="#555"
+              rx="0.5"
+            />
+            <rect
+              x={postX + (bpW + postW) / 2 - 6}
+              y={deckY + bpH + 16}
+              width={4}
+              height={3}
+              fill="#555"
+              rx="0.5"
+            />
+          </>
+        )}
+
+        {/* ── FASCIA MOUNT: Fascia board + base plate on side ── */}
+        {isFascia && (
+          <>
+            {/* Fascia board (wood grain texture via lines) */}
+            <rect
+              x={fasciaX}
+              y={deckY - distTopBasePlateToDeck * scale}
+              width={fasciaW}
+              height={fasciaH + distTopBasePlateToDeck * scale + 10}
+              fill="#D4A96A"
+              stroke="#8B6914"
+              strokeWidth="1"
+              rx="1"
+            />
+            {/* Wood grain lines */}
+            {Array.from({ length: 4 }).map((_, i) => (
+              <line
+                key={i}
+                x1={fasciaX + 2}
+                y1={deckY - distTopBasePlateToDeck * scale + 8 + i * 10}
+                x2={fasciaX + fasciaW - 2}
+                y2={deckY - distTopBasePlateToDeck * scale + 8 + i * 10}
+                stroke="#C49050"
+                strokeWidth="0.5"
+              />
+            ))}
+            {/* Fascia base plate */}
+            <rect
+              x={fasciaX + fasciaW}
+              y={deckY - distTopBasePlateToDeck * scale - 2}
+              width={bpW}
+              height={bpH + 4}
+              fill="#CCCCCC"
+              stroke="#555"
+              strokeWidth="1"
+              rx="1"
+            />
           </>
         )}
 
         {/* ── POST ── */}
+        {/* Post shadow for depth */}
         <rect
-          x={postCX - postW / 2}
-          y={topOfPostY}
+          x={postX + 2}
+          y={topPostY + 2}
           width={postW}
-          height={bottomOfPostY - topOfPostY}
-          fill="#E8E8E8"
+          height={deckY - topPostY}
+          fill="rgba(0,0,0,0.08)"
+          rx="1"
+        />
+        {/* Post body */}
+        <rect
+          x={postX}
+          y={topPostY}
+          width={postW}
+          height={deckY - topPostY}
+          fill="#E0E0E0"
+          stroke="#333"
+          strokeWidth="1.5"
+          rx="1"
+        />
+        {/* Post highlight (left edge) */}
+        <rect
+          x={postX + 1.5}
+          y={topPostY + 2}
+          width={2}
+          height={deckY - topPostY - 4}
+          fill="rgba(255,255,255,0.5)"
+          rx="0.5"
+        />
+        {/* Post top cap */}
+        <rect
+          x={postX - 1}
+          y={topPostY - 3}
+          width={postW + 2}
+          height={4}
+          fill="#444"
           stroke="#222"
-          strokeWidth="1.2"
+          strokeWidth="1"
+          rx="1"
         />
-        {/* Post center line */}
-        <line
-          x1={postCX}
-          y1={topOfPostY - 4}
-          x2={postCX}
-          y2={topOfPostY + 10}
-          stroke="#555"
-          strokeWidth="0.5"
-          strokeDasharray="2,2"
-        />
+
+        {/* ── SETTING BLOCK (gold band inside post near glass bottom) ── */}
+        {settingBlockHeight > 0 && (
+          <rect
+            x={postX + 1}
+            y={sbY}
+            width={postW - 2}
+            height={sbH}
+            fill="#F5C842"
+            stroke="#B8960A"
+            strokeWidth="0.5"
+            opacity="0.9"
+          />
+        )}
 
         {/* ── GLASS PANEL ── */}
-        {/* Glass sits to the right of the post */}
+        {/* Glass shadow */}
         <rect
-          x={postCX + postW / 2 + glassOffsetFromPost}
-          y={topOfGlassY}
+          x={glassX + 2}
+          y={topGlassY + 2}
           width={glassW}
-          height={bottomOfGlassY - topOfGlassY}
-          fill="rgba(180,220,255,0.35)"
+          height={bottomGlassY - topGlassY}
+          fill="rgba(0,0,0,0.06)"
+          rx="1"
+        />
+        {/* Glass body */}
+        <rect
+          x={glassX}
+          y={topGlassY}
+          width={glassW}
+          height={bottomGlassY - topGlassY}
+          fill="rgba(180,220,255,0.30)"
           stroke="#4A90B8"
-          strokeWidth="1"
+          strokeWidth="1.2"
+          rx="0.5"
         />
-        {/* Glass top cap / rail */}
+        {/* Glass inner highlight */}
         <rect
-          x={postCX + postW / 2 + glassOffsetFromPost - 2}
-          y={topOfGlassY - 3}
+          x={glassX + 1.5}
+          y={topGlassY + 3}
+          width={2}
+          height={(bottomGlassY - topGlassY) * 0.6}
+          fill="rgba(255,255,255,0.4)"
+          rx="0.5"
+        />
+        {/* Glass top rail cap */}
+        <rect
+          x={glassX - 2}
+          y={topGlassY - 4}
           width={glassW + 4}
-          height={3}
-          fill="#555"
+          height={5}
+          fill="#444"
           stroke="#222"
-          strokeWidth="0.5"
+          strokeWidth="0.8"
+          rx="1"
         />
 
-        {/* ── SETTING BLOCK (inside post at bottom of glass) ── */}
-        <rect
-          x={postCX - postW / 2 + 1}
-          y={bottomOfGlassY - (settingBlockHeight * scale)}
-          width={postW - 2}
-          height={settingBlockHeight * scale}
-          fill="#F5C842"
-          stroke="#B8960A"
-          strokeWidth="0.5"
-          opacity="0.8"
-        />
-
-        {/* ── GLASS REVEAL MARKER (top of post to top of glass) ── */}
-        {topGlassReveal > 0 && (
+        {/* ── GLASS REVEAL INDICATOR (dashed line at top of post) ── */}
+        {topGlassReveal > 0.05 && (
           <line
-            x1={postCX - postW / 2 - 2}
-            y1={topOfPostY}
-            x2={postCX + postW / 2 + glassOffsetFromPost + glassW + 2}
-            y2={topOfPostY}
+            x1={postX - 4}
+            y1={topPostY}
+            x2={glassX + glassW + 4}
+            y2={topPostY}
             stroke="#B69A5A"
-            strokeWidth="0.6"
+            strokeWidth="1"
             strokeDasharray="3,2"
           />
         )}
 
-        {/* ══════════════════════════════════════════════
-            DIMENSION LINES — LEFT SIDE
-        ══════════════════════════════════════════════ */}
-
-        {/* 1. Overall Rail Height (top of glass to deck) */}
-        <line x1={leftDim1X + 6} y1={topOfGlassY} x2={postCX - postW / 2 - 4} y2={topOfGlassY} stroke="#B69A5A" strokeWidth="0.5" strokeDasharray="2,2" />
-        <line x1={leftDim1X + 6} y1={deckY} x2={postCX - postW / 2 - 4} y2={deckY} stroke="#B69A5A" strokeWidth="0.5" strokeDasharray="2,2" />
-        <line x1={leftDim1X} y1={topOfGlassY} x2={leftDim1X} y2={deckY} stroke="#B69A5A" strokeWidth="0.8" markerStart="url(#arrowStart)" markerEnd="url(#arrowEnd)" />
-        <text
-          x={leftDim1X - 3}
-          y={(topOfGlassY + deckY) / 2}
-          fontSize="7"
-          fill="#B69A5A"
-          textAnchor="middle"
-          fontWeight="700"
-          transform={`rotate(-90, ${leftDim1X - 3}, ${(topOfGlassY + deckY) / 2})`}
-        >
-          {fmt(railHeightActual)} Overall Rail Height
-        </text>
-
-        {/* 2. Post Height Above Deck */}
-        <line x1={leftDim2X + 6} y1={topOfPostY} x2={postCX - postW / 2 - 4} y2={topOfPostY} stroke="#B69A5A" strokeWidth="0.5" strokeDasharray="2,2" />
-        <line x1={leftDim2X} y1={topOfPostY} x2={leftDim2X} y2={deckY} stroke="#B69A5A" strokeWidth="0.8" markerStart="url(#arrowStart)" markerEnd="url(#arrowEnd)" />
-        <text
-          x={leftDim2X - 3}
-          y={(topOfPostY + deckY) / 2}
-          fontSize="8"
-          fill="#B69A5A"
-          textAnchor="middle"
-          transform={`rotate(-90, ${leftDim2X - 3}, ${(topOfPostY + deckY) / 2})`}
-        >
-          {fmt(postHeightAboveDeck)}" From Deck to Top of Post
-        </text>
-
-        {/* 3. Glass height (bottom of glass to deck) */}
-        {bottomGlassGap > 0 && (
-          <>
-            <line x1={leftDim3X + 6} y1={bottomOfGlassY} x2={postCX - postW / 2 - 4} y2={bottomOfGlassY} stroke="#B69A5A" strokeWidth="0.5" strokeDasharray="2,2" />
-            <line x1={leftDim3X} y1={bottomOfGlassY} x2={leftDim3X} y2={deckY} stroke="#B69A5A" strokeWidth="0.8" markerStart="url(#arrowStart)" markerEnd="url(#arrowEnd)" />
-            <text
-              x={leftDim3X - 3}
-              y={(bottomOfGlassY + deckY) / 2}
-              fontSize="8"
-              fill="#B69A5A"
-              textAnchor="middle"
-              transform={`rotate(-90, ${leftDim3X - 3}, ${(bottomOfGlassY + deckY) / 2})`}
-            >
-              {fmt(bottomGlassGap)}" Bottom Gap
-            </text>
-          </>
-        )}
-
-        {/* ══════════════════════════════════════════════
-            DIMENSION LINES — RIGHT SIDE
-        ══════════════════════════════════════════════ */}
-
-        {/* R1. Glass height (top to bottom) */}
-        <line x1={postCX + postW / 2 + glassOffsetFromPost + glassW + 2} y1={topOfGlassY} x2={rightDim1X - 6} y2={topOfGlassY} stroke="#B69A5A" strokeWidth="0.5" strokeDasharray="2,2" />
-        <line x1={postCX + postW / 2 + glassOffsetFromPost + glassW + 2} y1={bottomOfGlassY} x2={rightDim1X - 6} y2={bottomOfGlassY} stroke="#B69A5A" strokeWidth="0.5" strokeDasharray="2,2" />
-        <line x1={rightDim1X} y1={topOfGlassY} x2={rightDim1X} y2={bottomOfGlassY} stroke="#B69A5A" strokeWidth="0.8" markerStart="url(#arrowStart)" markerEnd="url(#arrowEnd)" />
-        <text
-          x={rightDim1X + 3}
-          y={(topOfGlassY + bottomOfGlassY) / 2}
-          fontSize="8"
-          fill="#B69A5A"
-          textAnchor="middle"
-          transform={`rotate(90, ${rightDim1X + 3}, ${(topOfGlassY + bottomOfGlassY) / 2})`}
-        >
-          {fmt(glassInsertLength)}" Tall Glass
-        </text>
-
-        {/* R2. Top glass reveal (top of post to top of glass) */}
-        {topGlassReveal > 0 && (
-          <>
-            <line x1={postCX + postW / 2 + glassOffsetFromPost + glassW + 2} y1={topOfPostY} x2={rightDim2X - 6} y2={topOfPostY} stroke="#B69A5A" strokeWidth="0.5" strokeDasharray="2,2" />
-            <line x1={rightDim2X} y1={topOfGlassY} x2={rightDim2X} y2={topOfPostY} stroke="#B69A5A" strokeWidth="0.8" markerStart="url(#arrowStart)" markerEnd="url(#arrowEnd)" />
-            <text
-              x={rightDim2X + 3}
-              y={(topOfGlassY + topOfPostY) / 2}
-              fontSize="8"
-              fill="#B69A5A"
-              textAnchor="middle"
-              transform={`rotate(90, ${rightDim2X + 3}, ${(topOfGlassY + topOfPostY) / 2})`}
-            >
-              {fmt(topGlassReveal)}" Glass Reveal
-            </text>
-          </>
-        )}
-
-        {/* R3. From deck to bottom of glass */}
-        <line x1={postCX + postW / 2 + glassOffsetFromPost + glassW + 2} y1={deckY} x2={rightDim3X - 6} y2={deckY} stroke="#B69A5A" strokeWidth="0.5" strokeDasharray="2,2" />
-        <line x1={rightDim3X} y1={bottomOfGlassY} x2={rightDim3X} y2={deckY} stroke="#B69A5A" strokeWidth="0.8" markerStart="url(#arrowStart)" markerEnd="url(#arrowEnd)" />
-        <text
-          x={rightDim3X + 3}
-          y={(bottomOfGlassY + deckY) / 2}
-          fontSize="8"
-          fill="#B69A5A"
-          textAnchor="middle"
-          transform={`rotate(90, ${rightDim3X + 3}, ${(bottomOfGlassY + deckY) / 2})`}
-        >
-          {fmt(bottomGlassGap)}" Deck to Bottom of Glass
-        </text>
-
-        {/* R4. Post label */}
-        <text
-          x={rightDim4X}
-          y={(topOfPostY + deckY) / 2}
-          fontSize="8"
-          fill="#333"
-          textAnchor="middle"
-          fontWeight="600"
-          transform={`rotate(90, ${rightDim4X}, ${(topOfPostY + deckY) / 2})`}
-        >
-          {fmt(postHeightAboveDeck)}" {isFascia ? 'Fascia' : 'Infinity'} Post
-        </text>
-
-        {/* ── LABELS ── */}
-        {/* Post top label */}
-        <text x={postCX + postW / 2 + 3} y={topOfPostY - 2} fontSize="7.5" fill="#333" fontWeight="600">
-          Top of Post
-        </text>
-
-        {/* Setting block label */}
-        {settingBlockHeight > 0 && (
-          <text x={postCX + postW / 2 + 3} y={bottomOfGlassY - (settingBlockHeight * scale) / 2 + 2} fontSize="7" fill="#8B6914">
-            Setting Block
-          </text>
-        )}
-
-        {/* Fascia: base plate label */}
-        {isFascia && (
-          <text x={postCX - bpW / 2 - 2} y={bpY + bpH / 2 + 2} fontSize="7" fill="#555" textAnchor="end">
-            Base Plate
-          </text>
-        )}
-
-        {/* Short post indicator */}
+        {/* ── SHORT POST INDICATOR ── */}
         {isShortPost && (
-          <text x={postCX} y={topOfPostY - 8} fontSize="7.5" fill="#B69A5A" textAnchor="middle" fontWeight="700">
-            SHORT POST CONFIG
-          </text>
+          <rect
+            x={postX - 2}
+            y={topPostY - 10}
+            width={postW + 4}
+            height={8}
+            fill="#B69A5A"
+            rx="2"
+            opacity="0.9"
+          />
         )}
 
         {/* ── TITLE ── */}
-        <text x={SVG_W / 2} y={SVG_H - 8} fontSize="9" fill="#333" textAnchor="middle" fontWeight="700" letterSpacing="0.08em">
-          {title.toUpperCase()}
+        <text
+          x={W / 2}
+          y={H - 6}
+          fontSize="8.5"
+          fill="#444"
+          textAnchor="middle"
+          fontWeight="700"
+          fontFamily="'Helvetica Neue', Helvetica, Arial, sans-serif"
+          letterSpacing="0.06em"
+        >
+          {title}
         </text>
-      </svg>
 
-      {/* Legend */}
-      <div className="flex flex-wrap gap-3 mt-2 text-[10px]" style={{ color: '#6B6B6B' }}>
-        <span className="flex items-center gap-1">
-          <span className="inline-block w-3 h-2 rounded-sm" style={{ background: 'rgba(180,220,255,0.5)', border: '1px solid #4A90B8' }} />
-          Glass
-        </span>
-        <span className="flex items-center gap-1">
-          <span className="inline-block w-3 h-2 rounded-sm" style={{ background: '#E8E8E8', border: '1px solid #222' }} />
-          Post
-        </span>
-        <span className="flex items-center gap-1">
-          <span className="inline-block w-3 h-2 rounded-sm" style={{ background: '#F5C842', border: '1px solid #B8960A' }} />
-          Setting Block
-        </span>
-        <span className="flex items-center gap-1">
-          <span className="inline-block w-3 h-2 rounded-sm" style={{ background: '#CCC', border: '1px solid #333' }} />
-          Base Plate
-        </span>
-      </div>
+        {/* Short post label */}
+        {isShortPost && (
+          <text
+            x={W / 2}
+            y={H - 16}
+            fontSize="7"
+            fill="#B69A5A"
+            textAnchor="middle"
+            fontFamily="'Helvetica Neue', Helvetica, Arial, sans-serif"
+            fontWeight="600"
+          >
+            SHORT POST CONFIG
+          </text>
+        )}
+      </svg>
     </div>
   );
 }
