@@ -24,7 +24,7 @@ import {
 import { Lock, Unlock, AlertTriangle, AlertCircle, Printer, ChevronDown, ChevronUp, Info } from 'lucide-react';
 
 // CDN URLs for logos
-const IAS_LOGO_URL = 'https://d2xsxph8kpxj0f.cloudfront.net/310519663093943154/Vxc6ufyoD2HuhTpJtdEazX/ias-logo_4e058ff8.png';
+const IAS_LOGO_URL = 'https://d2xsxph8kpxj0f.cloudfront.net/310519663093943154/Vxc6ufyoD2HuhTpJtdEazX/ias-logo-2024_bbb213b4.webp';
 const INFINITY_LOGO_URL = 'https://d2xsxph8kpxj0f.cloudfront.net/310519663093943154/Vxc6ufyoD2HuhTpJtdEazX/infinity-logo_2a84a66e.png';
 
 // ============================================================
@@ -310,22 +310,21 @@ export default function Home() {
     <div className="min-h-screen" style={{ background: '#F5F5F5', fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif" }}>
 
       {/* ====== HEADER ====== */}
-      <header className="no-print" style={{ background: '#111111', borderBottom: '3px solid #B69A5A' }}>
+      <header className="no-print" style={{ background: '#FFFFFF', borderBottom: '3px solid #B69A5A', borderTop: '3px solid #B69A5A' }}>
         <div className="container py-3 flex items-center justify-between">
           {/* Left: IAS logo + Infinity logo */}
           <div className="flex items-center gap-5">
             <img
               src={IAS_LOGO_URL}
               alt="Innovative Aluminum Systems"
-              className="h-10 w-auto object-contain"
+              style={{ height: '56px', width: 'auto', objectFit: 'contain', display: 'block' }}
             />
-            <div style={{ width: '1px', height: '36px', background: '#B69A5A', opacity: 0.6 }} />
+            <div style={{ width: '1px', height: '40px', background: '#B69A5A', opacity: 0.5 }} />
             <div className="flex flex-col justify-center">
               <img
                 src={INFINITY_LOGO_URL}
                 alt="Infinity"
                 className="h-7 w-auto object-contain"
-                style={{ filter: 'invert(1) brightness(2)' }}
               />
               <span className="text-[10px] tracking-[0.18em] uppercase mt-0.5" style={{ color: '#B69A5A', letterSpacing: '0.18em' }}>
                 Railing Calculator
@@ -341,7 +340,7 @@ export default function Home() {
             <button
               onClick={() => window.print()}
               className="flex items-center gap-2 px-4 py-2 text-sm font-semibold transition-all"
-              style={{ background: '#B69A5A', color: '#111111', borderRadius: '2px', letterSpacing: '0.04em' }}
+              style={{ background: '#111111', color: '#FFFFFF', borderRadius: '2px', letterSpacing: '0.04em' }}
             >
               <Printer size={13} />
               Print Quote
