@@ -424,14 +424,6 @@ export default function Home() {
           {/* ====== LEFT COLUMN ====== */}
           <div className="space-y-4">
 
-            {/* ====== POST DIAGRAM ====== */}
-            <PostDiagram
-              mountType={config.mountType}
-              railHeight={config.railHeight}
-              postHeightAboveDeck={result.postHeightAboveDeck}
-              isShortPost={constraints.isShortPost}
-            />
-
             {/* Job Info */}
             <div className="calc-card p-5 no-print">
               <SectionHeader title="Job Information" />
@@ -474,122 +466,13 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Material Quote — moved to left column */}
-            <div className="calc-card p-5">
-              <div className="flex items-start justify-between mb-4 pb-3" style={{ borderBottom: '2px solid #B69A5A' }}>
-                <div>
-                  <h2 className="text-base font-black uppercase tracking-widest" style={{ color: '#111111', letterSpacing: '0.12em' }}>
-                    Material Quote
-                  </h2>
-                  <p className="text-xs mt-0.5" style={{ color: '#6B6B6B' }}>
-                    {config.mountType === 'surface' ? 'Surface Mount' : 'Fascia Mount'} &middot;{' '}
-                    {config.railHeight}" Rail &middot; {config.glassThickness}mm Glass
-                  </p>
-                  {jobInfo.jobReference && (
-                    <p className="text-xs mt-0.5" style={{ color: '#6B6B6B' }}>Ref: {jobInfo.jobReference}</p>
-                  )}
-                  {jobInfo.dealerName && (
-                    <p className="text-xs" style={{ color: '#6B6B6B' }}>Dealer: {jobInfo.dealerName}</p>
-                  )}
-                </div>
-                <div className="text-right">
-                  <div className="text-[10px] font-bold uppercase tracking-widest mb-0.5" style={{ color: '#6B6B6B' }}>Job Cost</div>
-                  <div className="mono text-2xl font-black" style={{ color: '#111111' }}>
-                    {fmtCurrency(result.jobCost)}
-                  </div>
-                  {config.discountLevel > 0 && (
-                    <div className="text-xs" style={{ color: '#B69A5A' }}>
-                      {(config.discountLevel * 100).toFixed(1)}% discount applied
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Fastener info */}
-              {hasContent && (
-                <div className="grid grid-cols-2 gap-3 mb-4 p-3 rounded" style={{ background: '#F5F5F5', border: '1px solid #EBEBEB' }}>
-                  <div>
-                    <div className="text-[10px] font-bold uppercase tracking-widest mb-0.5" style={{ color: '#6B6B6B' }}>Deck Fasteners</div>
-                    <div className="mono font-bold text-sm" style={{ color: '#111111' }}>{result.deckFasteners} required</div>
-                    <div className="text-xs" style={{ color: '#6B6B6B' }}>Not included</div>
-                  </div>
-                  {result.wallFasteners > 0 && (
-                    <div>
-                      <div className="text-[10px] font-bold uppercase tracking-widest mb-0.5" style={{ color: '#6B6B6B' }}>Wall Fasteners</div>
-                      <div className="mono font-bold text-sm" style={{ color: '#111111' }}>{result.wallFasteners} required</div>
-                      <div className="text-xs" style={{ color: '#6B6B6B' }}>Not included</div>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* Bill of Materials */}
-              {hasContent ? (
-                <div className="overflow-x-auto">
-                  <table className="results-table w-full text-left">
-                    <thead>
-                      <tr style={{ background: '#111111' }}>
-                        <th style={{ color: '#B69A5A' }}>Description</th>
-                        <th className="text-right" style={{ color: '#B69A5A' }}>QTY</th>
-                        <th className="text-right" style={{ color: '#B69A5A' }}>Unit</th>
-                        <th className="text-right" style={{ color: '#B69A5A' }}>Total</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {result.lineItems.map((item, i) => (
-                        <tr key={i}>
-                          <td className="text-xs">{item.description}</td>
-                          <td className="mono text-right text-xs">{item.qty % 1 === 0 ? item.qty : fmt(item.qty, 2)}</td>
-                          <td className="mono text-right text-xs">{fmtCurrency(item.unitCost)}</td>
-                          <td className="mono text-right text-xs font-bold">{fmtCurrency(item.total)}</td>
-                        </tr>
-                      ))}
-                      {result.lineItems.some(i => i.paintCost) && (
-                        <tr>
-                          <td className="text-xs italic" colSpan={3} style={{ color: '#6B6B6B' }}>Paint costs included in totals</td>
-                          <td className="mono text-right text-xs" style={{ color: '#6B6B6B' }}>
-                            {fmtCurrency(result.lineItems.reduce((s, i) => s + (i.paintCost || 0), 0))}
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                    <tfoot>
-                      <tr className="total-row">
-                        <td colSpan={3} className="text-sm font-black uppercase tracking-wide" style={{ color: '#111111' }}>
-                          {config.glassThickness === 12 ? '12mm' : '13mm'} Job Cost
-                        </td>
-                        <td className="mono text-right text-sm font-black" style={{ color: '#111111' }}>{fmtCurrency(result.jobCost)}</td>
-                      </tr>
-                    </tfoot>
-                  </table>
-                </div>
-              ) : (
-                <div className="text-center py-8" style={{ color: '#6B6B6B' }}>
-                  <div className="mb-3">
-                    <div className="inline-flex items-center justify-center w-12 h-12 rounded" style={{ background: '#F5F0E8', border: '1px solid #D4B97A' }}>
-                      <span style={{ color: '#B69A5A', fontSize: '1.25rem' }}>&#9656;</span>
-                    </div>
-                  </div>
-                  <p className="text-sm">Enter post quantities above to generate your material list and pricing.</p>
-                </div>
-              )}
-            </div>
-
-            {/* Discount & Shipping */}
-            <div className="calc-card p-5 no-print">
-              <SectionHeader title="Discount" />
-              <div className="space-y-0">
-                <FieldRow label="Discount Level" hint="Enter as % (e.g. 43.5) or decimal (e.g. 0.435)">
-                  <DiscountInput
-                    value={config.discountLevel}
-                    onChange={v => update('discountLevel', v)}
-                  />
-                </FieldRow>
-                <FieldRow label="Ship Via Courier">
-                  <Toggle checked={config.shipViaCourier} onChange={v => update('shipViaCourier', v)} />
-                </FieldRow>
-              </div>
-            </div>
+            {/* ====== POST DIAGRAM ====== */}
+            <PostDiagram
+              mountType={config.mountType}
+              railHeight={config.railHeight}
+              postHeightAboveDeck={result.postHeightAboveDeck}
+              isShortPost={constraints.isShortPost}
+            />
 
             {/* Country Selection */}
             <div className="calc-card p-5 no-print">
@@ -801,6 +684,31 @@ export default function Home() {
               )}
             </div>
 
+            {/* Quantities */}
+            <div className="calc-card p-5">
+              <SectionHeader title="Post Quantities" />
+              <div className="space-y-0">
+                {[
+                  { key: 'midPosts', label: '# of Mid Posts' },
+                  { key: 'endPosts', label: '# of End Posts' },
+                  { key: 'outsideCornerPosts', label: '# of Outside Corner Posts' },
+                  { key: 'insideCornerPosts', label: '# of Inside Corner Posts' },
+                  { key: 'wallTracks', label: '# of Wall Tracks' },
+                  { key: 'endPostsLeft25', label: '# of 2.5" End Left Posts' },
+                  { key: 'endPostsRight25', label: '# of 2.5" End Right Posts' },
+                ].map(({ key, label }) => (
+                  <FieldRow key={key} label={label}>
+                    <NumInput
+                      value={config.quantities[key as keyof typeof config.quantities]}
+                      onChange={v => updateQty(key as keyof typeof config.quantities, v)}
+                      min={0}
+                      step={1}
+                    />
+                  </FieldRow>
+                ))}
+              </div>
+            </div>
+
             {/* Computed Dimensions Summary */}
             <div className="calc-card p-5 no-print">
               <SectionHeader title="Computed Dimensions" subtitle="Auto-calculated from your configuration" />
@@ -828,31 +736,6 @@ export default function Home() {
                   <span>Short post configuration active — post finishes {fmt(result.postHeightAboveDeck, 2)}" above deck.</span>
                 </div>
               )}
-            </div>
-
-            {/* Quantities */}
-            <div className="calc-card p-5">
-              <SectionHeader title="Post Quantities" />
-              <div className="space-y-0">
-                {[
-                  { key: 'midPosts', label: '# of Mid Posts' },
-                  { key: 'endPosts', label: '# of End Posts' },
-                  { key: 'outsideCornerPosts', label: '# of Outside Corner Posts' },
-                  { key: 'insideCornerPosts', label: '# of Inside Corner Posts' },
-                  { key: 'wallTracks', label: '# of Wall Tracks' },
-                  { key: 'endPostsLeft25', label: '# of 2.5" End Left Posts' },
-                  { key: 'endPostsRight25', label: '# of 2.5" End Right Posts' },
-                ].map(({ key, label }) => (
-                  <FieldRow key={key} label={label}>
-                    <NumInput
-                      value={config.quantities[key as keyof typeof config.quantities]}
-                      onChange={v => updateQty(key as keyof typeof config.quantities, v)}
-                      min={0}
-                      step={1}
-                    />
-                  </FieldRow>
-                ))}
-              </div>
             </div>
 
             {/* Add-Ons */}
@@ -926,8 +809,125 @@ export default function Home() {
             </div>
           </div>
 
-          {/* ====== RIGHT COLUMN: Details, Warnings, Footer ====== */}
+          {/* ====== RIGHT COLUMN: Quote, Discount, Details, Footer ====== */}
           <div className="space-y-4">
+
+            {/* Material Quote */}
+            <div className="calc-card p-5">
+              <div className="flex items-start justify-between mb-4 pb-3" style={{ borderBottom: '2px solid #B69A5A' }}>
+                <div>
+                  <h2 className="text-base font-black uppercase tracking-widest" style={{ color: '#111111', letterSpacing: '0.12em' }}>
+                    Material Quote
+                  </h2>
+                  <p className="text-xs mt-0.5" style={{ color: '#6B6B6B' }}>
+                    {config.mountType === 'surface' ? 'Surface Mount' : 'Fascia Mount'} &middot;{' '}
+                    {config.railHeight}" Rail &middot; {config.glassThickness}mm Glass
+                  </p>
+                  {jobInfo.jobReference && (
+                    <p className="text-xs mt-0.5" style={{ color: '#6B6B6B' }}>Ref: {jobInfo.jobReference}</p>
+                  )}
+                  {jobInfo.dealerName && (
+                    <p className="text-xs" style={{ color: '#6B6B6B' }}>Dealer: {jobInfo.dealerName}</p>
+                  )}
+                </div>
+                <div className="text-right">
+                  <div className="text-[10px] font-bold uppercase tracking-widest mb-0.5" style={{ color: '#6B6B6B' }}>Job Cost</div>
+                  <div className="mono text-2xl font-black" style={{ color: '#111111' }}>
+                    {fmtCurrency(result.jobCost)}
+                  </div>
+                  {config.discountLevel > 0 && (
+                    <div className="text-xs" style={{ color: '#B69A5A' }}>
+                      {(config.discountLevel * 100).toFixed(1)}% discount applied
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Fastener info */}
+              {hasContent && (
+                <div className="grid grid-cols-2 gap-3 mb-4 p-3 rounded" style={{ background: '#F5F5F5', border: '1px solid #EBEBEB' }}>
+                  <div>
+                    <div className="text-[10px] font-bold uppercase tracking-widest mb-0.5" style={{ color: '#6B6B6B' }}>Deck Fasteners</div>
+                    <div className="mono font-bold text-sm" style={{ color: '#111111' }}>{result.deckFasteners} required</div>
+                    <div className="text-xs" style={{ color: '#6B6B6B' }}>Not included</div>
+                  </div>
+                  {result.wallFasteners > 0 && (
+                    <div>
+                      <div className="text-[10px] font-bold uppercase tracking-widest mb-0.5" style={{ color: '#6B6B6B' }}>Wall Fasteners</div>
+                      <div className="mono font-bold text-sm" style={{ color: '#111111' }}>{result.wallFasteners} required</div>
+                      <div className="text-xs" style={{ color: '#6B6B6B' }}>Not included</div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Bill of Materials */}
+              {hasContent ? (
+                <div className="overflow-x-auto">
+                  <table className="results-table w-full text-left">
+                    <thead>
+                      <tr style={{ background: '#111111' }}>
+                        <th style={{ color: '#B69A5A' }}>Description</th>
+                        <th className="text-right" style={{ color: '#B69A5A' }}>QTY</th>
+                        <th className="text-right" style={{ color: '#B69A5A' }}>Unit</th>
+                        <th className="text-right" style={{ color: '#B69A5A' }}>Total</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {result.lineItems.map((item, i) => (
+                        <tr key={i}>
+                          <td className="text-xs">{item.description}</td>
+                          <td className="mono text-right text-xs">{item.qty % 1 === 0 ? item.qty : fmt(item.qty, 2)}</td>
+                          <td className="mono text-right text-xs">{fmtCurrency(item.unitCost)}</td>
+                          <td className="mono text-right text-xs font-bold">{fmtCurrency(item.total)}</td>
+                        </tr>
+                      ))}
+                      {result.lineItems.some(i => i.paintCost) && (
+                        <tr>
+                          <td className="text-xs italic" colSpan={3} style={{ color: '#6B6B6B' }}>Paint costs included in totals</td>
+                          <td className="mono text-right text-xs" style={{ color: '#6B6B6B' }}>
+                            {fmtCurrency(result.lineItems.reduce((s, i) => s + (i.paintCost || 0), 0))}
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                    <tfoot>
+                      <tr className="total-row">
+                        <td colSpan={3} className="text-sm font-black uppercase tracking-wide" style={{ color: '#111111' }}>
+                          {config.glassThickness === 12 ? '12mm' : '13mm'} Job Cost
+                        </td>
+                        <td className="mono text-right text-sm font-black" style={{ color: '#111111' }}>{fmtCurrency(result.jobCost)}</td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              ) : (
+                <div className="text-center py-8" style={{ color: '#6B6B6B' }}>
+                  <div className="mb-3">
+                    <div className="inline-flex items-center justify-center w-12 h-12 rounded" style={{ background: '#F5F0E8', border: '1px solid #D4B97A' }}>
+                      <span style={{ color: '#B69A5A', fontSize: '1.25rem' }}>&#9656;</span>
+                    </div>
+                  </div>
+                  <p className="text-sm">Enter post quantities above to generate your material list and pricing.</p>
+                </div>
+              )}
+            </div>
+
+            {/* Discount & Shipping */}
+            <div className="calc-card p-5 no-print">
+              <SectionHeader title="Discount" />
+              <div className="space-y-0">
+                <FieldRow label="Discount Level" hint="Enter as % (e.g. 43.5) or decimal (e.g. 0.435)">
+                  <DiscountInput
+                    value={config.discountLevel}
+                    onChange={v => update('discountLevel', v)}
+                  />
+                </FieldRow>
+                <FieldRow label="Ship Via Courier">
+                  <Toggle checked={config.shipViaCourier} onChange={v => update('shipViaCourier', v)} />
+                </FieldRow>
+              </div>
+            </div>
 
             {/* Warnings & Errors */}
             {(result.warnings.length > 0 || result.errors.length > 0 || constraints.warningMessages.length > 0) && (
