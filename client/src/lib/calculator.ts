@@ -228,11 +228,8 @@ export interface AddOns {
   add5x5BasePlate: number;
   addWeldedSurfaceBase: number;
   addWeldedExtrudedSideMount: number;
-  drinkHolders: number;
   glassShelfKits: number;
-  midBasePlateCover: number;
-  outsideBasePlateCover: number;
-  insideBasePlateCover: number;
+  includeBasePlateCovers: boolean;
 }
 
 export interface ConfigInputs {
@@ -638,20 +635,16 @@ export function calculateSurface(config: ConfigInputs): CalculationResult {
     const price = 49.5327347 * (1 - discount); // U16
     addLine('Add Welded Extruded Side Mount 1.9 Pipe', addons.addWeldedExtrudedSideMount, price);
   }
-  if (addons.drinkHolders > 0) {
-    addLine('Drink Holders', addons.drinkHolders, PRICES_2026.parts.glassShelfKit * 0.189 * (1 - discount));
-  }
   if (addons.glassShelfKits > 0) {
     addLine('Glass Shelf Kits', addons.glassShelfKits, PRICES_2026.parts.glassShelfKit * (1 - discount));
   }
-  if (addons.midBasePlateCover > 0) {
-    addLine('Mid Base Plate Covers', addons.midBasePlateCover, PRICES_2026.parts.basePlateCover_mid * (1 - discount));
-  }
-  if (addons.outsideBasePlateCover > 0) {
-    addLine('Outside Base Plate Covers', addons.outsideBasePlateCover, PRICES_2026.parts.basePlateCover_outside * (1 - discount));
-  }
-  if (addons.insideBasePlateCover > 0) {
-    addLine('Inside Base Plate Covers', addons.insideBasePlateCover, PRICES_2026.parts.basePlateCover_inside * (1 - discount));
+  if (addons.includeBasePlateCovers) {
+    const midQty = q.midPosts + q.endPosts; // end posts count as mid
+    const outsideQty = q.outsideCornerPosts;
+    const insideQty = q.insideCornerPosts;
+    if (midQty > 0) addLine('Mid Base Plate Covers', midQty, PRICES_2026.parts.basePlateCover_mid * (1 - discount));
+    if (outsideQty > 0) addLine('Outside Base Plate Covers', outsideQty, PRICES_2026.parts.basePlateCover_outside * (1 - discount));
+    if (insideQty > 0) addLine('Inside Base Plate Covers', insideQty, PRICES_2026.parts.basePlateCover_inside * (1 - discount));
   }
 
   const subtotal = lineItems.reduce((sum, item) => sum + item.total + (item.paintCost || 0), 0);
@@ -902,11 +895,16 @@ export function calculateFascia(config: ConfigInputs): CalculationResult {
   if (addons.addWeldedExtrudedSideMount > 0) {
     addLine('Add Welded Extruded Side Mount 1.9 Pipe', addons.addWeldedExtrudedSideMount, 49.5327347 * (1 - discount));
   }
-  if (addons.drinkHolders > 0) {
-    addLine('Drink Holders', addons.drinkHolders, 39.925135 * (1 - discount));
-  }
   if (addons.glassShelfKits > 0) {
     addLine('Glass Shelf Kits', addons.glassShelfKits, PRICES_2026.parts.glassShelfKit * (1 - discount));
+  }
+  if (addons.includeBasePlateCovers) {
+    const midQty = q.midPosts + q.endPosts; // end posts count as mid
+    const outsideQty = q.outsideCornerPosts;
+    const insideQty = q.insideCornerPosts;
+    if (midQty > 0) addLine('Mid Base Plate Covers', midQty, PRICES_2026.parts.basePlateCover_mid * (1 - discount));
+    if (outsideQty > 0) addLine('Outside Base Plate Covers', outsideQty, PRICES_2026.parts.basePlateCover_outside * (1 - discount));
+    if (insideQty > 0) addLine('Inside Base Plate Covers', insideQty, PRICES_2026.parts.basePlateCover_inside * (1 - discount));
   }
 
   const subtotal = lineItems.reduce((sum, item) => sum + item.total + (item.paintCost || 0), 0);
@@ -988,11 +986,8 @@ export function defaultConfig(): ConfigInputs {
       add5x5BasePlate: 0,
       addWeldedSurfaceBase: 0,
       addWeldedExtrudedSideMount: 0,
-      drinkHolders: 0,
       glassShelfKits: 0,
-      midBasePlateCover: 0,
-      outsideBasePlateCover: 0,
-      insideBasePlateCover: 0,
+      includeBasePlateCovers: false,
     },
   };
 }

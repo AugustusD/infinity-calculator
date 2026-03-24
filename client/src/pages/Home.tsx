@@ -319,10 +319,10 @@ export default function Home() {
     }));
   }, []);
 
-  const updateAddOn = useCallback((key: keyof ConfigInputs['addOns'], value: number) => {
+  const updateAddOn = useCallback((key: keyof ConfigInputs['addOns'], value: number | boolean) => {
     setConfig(prev => ({
       ...prev,
-      addOns: { ...prev.addOns, [key]: Math.max(0, value) },
+      addOns: { ...prev.addOns, [key]: typeof value === 'boolean' ? value : Math.max(0, value) },
     }));
   }, []);
 
@@ -831,7 +831,7 @@ export default function Home() {
                       ].map(({ key, label }) => (
                         <FieldRow key={key} label={label}>
                           <NumInput
-                            value={config.addOns[key as keyof typeof config.addOns]}
+                            value={config.addOns[key as keyof typeof config.addOns] as number}
                             onChange={v => updateAddOn(key as keyof typeof config.addOns, v)}
                             min={0}
                           />
@@ -844,27 +844,25 @@ export default function Home() {
                       ].map(({ key, label }) => (
                         <FieldRow key={key} label={label}>
                           <NumInput
-                            value={config.addOns[key as keyof typeof config.addOns]}
+                            value={config.addOns[key as keyof typeof config.addOns] as number}
                             onChange={v => updateAddOn(key as keyof typeof config.addOns, v)}
                             min={0}
                           />
                         </FieldRow>
                       ))}
-                      {[
-                        { key: 'drinkHolders', label: 'Drink Holders' },
-                        { key: 'glassShelfKits', label: 'Glass Shelf Kits' },
-                        { key: 'midBasePlateCover', label: 'Mid Base Plate Covers' },
-                        { key: 'outsideBasePlateCover', label: 'Outside Base Plate Covers' },
-                        { key: 'insideBasePlateCover', label: 'Inside Base Plate Covers' },
-                      ].map(({ key, label }) => (
-                        <FieldRow key={key} label={label}>
-                          <NumInput
-                            value={config.addOns[key as keyof typeof config.addOns]}
-                            onChange={v => updateAddOn(key as keyof typeof config.addOns, v)}
-                            min={0}
-                          />
-                        </FieldRow>
-                      ))}
+                      <FieldRow label="Glass Shelf Kits">
+                        <NumInput
+                          value={config.addOns.glassShelfKits}
+                          onChange={v => updateAddOn('glassShelfKits', v)}
+                          min={0}
+                        />
+                      </FieldRow>
+                      <FieldRow label="Include Base Plate Covers" hint="Mid + End posts get mid covers; outside/inside corners get respective covers">
+                        <Toggle
+                          checked={config.addOns.includeBasePlateCovers}
+                          onChange={v => updateAddOn('includeBasePlateCovers', v)}
+                        />
+                      </FieldRow>
                     </div>
                   </motion.div>
                 )}
