@@ -22,7 +22,7 @@ export const PRICES_2026 = {
     endPost_37in: 145.420244651675,     // PPSINF362ENDL/R - 2.5" end post, 36 1/8" rail
     endPost_43in: 165.76737767625002,   // PPSINF422ENDL/R - 2.5" end post, 42 1/8" rail
     postCap_25: 14.678538776195,        // PCP250 - 2.5" pyramid post cap
-    basePlateGasket: 3.74439253104,     // RPLBPG - 4x4 rubber gasket
+    basePlateGasket: 3.74,              // RPLBPG - Base Plate Gasket Neoprene 1/8x4x4
     ezShim: 6.955729180925,            // RPLBPSHIM - base plate E-Z shim (bag of 10)
   },
 
@@ -609,7 +609,7 @@ export function calculateSurface(config: ConfigInputs): CalculationResult {
   addLine('Setting Block (Per Ft)', isCourier ? totalSBFootage : (settingBlockLeftover < 7 ? settingBlockLeftover : 0), sbFtPrice);
   addLine('Setting Block (1.5" Pieces)', settingBlock15Pieces, sb15Price);
   addLine(thickness === 12 ? 'Glass Wedge 12mm (3 Inch Piece)' : 'Glass Wedge 10mm (4 Inch Piece)', glassWedgeQty, wedgePrice);
-  addLine('4" × 4" Base Plate Gaskets', basePlateGasketQty, basePlateGasketPrice);
+  addLine('Base Plate Gasket - Neoprene 1/8x4x4 (RPLBPG)', basePlateGasketQty, basePlateGasketPrice);
   addLine('Infinity Mid Post', totalMidEndPosts, postPriceEa, postPaintEa);
   addLine('Infinity Outside Corner Post', q.outsideCornerPosts, postPriceEa, postPaintEa);
   addLine('Infinity Inside Corner Post', q.insideCornerPosts, postPriceEa, postPaintEa);
