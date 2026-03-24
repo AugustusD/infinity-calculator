@@ -22,16 +22,16 @@ interface PostDiagramProps {
 const CDN = 'https://d2xsxph8kpxj0f.cloudfront.net/310519663093943154/Vxc6ufyoD2HuhTpJtdEazX';
 
 const IMAGES: Record<string, string> = {
-  'fascia-42-tall-40': `${CDN}/cad-fascia-42-40_02d85b57.png`,
-  'fascia-42-tall-34': `${CDN}/cad-fascia-42-34_78905730.png`,
-  'fascia-42-short':   `${CDN}/cad-fascia-42-short_55aca834.png`,
-  'fascia-36-tall-34': `${CDN}/cad-fascia-36-34_e689e276.png`,
-  'fascia-36-short':   `${CDN}/cad-fascia-36-short_2170a2fc.png`,
-  'surface-42-tall-40':`${CDN}/cad-surface-42-40_2772c61d.png`,
-  'surface-42-tall-34':`${CDN}/cad-surface-42-34_9a1af8bb.png`,
-  'surface-42-short':  `${CDN}/cad-surface-42-short_7a60c83d.png`,
-  'surface-36-tall-34':`${CDN}/cad-surface-36-34_17124c48.png`,
-  'surface-36-short':  `${CDN}/cad-surface-36-short_baf39e92.png`,
+  'fascia-42-tall-40': `${CDN}/cad-fascia-42-40_f0305097.png`,
+  'fascia-42-tall-34': `${CDN}/cad-fascia-42-34_6233a2e3.png`,
+  'fascia-42-short':   `${CDN}/cad-fascia-42-short_a3c36153.png`,
+  'fascia-36-tall-34': `${CDN}/cad-fascia-36-34_b4ebbefa.png`,
+  'fascia-36-short':   `${CDN}/cad-fascia-36-short_4135f63d.png`,
+  'surface-42-tall-40':`${CDN}/cad-surface-42-40_67e77b28.png`,
+  'surface-42-tall-34':`${CDN}/cad-surface-42-34_b8e226b9.png`,
+  'surface-42-short':  `${CDN}/cad-surface-42-short_4e7dd12b.png`,
+  'surface-36-tall-34':`${CDN}/cad-surface-36-34_5721d2f5.png`,
+  'surface-36-short':  `${CDN}/cad-surface-36-short_98264596.png`,
 };
 
 function getImageKey(
