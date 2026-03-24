@@ -532,34 +532,33 @@ export default function Home() {
           {/* ====== CENTRE COLUMN: Configuration ====== */}
           <div className="space-y-4">
 
-            {/* Mount Type */}
+            {/* Configuration (Mount Type + Rail Height + Post Config) */}
             <div className="calc-card p-5 no-print">
-              <SectionHeader title="Mount Type" />
-              <div className="grid grid-cols-2 gap-3">
-                {(['surface', 'fascia'] as MountType[]).map(mt => (
-                  <button
-                    key={mt}
-                    onClick={() => update('mountType', mt)}
-                    className="p-4 text-left transition-all"
-                    style={{
-                      borderRadius: '2px',
-                      border: config.mountType === mt ? '2px solid #B69A5A' : '2px solid #D8D8D8',
-                      background: config.mountType === mt ? '#111111' : '#FFFFFF',
-                      color: config.mountType === mt ? '#FFFFFF' : '#3A3A3A',
-                    }}
-                  >
-                    <div className="font-bold text-sm capitalize" style={{ letterSpacing: '0.02em' }}>{mt} Mount</div>
-                    <div className="text-xs mt-1" style={{ color: config.mountType === mt ? '#B69A5A' : '#6B6B6B' }}>
-                      {mt === 'surface' ? 'Post bolted through deck surface' : 'Post attached to fascia board'}
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
+              <SectionHeader title="Configuration" />
 
-            {/* Rail Height & Post Config */}
-            <div className="calc-card p-5 no-print">
-              <SectionHeader title="Railing Configuration" />
+              {/* Mount Type */}
+              <FieldRow label="Mount Type">
+                <div className="grid grid-cols-2 gap-2">
+                  {(['surface', 'fascia'] as MountType[]).map(mt => (
+                    <button
+                      key={mt}
+                      onClick={() => update('mountType', mt)}
+                      className="p-3 text-left transition-all"
+                      style={{
+                        borderRadius: '2px',
+                        border: config.mountType === mt ? '2px solid #B69A5A' : '2px solid #D8D8D8',
+                        background: config.mountType === mt ? '#111111' : '#FFFFFF',
+                        color: config.mountType === mt ? '#FFFFFF' : '#3A3A3A',
+                      }}
+                    >
+                      <div className="font-bold text-sm capitalize" style={{ letterSpacing: '0.02em' }}>{mt} Mount</div>
+                      <div className="text-xs mt-0.5" style={{ color: config.mountType === mt ? '#B69A5A' : '#6B6B6B' }}>
+                        {mt === 'surface' ? 'Post bolted through deck surface' : 'Post attached to fascia board'}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </FieldRow>
 
               <FieldRow label="Rail Height (nominal)">
                 <div className="flex gap-2">
