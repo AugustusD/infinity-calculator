@@ -526,6 +526,8 @@ export default function Home() {
               railHeight={config.railHeight}
               postHeightAboveDeck={result.postHeightAboveDeck}
               isShortPost={constraints.isShortPost}
+              topGlassReveal={config.topGlassReveal}
+              bottomGlassGap={config.bottomGlassGap}
             />
           </div>
 
