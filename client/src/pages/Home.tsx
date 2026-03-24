@@ -523,15 +523,8 @@ export default function Home() {
             {/* ====== POST DIAGRAM ====== */}
             <PostDiagram
               mountType={config.mountType}
-              railHeightActual={result.railHeightActual}
+              railHeight={config.railHeight}
               postHeightAboveDeck={result.postHeightAboveDeck}
-              topGlassReveal={config.topGlassReveal}
-              bottomGlassGap={config.bottomGlassGap}
-              glassInsertLength={result.glassInsertLength}
-              settingBlockHeight={result.settingBlockHeight}
-              physicalPostLength={result.physicalPostLength}
-              fasciaOffset={config.fasciaOffset}
-              distTopBasePlateToDeck={config.distTopBasePlateToDeck}
               isShortPost={constraints.isShortPost}
             />
           </div>
