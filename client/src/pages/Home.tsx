@@ -860,7 +860,6 @@ export default function Home() {
                     Material Quote
                   </h2>
                   <p className="text-xs mt-0.5" style={{ color: '#6B6B6B' }}>
-                    {config.country === 'US' ? '🇺🇸 United States' : '🇨🇦 Canada'} &middot;{' '}
                     {config.mountType === 'surface' ? 'Surface Mount' : 'Fascia Mount'} &middot;{' '}
                     {config.railHeight}" Rail &middot; {config.glassThickness}mm Glass
                   </p>
