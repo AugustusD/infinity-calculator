@@ -22,7 +22,9 @@ import {
   type GlassThickness,
   type FasciaOffset,
 } from '@/lib/calculator';
-import { Lock, Unlock, AlertTriangle, AlertCircle, Printer, ChevronDown, ChevronUp, Info } from 'lucide-react';
+import { Lock, Unlock, AlertTriangle, AlertCircle, Printer, ChevronDown, ChevronUp, Info, FileSpreadsheet, Mail } from 'lucide-react';
+import { exportToExcel } from '@/lib/exportExcel';
+import { toast } from 'sonner';
 import PostDiagram from '@/components/PostDiagram';
 
 const DISCOUNT_STORAGE_KEY = 'ias-infinity-discount';
@@ -398,17 +400,50 @@ export default function Home() {
               </span>
             </div>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 flex-wrap">
             <span className="text-xs hidden sm:block" style={{ color: '#6B6B6B', letterSpacing: '0.06em' }}>
               2026 Dealer Pricing
             </span>
             <button
+              onClick={async () => {
+                try {
+                  await exportToExcel(config, result, jobInfo);
+                  toast.success('Excel file downloaded');
+                } catch (e) {
+                  toast.error('Excel export failed');
+                  console.error(e);
+                }
+              }}
+              className="flex items-center gap-2 px-3 py-2 text-sm font-semibold transition-all no-print"
+              style={{ background: '#1A5C2A', color: '#FFFFFF', borderRadius: '2px', letterSpacing: '0.04em' }}
+              title="Export to Excel"
+            >
+              <FileSpreadsheet size={13} />
+              <span className="hidden sm:inline">Export Excel</span>
+            </button>
+            <button
+              onClick={() => {
+                const subject = [jobInfo.jobReference, jobInfo.color, jobInfo.dealerName]
+                  .filter(Boolean).join(' - ');
+                const body = encodeURIComponent(
+                  `Please find attached the Material Quote and Excel file for:\n\nJob Reference: ${jobInfo.jobReference || '—'}\nDealer: ${jobInfo.dealerName || '—'}\nColor: ${jobInfo.color || '—'}\nMount: ${config.mountType === 'surface' ? 'Surface Mount' : 'Fascia Mount'}\nRail Height: ${config.railHeight}"\nGlass: ${config.glassThickness}mm\nJob Cost: $${result.jobCost.toFixed(2)}\n\nPlease use the Print Quote button to save the PDF, and the Export Excel button to download the Excel file, then attach both to this email before sending.`
+                );
+                window.location.href = `mailto:orders@innovativealuminum.com?subject=${encodeURIComponent(subject)}&body=${body}`;
+              }}
+              className="flex items-center gap-2 px-3 py-2 text-sm font-semibold transition-all no-print"
+              style={{ background: '#B69A5A', color: '#FFFFFF', borderRadius: '2px', letterSpacing: '0.04em' }}
+              title="Email quote"
+            >
+              <Mail size={13} />
+              <span className="hidden sm:inline">Email Quote</span>
+            </button>
+            <button
               onClick={() => window.print()}
-              className="flex items-center gap-2 px-4 py-2 text-sm font-semibold transition-all"
+              className="flex items-center gap-2 px-3 py-2 text-sm font-semibold transition-all no-print"
               style={{ background: '#111111', color: '#FFFFFF', borderRadius: '2px', letterSpacing: '0.04em' }}
             >
               <Printer size={13} />
-              Print Quote
+              <span className="hidden sm:inline">Print Quote</span>
             </button>
           </div>
         </div>
@@ -716,6 +751,9 @@ export default function Home() {
                   )}
                   {jobInfo.dealerName && (
                     <p className="text-xs" style={{ color: '#6B6B6B' }}>Dealer: {jobInfo.dealerName}</p>
+                  )}
+                  {jobInfo.color && (
+                    <p className="text-xs" style={{ color: '#6B6B6B' }}>Color: <strong style={{ color: '#111111' }}>{jobInfo.color}</strong></p>
                   )}
                 </div>
                 <div className="text-right">
