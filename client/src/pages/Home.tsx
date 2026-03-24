@@ -511,17 +511,15 @@ export default function Home() {
 
             {/* Discount & Shipping — bottom left */}
             <div className="calc-card p-5 no-print">
-              <SectionHeader title="Discount" />
+              <SectionHeader title="Infinity Discount" />
               <div className="space-y-0">
-                <FieldRow label="Discount Level" hint="Enter as % (e.g. 43.5) or decimal (e.g. 0.435)">
+                <FieldRow label="Infinity Discount Level" hint="Enter as % (e.g. 43.5) or decimal (e.g. 0.435)">
                   <DiscountInput
                     value={config.discountLevel}
                     onChange={v => update('discountLevel', v)}
                   />
                 </FieldRow>
-                <FieldRow label="Ship Via Courier">
-                  <Toggle checked={config.shipViaCourier} onChange={v => update('shipViaCourier', v)} />
-                </FieldRow>
+
               </div>
             </div>
 
@@ -590,7 +588,7 @@ export default function Home() {
                     >
                       <div className="font-bold text-sm capitalize" style={{ letterSpacing: '0.02em' }}>{mt} Mount</div>
                       <div className="text-xs mt-0.5" style={{ color: config.mountType === mt ? '#B69A5A' : '#6B6B6B' }}>
-                        {mt === 'surface' ? 'Post bolted through deck surface' : 'Post attached to fascia board'}
+                        {mt === 'surface' ? 'Post screwed into deck surface' : 'Post screwed to fascia w/adequate blocking'}
                       </div>
                     </button>
                   ))}
@@ -895,11 +893,32 @@ export default function Home() {
                           min={0}
                         />
                       </FieldRow>
-                      <FieldRow label="Include Base Plate Covers" hint="Mid + End posts get mid covers; outside/inside corners get respective covers">
-                        <Toggle
-                          checked={config.addOns.includeBasePlateCovers}
-                          onChange={v => updateAddOn('includeBasePlateCovers', v)}
-                        />
+                      {isSurface && (
+                        <FieldRow label="Include Base Plate Covers" hint="Mid + End posts get mid covers; outside/inside corners get respective covers">
+                          <Toggle
+                            checked={config.addOns.includeBasePlateCovers}
+                            onChange={v => updateAddOn('includeBasePlateCovers', v)}
+                          />
+                        </FieldRow>
+                      )}
+                      {isFascia && (
+                        <>
+                          <FieldRow label={'Include Shims (1/4" Base Plate Gaskets)'} hint="MP/IC: RPLFINFSH25 / OC: RPLFINFOSH25 - subject to discount">
+                            <Toggle
+                              checked={config.addOns.includeShims}
+                              onChange={v => updateAddOn('includeShims', v)}
+                            />
+                          </FieldRow>
+                          <FieldRow label="Include Shoulder Washers" hint={'5/16" Nylon Insulator Box/100 RPLSCI516 - list price, no discount'}>
+                            <Toggle
+                              checked={config.addOns.includeShoulderWashers}
+                              onChange={v => updateAddOn('includeShoulderWashers', v)}
+                            />
+                          </FieldRow>
+                        </>
+                      )}
+                      <FieldRow label="Ship Via Courier (Vinyl Cut Down)" hint="Vinyl glass inserts cut to courier length">
+                        <Toggle checked={config.shipViaCourier} onChange={v => update('shipViaCourier', v)} />
                       </FieldRow>
                     </div>
                   </motion.div>

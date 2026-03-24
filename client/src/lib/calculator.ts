@@ -56,6 +56,9 @@ export const PRICES_2026 = {
     basePlateCover_outside: 23.402453319000003, // PBCIO
     basePlateCover_inside: 23.402453319000003,  // PBCII
     glassShelfKit: 229.24003162255997,      // PSHLINF12
+    fasciaShim_midInside: 4.21,              // RPLFINFSH25 - 1/4" rubber gasket MP/IC
+    fasciaShim_outside: 12.39,              // RPLFINFOSH25 - 1/4" rubber gasket OC
+    shoulderWasherBox: 21.54,              // RPLSCI516 - 5/16" nylon insulator box/100 (no discount)
   },
 
   // Fasteners
@@ -230,6 +233,8 @@ export interface AddOns {
   addWeldedExtrudedSideMount: number;
   glassShelfKits: number;
   includeBasePlateCovers: boolean;
+  includeShims: boolean; // fascia only — 1/4" base plate rubber gaskets
+  includeShoulderWashers: boolean; // fascia only — 5/16" nylon insulators, no discount
 }
 
 export interface ConfigInputs {
@@ -906,6 +911,17 @@ export function calculateFascia(config: ConfigInputs): CalculationResult {
     if (outsideQty > 0) addLine('Outside Base Plate Covers', outsideQty, PRICES_2026.parts.basePlateCover_outside * (1 - discount));
     if (insideQty > 0) addLine('Inside Base Plate Covers', insideQty, PRICES_2026.parts.basePlateCover_inside * (1 - discount));
   }
+  // Fascia shims (1/4" base plate rubber gaskets) — discountable
+  if (addons.includeShims) {
+    const shimMidQty = q.midPosts + q.endPosts + q.insideCornerPosts; // MP/IC
+    const shimOutsideQty = q.outsideCornerPosts; // OC
+    if (shimMidQty > 0) addLine('Fascia Base Plate Gasket 1/4" (MP/IC) RPLFINFSH25', shimMidQty, PRICES_2026.parts.fasciaShim_midInside * (1 - discount));
+    if (shimOutsideQty > 0) addLine('Fascia Base Plate Gasket 1/4" (OC) RPLFINFOSH25', shimOutsideQty, PRICES_2026.parts.fasciaShim_outside * (1 - discount));
+  }
+  // Shoulder washers (5/16" nylon insulators) — NO discount
+  if (addons.includeShoulderWashers) {
+    addLine('5/16" Screw Nylon Insulator Box/100 RPLSCI516', 1, PRICES_2026.parts.shoulderWasherBox);
+  }
 
   const subtotal = lineItems.reduce((sum, item) => sum + item.total + (item.paintCost || 0), 0);
 
@@ -988,6 +1004,8 @@ export function defaultConfig(): ConfigInputs {
       addWeldedExtrudedSideMount: 0,
       glassShelfKits: 0,
       includeBasePlateCovers: false,
+      includeShims: false,
+      includeShoulderWashers: false,
     },
   };
 }
