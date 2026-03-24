@@ -474,6 +474,22 @@ export default function Home() {
               isShortPost={constraints.isShortPost}
             />
 
+            {/* Discount & Shipping — bottom left */}
+            <div className="calc-card p-5 no-print">
+              <SectionHeader title="Discount" />
+              <div className="space-y-0">
+                <FieldRow label="Discount Level" hint="Enter as % (e.g. 43.5) or decimal (e.g. 0.435)">
+                  <DiscountInput
+                    value={config.discountLevel}
+                    onChange={v => update('discountLevel', v)}
+                  />
+                </FieldRow>
+                <FieldRow label="Ship Via Courier">
+                  <Toggle checked={config.shipViaCourier} onChange={v => update('shipViaCourier', v)} />
+                </FieldRow>
+              </div>
+            </div>
+
             {/* Country Selection */}
             <div className="calc-card p-5 no-print">
               <SectionHeader title="Market" subtitle="Select your country for code-compliant configuration" />
@@ -684,135 +700,7 @@ export default function Home() {
               )}
             </div>
 
-            {/* Quantities */}
-            <div className="calc-card p-5">
-              <SectionHeader title="Post Quantities" />
-              <div className="space-y-0">
-                {[
-                  { key: 'midPosts', label: '# of Mid Posts' },
-                  { key: 'endPosts', label: '# of End Posts' },
-                  { key: 'outsideCornerPosts', label: '# of Outside Corner Posts' },
-                  { key: 'insideCornerPosts', label: '# of Inside Corner Posts' },
-                  { key: 'wallTracks', label: '# of Wall Tracks' },
-                  { key: 'endPostsLeft25', label: '# of 2.5" End Left Posts' },
-                  { key: 'endPostsRight25', label: '# of 2.5" End Right Posts' },
-                ].map(({ key, label }) => (
-                  <FieldRow key={key} label={label}>
-                    <NumInput
-                      value={config.quantities[key as keyof typeof config.quantities]}
-                      onChange={v => updateQty(key as keyof typeof config.quantities, v)}
-                      min={0}
-                      step={1}
-                    />
-                  </FieldRow>
-                ))}
-              </div>
-            </div>
-
-            {/* Computed Dimensions Summary */}
-            <div className="calc-card p-5 no-print">
-              <SectionHeader title="Computed Dimensions" subtitle="Auto-calculated from your configuration" />
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                <DimBadge label="Rail Height" value={`${fmt(result.railHeightActual, 3)}"`} />
-                <DimBadge label="Post Top Above Deck" value={`${fmt(result.postHeightAboveDeck, 3)}"`} />
-                {isFascia && result.physicalPostLength !== undefined && (
-                  <DimBadge label="Physical Post Length" value={`${fmt(result.physicalPostLength, 3)}"`} />
-                )}
-                <DimBadge label="Glass Insert (Post)" value={`${fmt(result.glassInsertLength, 3)}"`} />
-                <DimBadge label="Glass Insert (End Post)" value={`${fmt(result.endPostInsertLength, 3)}"`} />
-                <DimBadge label="Glass Insert (Track)" value={`${fmt(result.glassInsertLengthTrack, 3)}"`} />
-                <DimBadge label="Setting Block Height" value={`${fmt(result.settingBlockHeight, 3)}"`} />
-                <DimBadge label="Wall Track Height" value={`${fmt(result.wallTrackHeight, 3)}"`} />
-                <DimBadge label="Courier Length" value={`${result.courierLength}"`} />
-              </div>
-              {result.useWedgeInsteadOfBlock && (
-                <div className="warning-banner mt-4 text-xs">
-                  <strong>Setting Block &gt; 5":</strong> Replace setting block with wedge. Use 1.5" piece of setting block + {fmt(result.extraWedgeLength || 0, 3)}" extra wedge at each side of post.
-                </div>
-              )}
-              {isCA && constraints.isShortPost && (
-                <div className="mt-3 flex items-start gap-2 text-xs rounded p-2.5" style={{ background: '#FFFBEB', border: '1px solid #D4B97A', color: '#5C4A1E' }}>
-                  <Info size={13} className="mt-0.5 flex-shrink-0" />
-                  <span>Short post configuration active — post finishes {fmt(result.postHeightAboveDeck, 2)}" above deck.</span>
-                </div>
-              )}
-            </div>
-
-            {/* Add-Ons */}
-            <div className="calc-card p-5 no-print">
-              <button
-                onClick={() => setShowAddOns(!showAddOns)}
-                className="flex items-center justify-between w-full"
-              >
-                <SectionHeader title="Add-Ons & Accessories" />
-                {showAddOns
-                  ? <ChevronUp size={16} style={{ color: '#B69A5A' }} />
-                  : <ChevronDown size={16} style={{ color: '#B69A5A' }} />}
-              </button>
-              <AnimatePresence>
-                {showAddOns && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: 'auto', opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                    className="overflow-hidden"
-                  >
-                    <div className="space-y-0 mt-2">
-                      {isSurface && [
-                        { key: 'removeTrackFromPost', label: 'Remove Track From Post' },
-                        { key: 'cutDownTrack', label: 'Cut Down One Track' },
-                        { key: 'add5x5BasePlate', label: 'Add 5"x5"x0.5" Base Plate (Infinity Post)' },
-                        { key: 'addWeldedSurfaceBase', label: 'Add Welded Surface Base' },
-                        { key: 'addWeldedExtrudedSideMount', label: 'Add Welded Extruded Side Mount 1.9 Pipe' },
-                      ].map(({ key, label }) => (
-                        <FieldRow key={key} label={label}>
-                          <NumInput
-                            value={config.addOns[key as keyof typeof config.addOns]}
-                            onChange={v => updateAddOn(key as keyof typeof config.addOns, v)}
-                            min={0}
-                          />
-                        </FieldRow>
-                      ))}
-                      {isFascia && [
-                        { key: 'removeTrackFromPost', label: 'Remove Track From Post' },
-                        { key: 'cutDownTrack', label: 'Cut Down One Track' },
-                        { key: 'addWeldedExtrudedSideMount', label: 'Add Welded Extruded Side Mount 1.9 Pipe' },
-                      ].map(({ key, label }) => (
-                        <FieldRow key={key} label={label}>
-                          <NumInput
-                            value={config.addOns[key as keyof typeof config.addOns]}
-                            onChange={v => updateAddOn(key as keyof typeof config.addOns, v)}
-                            min={0}
-                          />
-                        </FieldRow>
-                      ))}
-                      {[
-                        { key: 'drinkHolders', label: 'Drink Holders' },
-                        { key: 'glassShelfKits', label: 'Glass Shelf Kits' },
-                        { key: 'midBasePlateCover', label: 'Mid Base Plate Covers' },
-                        { key: 'outsideBasePlateCover', label: 'Outside Base Plate Covers' },
-                        { key: 'insideBasePlateCover', label: 'Inside Base Plate Covers' },
-                      ].map(({ key, label }) => (
-                        <FieldRow key={key} label={label}>
-                          <NumInput
-                            value={config.addOns[key as keyof typeof config.addOns]}
-                            onChange={v => updateAddOn(key as keyof typeof config.addOns, v)}
-                            min={0}
-                          />
-                        </FieldRow>
-                      ))}
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          </div>
-
-          {/* ====== RIGHT COLUMN: Quote, Discount, Details, Footer ====== */}
-          <div className="space-y-4">
-
-            {/* Material Quote */}
+            {/* Material Quote — centre column, after Configuration */}
             <div className="calc-card p-5">
               <div className="flex items-start justify-between mb-4 pb-3" style={{ borderBottom: '2px solid #B69A5A' }}>
                 <div>
@@ -913,19 +801,102 @@ export default function Home() {
               )}
             </div>
 
-            {/* Discount & Shipping */}
+            {/* Add-Ons */}
             <div className="calc-card p-5 no-print">
-              <SectionHeader title="Discount" />
+              <button
+                onClick={() => setShowAddOns(!showAddOns)}
+                className="flex items-center justify-between w-full"
+              >
+                <SectionHeader title="Add-Ons & Accessories" />
+                {showAddOns
+                  ? <ChevronUp size={16} style={{ color: '#B69A5A' }} />
+                  : <ChevronDown size={16} style={{ color: '#B69A5A' }} />}
+              </button>
+              <AnimatePresence>
+                {showAddOns && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="space-y-0 mt-2">
+                      {isSurface && [
+                        { key: 'removeTrackFromPost', label: 'Remove Track From Post' },
+                        { key: 'cutDownTrack', label: 'Cut Down One Track' },
+                        { key: 'add5x5BasePlate', label: 'Add 5"x5"x0.5" Base Plate (Infinity Post)' },
+                        { key: 'addWeldedSurfaceBase', label: 'Add Welded Surface Base' },
+                        { key: 'addWeldedExtrudedSideMount', label: 'Add Welded Extruded Side Mount 1.9 Pipe' },
+                      ].map(({ key, label }) => (
+                        <FieldRow key={key} label={label}>
+                          <NumInput
+                            value={config.addOns[key as keyof typeof config.addOns]}
+                            onChange={v => updateAddOn(key as keyof typeof config.addOns, v)}
+                            min={0}
+                          />
+                        </FieldRow>
+                      ))}
+                      {isFascia && [
+                        { key: 'removeTrackFromPost', label: 'Remove Track From Post' },
+                        { key: 'cutDownTrack', label: 'Cut Down One Track' },
+                        { key: 'addWeldedExtrudedSideMount', label: 'Add Welded Extruded Side Mount 1.9 Pipe' },
+                      ].map(({ key, label }) => (
+                        <FieldRow key={key} label={label}>
+                          <NumInput
+                            value={config.addOns[key as keyof typeof config.addOns]}
+                            onChange={v => updateAddOn(key as keyof typeof config.addOns, v)}
+                            min={0}
+                          />
+                        </FieldRow>
+                      ))}
+                      {[
+                        { key: 'drinkHolders', label: 'Drink Holders' },
+                        { key: 'glassShelfKits', label: 'Glass Shelf Kits' },
+                        { key: 'midBasePlateCover', label: 'Mid Base Plate Covers' },
+                        { key: 'outsideBasePlateCover', label: 'Outside Base Plate Covers' },
+                        { key: 'insideBasePlateCover', label: 'Inside Base Plate Covers' },
+                      ].map(({ key, label }) => (
+                        <FieldRow key={key} label={label}>
+                          <NumInput
+                            value={config.addOns[key as keyof typeof config.addOns]}
+                            onChange={v => updateAddOn(key as keyof typeof config.addOns, v)}
+                            min={0}
+                          />
+                        </FieldRow>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </div>
+
+          {/* ====== RIGHT COLUMN: Post Quantities, Computed Dimensions, Material Details, Footer ====== */}
+          <div className="space-y-4">
+
+            {/* Post Quantities — top of right column */}
+            <div className="calc-card p-5">
+              <SectionHeader title="Post Quantities" />
               <div className="space-y-0">
-                <FieldRow label="Discount Level" hint="Enter as % (e.g. 43.5) or decimal (e.g. 0.435)">
-                  <DiscountInput
-                    value={config.discountLevel}
-                    onChange={v => update('discountLevel', v)}
-                  />
-                </FieldRow>
-                <FieldRow label="Ship Via Courier">
-                  <Toggle checked={config.shipViaCourier} onChange={v => update('shipViaCourier', v)} />
-                </FieldRow>
+                {[
+                  { key: 'midPosts', label: '# of Mid Posts' },
+                  { key: 'endPosts', label: '# of End Posts' },
+                  { key: 'outsideCornerPosts', label: '# of Outside Corner Posts' },
+                  { key: 'insideCornerPosts', label: '# of Inside Corner Posts' },
+                  { key: 'wallTracks', label: '# of Wall Tracks' },
+                  { key: 'endPostsLeft25', label: '# of 2.5" End Left Posts' },
+                  { key: 'endPostsRight25', label: '# of 2.5" End Right Posts' },
+                ].map(({ key, label }) => (
+                  <FieldRow key={key} label={label}>
+                    <NumInput
+                      value={config.quantities[key as keyof typeof config.quantities]}
+                      onChange={v => updateQty(key as keyof typeof config.quantities, v)}
+                      min={0}
+                      step={1}
+                    />
+                  </FieldRow>
+                ))}
               </div>
             </div>
 
@@ -946,6 +917,35 @@ export default function Home() {
                 ))}
               </div>
             )}
+
+            {/* Computed Dimensions Summary — above Material Details */}
+            <div className="calc-card p-5 no-print">
+              <SectionHeader title="Computed Dimensions" subtitle="Auto-calculated from your configuration" />
+              <div className="grid grid-cols-2 gap-4">
+                <DimBadge label="Rail Height" value={`${fmt(result.railHeightActual, 3)}"`} />
+                <DimBadge label="Post Top Above Deck" value={`${fmt(result.postHeightAboveDeck, 3)}"`} />
+                {isFascia && result.physicalPostLength !== undefined && (
+                  <DimBadge label="Physical Post Length" value={`${fmt(result.physicalPostLength, 3)}"`} />
+                )}
+                <DimBadge label="Glass Insert (Post)" value={`${fmt(result.glassInsertLength, 3)}"`} />
+                <DimBadge label="Glass Insert (End Post)" value={`${fmt(result.endPostInsertLength, 3)}"`} />
+                <DimBadge label="Glass Insert (Track)" value={`${fmt(result.glassInsertLengthTrack, 3)}"`} />
+                <DimBadge label="Setting Block Height" value={`${fmt(result.settingBlockHeight, 3)}"`} />
+                <DimBadge label="Wall Track Height" value={`${fmt(result.wallTrackHeight, 3)}"`} />
+                <DimBadge label="Courier Length" value={`${result.courierLength}"`} />
+              </div>
+              {result.useWedgeInsteadOfBlock && (
+                <div className="warning-banner mt-4 text-xs">
+                  <strong>Setting Block &gt; 5":</strong> Replace setting block with wedge. Use 1.5" piece of setting block + {fmt(result.extraWedgeLength || 0, 3)}" extra wedge at each side of post.
+                </div>
+              )}
+              {isCA && constraints.isShortPost && (
+                <div className="mt-3 flex items-start gap-2 text-xs rounded p-2.5" style={{ background: '#FFFBEB', border: '1px solid #D4B97A', color: '#5C4A1E' }}>
+                  <Info size={13} className="mt-0.5 flex-shrink-0" />
+                  <span>Short post configuration active — post finishes {fmt(result.postHeightAboveDeck, 2)}" above deck.</span>
+                </div>
+              )}
+            </div>
 
             {/* Material Details Summary */}
             {hasContent && (
