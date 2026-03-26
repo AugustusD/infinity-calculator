@@ -1165,7 +1165,6 @@ export default function Home() {
                 </div>
                 {isSurface && [
                   { key: 'removeTrackFromPost', label: 'Remove Track From Post' },
-                  { key: 'cutDownTrack', label: 'Cut Down One Track' },
                   { key: 'add5x5BasePlate', label: 'Add 5"x5"x0.5" Base Plate (Infinity Post)' },
                   { key: 'addWeldedSurfaceBase', label: 'Add Welded Surface Base' },
                   { key: 'addWeldedExtrudedSideMount', label: 'Add Welded Extruded Side Mount 1.9 Pipe' },
@@ -1180,7 +1179,6 @@ export default function Home() {
                 ))}
                 {isFascia && [
                   { key: 'removeTrackFromPost', label: 'Remove Track From Post' },
-                  { key: 'cutDownTrack', label: 'Cut Down One Track' },
                   { key: 'addWeldedExtrudedSideMount', label: 'Add Welded Extruded Side Mount 1.9 Pipe' },
                 ].map(({ key, label }) => (
                   <FieldRow key={key} label={label}>
