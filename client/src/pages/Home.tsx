@@ -1163,20 +1163,77 @@ export default function Home() {
                 <div className="pt-3 mt-1" style={{ borderTop: '1px solid #E8E4DC' }}>
                   <div className="text-[10px] font-bold uppercase tracking-widest mb-2" style={{ color: '#B69A5A' }}>Other Add-Ons</div>
                 </div>
-                {isSurface && [
-                  { key: 'removeTrackFromPost', label: 'Remove Track From Post' },
-                  { key: 'add5x5BasePlate', label: 'Add 5"x5"x0.5" Base Plate (Infinity Post)' },
-                  { key: 'addWeldedSurfaceBase', label: 'Add Welded Surface Base' },
-                  { key: 'addWeldedExtrudedSideMount', label: 'Add Welded Extruded Side Mount 1.9 Pipe' },
-                ].map(({ key, label }) => (
-                  <FieldRow key={key} label={label}>
-                    <NumInput
-                      value={config.addOns[key as keyof typeof config.addOns] as number}
-                      onChange={v => updateAddOn(key as keyof typeof config.addOns, v)}
-                      min={0}
-                    />
-                  </FieldRow>
-                ))}
+                {isSurface && (
+                  <>
+                    <FieldRow label="Remove Track From Post">
+                      <NumInput value={config.addOns.removeTrackFromPost} onChange={v => updateAddOn('removeTrackFromPost', v)} min={0} />
+                    </FieldRow>
+
+                    {/* 5x5 base plate with per-post-type sub-spinners */}
+                    <FieldRow label='Add 5"×5"×0.5" Base Plate'>
+                      <NumInput
+                        value={config.addOns.add5x5BasePlate}
+                        onChange={v => {
+                          updateAddOn('add5x5BasePlate', v);
+                          // If reduced below current assigned total, zero out sub-spinners
+                          const assigned = config.addOns.basePlate5x5_midPost + config.addOns.basePlate5x5_outsideCorner + config.addOns.basePlate5x5_insideCorner + config.addOns.basePlate5x5_endPost + config.addOns.basePlate5x5_endPost25;
+                          if (v < assigned) {
+                            updateAddOn('basePlate5x5_midPost', 0);
+                            updateAddOn('basePlate5x5_outsideCorner', 0);
+                            updateAddOn('basePlate5x5_insideCorner', 0);
+                            updateAddOn('basePlate5x5_endPost', 0);
+                            updateAddOn('basePlate5x5_endPost25', 0);
+                          }
+                        }}
+                        min={0}
+                      />
+                    </FieldRow>
+
+                    {config.addOns.add5x5BasePlate > 0 && (() => {
+                      const assigned = config.addOns.basePlate5x5_midPost + config.addOns.basePlate5x5_outsideCorner + config.addOns.basePlate5x5_insideCorner + config.addOns.basePlate5x5_endPost + config.addOns.basePlate5x5_endPost25;
+                      const remaining = config.addOns.add5x5BasePlate - assigned;
+                      const isOver = assigned > config.addOns.add5x5BasePlate;
+                      return (
+                        <div className="ml-4 mb-2 rounded" style={{ background: '#F9F7F3', border: '1px solid #E8E4DC', padding: '8px 10px' }}>
+                          <div className="text-[10px] font-bold uppercase tracking-widest mb-2" style={{ color: '#B69A5A' }}>Post Type Breakdown</div>
+                          <div className="text-xs mb-2" style={{ color: isOver ? '#C0392B' : remaining === 0 ? '#27AE60' : '#6B6B6B' }}>
+                            {isOver
+                              ? `⚠ Over-assigned by ${assigned - config.addOns.add5x5BasePlate}`
+                              : remaining === 0
+                                ? '✓ All plates assigned'
+                                : `${remaining} plate${remaining !== 1 ? 's' : ''} unassigned`}
+                          </div>
+                          {([
+                            { key: 'basePlate5x5_midPost' as const,        label: 'MP — Mid/End Posts',        max: config.quantities.midPosts + config.quantities.endPosts },
+                            { key: 'basePlate5x5_outsideCorner' as const,  label: 'OC — Outside Corner Posts', max: config.quantities.outsideCornerPosts },
+                            { key: 'basePlate5x5_insideCorner' as const,   label: 'IC — Inside Corner Posts',  max: config.quantities.insideCornerPosts },
+                            { key: 'basePlate5x5_endPost' as const,        label: 'EP — End Posts',            max: config.quantities.endPosts },
+                            { key: 'basePlate5x5_endPost25' as const,      label: '2.5" EP — 2.5" End Posts',  max: config.quantities.endPostsLeft25 + config.quantities.endPostsRight25 },
+                          ] as { key: keyof typeof config.addOns; label: string; max: number }[]).map(({ key, label, max }) => (
+                            <div key={key} className="flex items-center gap-2 py-1 border-b border-[#EBEBEB] last:border-0">
+                              <span className="text-xs flex-1" style={{ color: '#3A3A3A' }}>{label}</span>
+                              <div className="w-20">
+                                <NumInput
+                                  value={config.addOns[key] as number}
+                                  onChange={v => updateAddOn(key, Math.min(v, max))}
+                                  min={0}
+                                  max={max}
+                                />
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      );
+                    })()}
+
+                    <FieldRow label="Add Welded Surface Base">
+                      <NumInput value={config.addOns.addWeldedSurfaceBase} onChange={v => updateAddOn('addWeldedSurfaceBase', v)} min={0} />
+                    </FieldRow>
+                    <FieldRow label="Add Welded Extruded Side Mount 1.9 Pipe">
+                      <NumInput value={config.addOns.addWeldedExtrudedSideMount} onChange={v => updateAddOn('addWeldedExtrudedSideMount', v)} min={0} />
+                    </FieldRow>
+                  </>
+                )}
                 {isFascia && [
                   { key: 'removeTrackFromPost', label: 'Remove Track From Post' },
                   { key: 'addWeldedExtrudedSideMount', label: 'Add Welded Extruded Side Mount 1.9 Pipe' },

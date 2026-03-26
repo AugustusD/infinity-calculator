@@ -235,6 +235,13 @@ export interface AddOns {
   removeTrackFromPost: number;
   cutDownTrack: number;
   add5x5BasePlate: number;
+  // Per-post-type breakdown for 5x5 base plate (surface mount only)
+  // Each value = how many of that post type get the 5x5 plate
+  basePlate5x5_midPost: number;
+  basePlate5x5_outsideCorner: number;
+  basePlate5x5_insideCorner: number;
+  basePlate5x5_endPost: number;
+  basePlate5x5_endPost25: number; // combined left + right 2.5" end posts
   addWeldedSurfaceBase: number;
   addWeldedExtrudedSideMount: number;
   glassShelfKits: number;
@@ -586,11 +593,19 @@ export function calculateSurface(config: ConfigInputs): CalculationResult {
   const basePlateGasketPrice = PRICES_2026.surface.basePlateGasket * (1 - discount);
   const postCap25Price = PRICES_2026.surface.postCap_25 * (1 - discount);
 
+  // 5x5 base plate breakdown — clamp each type to available post count
+  const bp5_mid = Math.min(addons.basePlate5x5_midPost, q.midPosts + q.endPosts);
+  const bp5_oc  = Math.min(addons.basePlate5x5_outsideCorner, q.outsideCornerPosts);
+  const bp5_ic  = Math.min(addons.basePlate5x5_insideCorner, q.insideCornerPosts);
+  const bp5_ep  = Math.min(addons.basePlate5x5_endPost, q.endPosts);
+  const bp5_ep25 = Math.min(addons.basePlate5x5_endPost25, q.endPostsLeft25 + q.endPostsRight25);
+  const total5x5Assigned = bp5_mid + bp5_oc + bp5_ic + bp5_ep + bp5_ep25;
+
   const totalMidEndPosts = q.midPosts + q.endPosts;
   const totalCornerPosts = q.outsideCornerPosts + q.insideCornerPosts;
   const endCapsQty = q.endPosts - addons.removeTrackFromPost;
   const basePlateGasketQty = config.basePlateGaskets
-    ? q.midPosts + q.endPosts + q.outsideCornerPosts + q.insideCornerPosts + q.endPostsLeft25 + q.endPostsRight25 - addons.add5x5BasePlate - addons.addWeldedSurfaceBase
+    ? q.midPosts + q.endPosts + q.outsideCornerPosts + q.insideCornerPosts + q.endPostsLeft25 + q.endPostsRight25 - total5x5Assigned - addons.addWeldedSurfaceBase
     : 0;
 
   // Paint costs
@@ -613,14 +628,26 @@ export function calculateSurface(config: ConfigInputs): CalculationResult {
     });
   };
 
+  const plate5x5UnitCost = 19.2733069 * (1 - discount);
+
   // ── 1. ALUMINUM: Posts → Wall Tracks → End Caps → 2.5" Posts → Post Caps ──
-  addLine('Infinity Mid Post', totalMidEndPosts, postPriceEa, postPaintEa);
-  addLine('Infinity Outside Corner Post', q.outsideCornerPosts, postPriceEa, postPaintEa);
-  addLine('Infinity Inside Corner Post', q.insideCornerPosts, postPriceEa, postPaintEa);
+  // Standard posts (excluding those getting 5x5 plates)
+  const stdMidEnd = totalMidEndPosts - bp5_mid - bp5_ep;
+  const stdOC = q.outsideCornerPosts - bp5_oc;
+  const stdIC = q.insideCornerPosts - bp5_ic;
+  const stdEP25 = (q.endPostsLeft25 + q.endPostsRight25) - bp5_ep25;
+  addLine('Infinity Mid Post', stdMidEnd, postPriceEa, postPaintEa);
+  addLine('Infinity Outside Corner Post', stdOC, postPriceEa, postPaintEa);
+  addLine('Infinity Inside Corner Post', stdIC, postPriceEa, postPaintEa);
+  // Combined post + 5x5 plate lines
+  if (bp5_mid > 0) addLine(`Infinity Mid/End Post (incl. 5"×5"×0.5" Base Plate)`, bp5_mid, postPriceEa + plate5x5UnitCost, postPaintEa);
+  if (bp5_oc  > 0) addLine(`Infinity Outside Corner Post (incl. 5"×5"×0.5" Base Plate)`, bp5_oc, postPriceEa + plate5x5UnitCost, postPaintEa);
+  if (bp5_ic  > 0) addLine(`Infinity Inside Corner Post (incl. 5"×5"×0.5" Base Plate)`, bp5_ic, postPriceEa + plate5x5UnitCost, postPaintEa);
+  if (bp5_ep25 > 0) addLine(`2.5" End Post (incl. 5"×5"×0.5" Base Plate)`, bp5_ep25, endPost25PriceEa + plate5x5UnitCost, postPaintEa);
   addLine('Infinity Wall Tracks', q.wallTracks, wallTrackPriceEa, trackPaintEa);
   addLine('End Caps', endCapsQty, endCapPrice);
-  addLine('2.5" End Left Posts', q.endPostsLeft25, endPost25PriceEa, postPaintEa);
-  addLine('2.5" End Right Posts', q.endPostsRight25, endPost25PriceEa, postPaintEa);
+  addLine('2.5" End Left Posts', stdEP25 > 0 ? Math.min(q.endPostsLeft25, stdEP25) : 0, endPost25PriceEa, postPaintEa);
+  addLine('2.5" End Right Posts', stdEP25 > 0 ? Math.max(0, stdEP25 - Math.min(q.endPostsLeft25, stdEP25)) : 0, endPost25PriceEa, postPaintEa);
   addLine('2.5" Post Caps', q.endPostsLeft25 + q.endPostsRight25, postCap25Price);
   // Aluminum add-ons
   if (addons.removeTrackFromPost > 0) {
@@ -629,8 +656,10 @@ export function calculateSurface(config: ConfigInputs): CalculationResult {
   if (addons.cutDownTrack > 0) {
     addLine('Cut Down One Track', addons.cutDownTrack, 61.257983 * (1 - discount));
   }
-  if (addons.add5x5BasePlate > 0) {
-    addLine('Add 5"×5"×0.5" Base Plate to Surface Mount Infinity Post', addons.add5x5BasePlate, 19.2733069 * (1 - discount));
+  // Unassigned 5x5 plates (total entered minus assigned to post types)
+  const unassigned5x5 = Math.max(0, addons.add5x5BasePlate - total5x5Assigned);
+  if (unassigned5x5 > 0) {
+    addLine('Add 5"×5"×0.5" Base Plate (unassigned)', unassigned5x5, plate5x5UnitCost);
   }
   if (addons.addWeldedSurfaceBase > 0) {
     addLine('Add Welded Surface Base', addons.addWeldedSurfaceBase, 15.980830300000001 * (1 - discount));
@@ -639,12 +668,13 @@ export function calculateSurface(config: ConfigInputs): CalculationResult {
     addLine('Add Welded Extruded Side Mount 1.9 Pipe', addons.addWeldedExtrudedSideMount, 49.5327347 * (1 - discount));
   }
   if (addons.includeBasePlateCovers) {
-    const midQty = q.midPosts + q.endPosts;
-    const outsideQty = q.outsideCornerPosts;
-    const insideQty = q.insideCornerPosts;
-    if (midQty > 0) addLine('Mid Base Plate Covers', midQty, PRICES_2026.parts.basePlateCover_mid * (1 - discount));
-    if (outsideQty > 0) addLine('Outside Base Plate Covers', outsideQty, PRICES_2026.parts.basePlateCover_outside * (1 - discount));
-    if (insideQty > 0) addLine('Inside Base Plate Covers', insideQty, PRICES_2026.parts.basePlateCover_inside * (1 - discount));
+    // Deduct covers for posts that got 5x5 plates (those posts don't use standard covers)
+    const midCoverQty = (q.midPosts + q.endPosts) - bp5_mid - bp5_ep;
+    const outsideCoverQty = q.outsideCornerPosts - bp5_oc;
+    const insideCoverQty = q.insideCornerPosts - bp5_ic;
+    if (midCoverQty > 0) addLine('Mid Base Plate Covers', midCoverQty, PRICES_2026.parts.basePlateCover_mid * (1 - discount));
+    if (outsideCoverQty > 0) addLine('Outside Base Plate Covers', outsideCoverQty, PRICES_2026.parts.basePlateCover_outside * (1 - discount));
+    if (insideCoverQty > 0) addLine('Inside Base Plate Covers', insideCoverQty, PRICES_2026.parts.basePlateCover_inside * (1 - discount));
   }
   if (addons.glassShelfKits > 0) {
     addLine('Glass Shelf Kits', addons.glassShelfKits, PRICES_2026.parts.glassShelfKit * (1 - discount));
@@ -1040,6 +1070,11 @@ export function defaultConfig(): ConfigInputs {
       removeTrackFromPost: 0,
       cutDownTrack: 0,
       add5x5BasePlate: 0,
+      basePlate5x5_midPost: 0,
+      basePlate5x5_outsideCorner: 0,
+      basePlate5x5_insideCorner: 0,
+      basePlate5x5_endPost: 0,
+      basePlate5x5_endPost25: 0,
       addWeldedSurfaceBase: 0,
       addWeldedExtrudedSideMount: 0,
       glassShelfKits: 0,
