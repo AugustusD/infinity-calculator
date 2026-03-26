@@ -372,3 +372,13 @@
     .calc-card { box-shadow: none; border: 1px solid #ddd; }
   }
 }
+
+/* Always show number input spinner arrows */
+input[type="number"] {
+  -moz-appearance: auto;
+}
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  opacity: 1;
+  height: auto;
+}
