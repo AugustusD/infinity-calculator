@@ -341,10 +341,15 @@ export default function Home() {
     }));
   }, [config.discountLevel]);
 
-  const updateAddOn = useCallback((key: keyof ConfigInputs['addOns'], value: number | boolean) => {
+  const updateAddOn = useCallback((key: keyof ConfigInputs['addOns'], value: number | boolean | string) => {
     setConfig(prev => ({
       ...prev,
-      addOns: { ...prev.addOns, [key]: typeof value === 'boolean' ? value : Math.max(0, value) },
+      addOns: {
+        ...prev.addOns,
+        [key]: typeof value === 'boolean' ? value
+             : typeof value === 'string' ? value
+             : Math.max(0, value),
+      },
     }));
   }, []);
 
