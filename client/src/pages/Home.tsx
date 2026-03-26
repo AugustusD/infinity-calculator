@@ -28,6 +28,9 @@ import { toast } from 'sonner';
 import PostDiagram from '@/components/PostDiagram';
 
 const DISCOUNT_STORAGE_KEY = 'ias-infinity-discount';
+const DEALER_STORAGE_KEY = 'ias-infinity-dealer';
+const MARKET_STORAGE_KEY = 'ias-infinity-market';
+const FIRST_VISIT_KEY = 'ias-infinity-visited';
 
 // CDN URLs for logos
 const IAS_LOGO_URL = 'https://d2xsxph8kpxj0f.cloudfront.net/310519663093943154/Vxc6ufyoD2HuhTpJtdEazX/ias-logo-2024_bbb213b4.webp';
@@ -303,23 +306,35 @@ export default function Home() {
   const [revealUnlocked, setRevealUnlocked] = useState(false);
   const [bottomGapUnlocked, setBottomGapUnlocked] = useState(false);
 
-  // Persist discount whenever it changes
+  // Mark first visit done and persist discount
   useEffect(() => {
     try {
+      localStorage.setItem(FIRST_VISIT_KEY, '1');
       localStorage.setItem(DISCOUNT_STORAGE_KEY, String(config.discountLevel));
     } catch {}
   }, [config.discountLevel]);
+  // Persist dealer name
+  useEffect(() => {
+    try { localStorage.setItem(DEALER_STORAGE_KEY, jobInfo.dealerName); } catch {}
+  }, [jobInfo.dealerName]);
+  // Persist market
+  useEffect(() => {
+    try { localStorage.setItem(MARKET_STORAGE_KEY, config.country); } catch {}
+  }, [config.country]);
 
   const update = useCallback(<K extends keyof ConfigInputs>(key: K, value: ConfigInputs[K]) => {
     setConfig(prev => ({ ...prev, [key]: value }));
   }, []);
 
   const updateQty = useCallback((key: keyof ConfigInputs['quantities'], value: number) => {
+    if (value > 0 && config.discountLevel === 0) {
+      toast.warning('Infinity Discount Level is blank — please enter your dealer discount before adding quantities.', { duration: 5000 });
+    }
     setConfig(prev => ({
       ...prev,
       quantities: { ...prev.quantities, [key]: Math.max(0, value) },
     }));
-  }, []);
+  }, [config.discountLevel]);
 
   const updateAddOn = useCallback((key: keyof ConfigInputs['addOns'], value: number | boolean) => {
     setConfig(prev => ({
@@ -376,27 +391,29 @@ export default function Home() {
   const hasContent = config.quantities.midPosts + config.quantities.endPosts +
     config.quantities.outsideCornerPosts + config.quantities.insideCornerPosts +
     config.quantities.wallTracks + config.quantities.endPostsLeft25 + config.quantities.endPostsRight25 > 0;
+  const colorSelected = !!jobInfo.color && jobInfo.color !== '';
+  const requireColorMsg = 'Please select a powder coat color in Job Information before exporting or printing.';
 
   return (
     <div className="min-h-screen" style={{ background: '#F5F5F5', fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif" }}>
 
       {/* ====== HEADER ====== */}
       <header className="no-print" style={{ background: '#FFFFFF', borderBottom: '3px solid #B69A5A', borderTop: '3px solid #B69A5A' }}>
-        <div className="container py-3 flex items-center justify-between">
-          <div className="flex items-center gap-5">
+        <div className="container py-2 flex items-center justify-between">
+          <div className="flex items-center gap-2">
             <img
               src={IAS_LOGO_URL}
               alt="Innovative Aluminum Systems"
-              style={{ height: '56px', width: 'auto', objectFit: 'contain', display: 'block' }}
+              style={{ height: '68px', width: 'auto', objectFit: 'contain', display: 'block' }}
             />
             <div className="flex flex-col justify-center">
               <img
                 src={INFINITY_LOGO_URL}
                 alt="Infinity"
-                className="h-14 w-auto object-contain"
+                className="h-10 w-auto object-contain"
               />
               <span className="text-[10px] tracking-[0.18em] uppercase mt-0.5" style={{ color: '#B69A5A', letterSpacing: '0.18em' }}>
-                Railing Calculator
+                Estimation Tool
               </span>
             </div>
           </div>
@@ -406,6 +423,7 @@ export default function Home() {
             </span>
             <button
               onClick={async () => {
+                if (!colorSelected) { toast.error(requireColorMsg); return; }
                 try {
                   await exportToExcel(config, result, jobInfo);
                   toast.success('Excel file downloaded');
@@ -423,27 +441,28 @@ export default function Home() {
             </button>
             <button
               onClick={() => {
+                if (!colorSelected) { toast.error(requireColorMsg); return; }
                 const subject = [jobInfo.jobReference, jobInfo.color, jobInfo.dealerName]
                   .filter(Boolean).join(' - ');
                 const body = encodeURIComponent(
-                  `Please find attached the Material Quote and Excel file for:\n\nJob Reference: ${jobInfo.jobReference || '—'}\nDealer: ${jobInfo.dealerName || '—'}\nColor: ${jobInfo.color || '—'}\nMount: ${config.mountType === 'surface' ? 'Surface Mount' : 'Fascia Mount'}\nRail Height: ${config.railHeight}"\nGlass: ${config.glassThickness}mm\nJob Cost: $${result.jobCost.toFixed(2)}\n\nPlease use the Print Quote button to save the PDF, and the Export Excel button to download the Excel file, then attach both to this email before sending.`
+                  `Please find attached the Material Estimate and Excel file for:\n\nJob Reference: ${jobInfo.jobReference || '—'}\nDealer: ${jobInfo.dealerName || '—'}\nColor: ${jobInfo.color || '—'}\nMount: ${config.mountType === 'surface' ? 'Surface Mount' : 'Fascia Mount'}\nRail Height: ${config.railHeight}"\nGlass: ${config.glassThickness}mm\nJob Cost: $${result.jobCost.toFixed(2)}\n\nPlease use the Print Estimate button to save the PDF, and the Export Excel button to download the Excel file, then attach both to this email before sending.`
                 );
                 window.location.href = `mailto:orders@innovativealuminum.com?subject=${encodeURIComponent(subject)}&body=${body}`;
               }}
               className="flex items-center gap-2 px-3 py-2 text-sm font-semibold transition-all no-print"
               style={{ background: '#B69A5A', color: '#FFFFFF', borderRadius: '2px', letterSpacing: '0.04em' }}
-              title="Email quote"
+              title="Email estimate"
             >
               <Mail size={13} />
-              <span className="hidden sm:inline">Email Quote</span>
+              <span className="hidden sm:inline">Email Estimate</span>
             </button>
             <button
-              onClick={() => window.print()}
+              onClick={() => { if (!colorSelected) { toast.error(requireColorMsg); return; } window.print(); }}
               className="flex items-center gap-2 px-3 py-2 text-sm font-semibold transition-all no-print"
               style={{ background: '#111111', color: '#FFFFFF', borderRadius: '2px', letterSpacing: '0.04em' }}
             >
               <Printer size={13} />
-              <span className="hidden sm:inline">Print Quote</span>
+              <span className="hidden sm:inline">Print Estimate</span>
             </button>
           </div>
         </div>
@@ -490,8 +509,13 @@ export default function Home() {
                   <SelectInput
                     value={jobInfo.color}
                     onChange={v => setJobInfo(p => ({ ...p, color: v }))}
-                    options={COLOR_OPTIONS.map(c => ({ value: c, label: c }))}
+                    options={[{ value: '', label: '— Choose a color —' }, ...COLOR_OPTIONS.map(c => ({ value: c, label: c }))]}
                   />
+                  {!colorSelected && (
+                    <p className="text-xs mt-1 flex items-center gap-1 font-semibold" style={{ color: '#C0392B' }}>
+                      <AlertTriangle size={11} /> Color selection required before printing or exporting
+                    </p>
+                  )}
                   {jobInfo.color === 'Custom' && (
                     <p className="text-xs mt-1 flex items-center gap-1" style={{ color: '#8A7240' }}>
                       <AlertTriangle size={11} /> Contact IAS for custom color pricing
@@ -1032,7 +1056,7 @@ export default function Home() {
 
             {/* Disclaimer */}
             <div className="text-xs p-3 rounded" style={{ color: '#6B6B6B', background: '#F5F5F5', border: '1px solid #D8D8D8' }}>
-              <strong style={{ color: '#3A3A3A' }}>Note:</strong> Glass is not included with the Infinity system. Pricing based on 2026 Dealer Price List. Please ensure topless rail fastening details are acceptable to local building authorities. This calculator is for material estimation purposes — verify final sales order for accuracy.
+              <strong style={{ color: '#3A3A3A' }}>Note:</strong> Glass is not included with the Infinity system. Pricing based on 2026 Dealer Price List. Please ensure topless rail fastening details are acceptable to local building authorities. All material quantities and types should be checked by the dealer prior to sending customer estimates or orders to Innovative Aluminum Systems.
             </div>
 
             {/* IAS footer branding */}

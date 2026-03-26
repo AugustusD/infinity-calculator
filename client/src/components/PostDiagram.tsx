@@ -47,9 +47,7 @@ function getImageKey(
     return `${mount}-${rail}-short`;
   }
 
-  // Tall post: ≥38" above deck → "40" drawing, <38" → "34" drawing
-  // (The 40" drawing covers the standard tall post; the 34" drawing covers the
-  //  US max-reveal / minimum tall-post configuration.)
+  // Tall post: >=38" above deck -> "40" drawing, <38" -> "34" drawing
   if (rail === '42') {
     const variant = postHeightAboveDeck >= 38 ? 'tall-40' : 'tall-34';
     return `${mount}-42-${variant}`;
@@ -66,9 +64,9 @@ function getCaption(
   isShortPost: boolean,
 ): string {
   const mount = mountType === 'surface' ? 'Surface Mount' : 'Fascia Mount';
-  const rail = railHeight >= 40 ? '42"' : '36"';
-  if (isShortPost) return `${mount} · ${rail} Rail · Short Post`;
-  return `${mount} · ${rail} Rail · ${Math.round(postHeightAboveDeck)}" Above Deck`;
+  const rail = railHeight >= 40 ? '42 1/8"' : '36 1/8"';
+  if (isShortPost) return `${mount} \u00b7 ${rail} Rail \u00b7 Short Post`;
+  return `${mount} \u00b7 ${rail} Rail \u00b7 Post finishes ${Math.round(postHeightAboveDeck)}" above deck`;
 }
 
 export default function PostDiagram({

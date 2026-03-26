@@ -913,8 +913,8 @@ export function calculateFascia(config: ConfigInputs): CalculationResult {
   }
   // Fascia shims (1/4" base plate rubber gaskets) — discountable
   if (addons.includeShims) {
-    const shimMidQty = q.midPosts + q.endPosts + q.insideCornerPosts; // MP/IC
-    const shimOutsideQty = q.outsideCornerPosts; // OC
+    const shimMidQty = (q.midPosts + q.endPosts + q.insideCornerPosts) * 2; // 2 shims per MP/IC post
+    const shimOutsideQty = q.outsideCornerPosts * 2; // 2 shims per OC post
     if (shimMidQty > 0) addLine('Fascia Base Plate Gasket 1/4" (MP/IC) RPLFINFSH25', shimMidQty, PRICES_2026.parts.fasciaShim_midInside * (1 - discount));
     if (shimOutsideQty > 0) addLine('Fascia Base Plate Gasket 1/4" (OC) RPLFINFOSH25', shimOutsideQty, PRICES_2026.parts.fasciaShim_outside * (1 - discount));
   }
