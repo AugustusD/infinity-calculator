@@ -1209,7 +1209,7 @@ export default function Home() {
                             { key: 'basePlate5x5_insideCorner' as const,   label: 'IC — Inside Corner Posts',  max: config.quantities.insideCornerPosts },
                             { key: 'basePlate5x5_endPost' as const,        label: 'EP — End Posts',            max: config.quantities.endPosts },
                             { key: 'basePlate5x5_endPost25' as const,      label: '2.5" EP — 2.5" End Posts',  max: config.quantities.endPostsLeft25 + config.quantities.endPostsRight25 },
-                          ] as { key: keyof typeof config.addOns; label: string; max: number }[]).map(({ key, label, max }) => (
+                          ] as { key: keyof typeof config.addOns; label: string; max: number }[]).filter(({ max }) => max > 0).map(({ key, label, max }) => (
                             <div key={key} className="flex items-center gap-2 py-1 border-b border-[#EBEBEB] last:border-0">
                               <span className="text-xs flex-1" style={{ color: '#3A3A3A' }}>{label}</span>
                               <div className="w-20">
