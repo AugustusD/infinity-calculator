@@ -64,6 +64,9 @@ export const PRICES_2026 = {
   // Fasteners
   fasteners: {
     tekScrew_10x075: 27.31, // PSC10X075PTS - #10x3/4 painted tek screw (box/100)
+    panHeadScrew_14x3: 0,   // TBD - #14x3 Pan Head Screw (box/100)
+    hexHeadScrew_516x5: 0,  // TBD - 5/16"x5" Hex Head Screw (box/50)
+    nylonWasher_deck: 0,    // TBD - Nylon Shoulder Washer for deck screws (box/100)
   },
 };
 
@@ -235,6 +238,9 @@ export interface AddOns {
   includeBasePlateCovers: boolean;
   includeShims: boolean; // fascia only — 1/4" base plate rubber gaskets
   includeShoulderWashers: boolean; // fascia only — 5/16" nylon insulators, no discount
+  // Deck fasteners add-on
+  deckFastenerOption: 'none' | 'panHead14x3' | 'hexHead516x5'; // surface: both; fascia: hexHead516x5 only
+  includeDeckNylonWashers: boolean; // surface only, paired with either screw type
 }
 
 export interface ConfigInputs {
@@ -651,6 +657,22 @@ export function calculateSurface(config: ConfigInputs): CalculationResult {
     if (outsideQty > 0) addLine('Outside Base Plate Covers', outsideQty, PRICES_2026.parts.basePlateCover_outside * (1 - discount));
     if (insideQty > 0) addLine('Inside Base Plate Covers', insideQty, PRICES_2026.parts.basePlateCover_inside * (1 - discount));
   }
+  // Deck fasteners add-on (surface mount)
+  if (addons.deckFastenerOption !== 'none') {
+    const totalPosts = q.midPosts + q.endPosts + q.outsideCornerPosts + q.insideCornerPosts + q.endPostsLeft25 + q.endPostsRight25;
+    const screwsNeeded = totalPosts * 4;
+    if (addons.deckFastenerOption === 'panHead14x3') {
+      const boxQty = Math.ceil(screwsNeeded / 100);
+      addLine('#14 x 3" Pan Head Screws (box/100) — not included in Infinity Engineering', boxQty, PRICES_2026.fasteners.panHeadScrew_14x3 * (1 - discount));
+    } else if (addons.deckFastenerOption === 'hexHead516x5') {
+      const boxQty = Math.ceil(screwsNeeded / 50);
+      addLine('5/16" x 5" Hex Head Screws (box/50) — not included in Infinity Engineering', boxQty, PRICES_2026.fasteners.hexHeadScrew_516x5 * (1 - discount));
+    }
+    if (addons.includeDeckNylonWashers) {
+      const washerBoxQty = Math.ceil(screwsNeeded / 100);
+      addLine('Nylon Shoulder Washers (box/100) — not included in Infinity Engineering', washerBoxQty, PRICES_2026.fasteners.nylonWasher_deck * (1 - discount));
+    }
+  }
 
   const subtotal = lineItems.reduce((sum, item) => sum + item.total + (item.paintCost || 0), 0);
 
@@ -922,6 +944,13 @@ export function calculateFascia(config: ConfigInputs): CalculationResult {
   if (addons.includeShoulderWashers) {
     addLine('5/16" Screw Nylon Insulator Box/100 RPLSCI516', 1, PRICES_2026.parts.shoulderWasherBox);
   }
+  // Deck fasteners add-on (fascia mount — only 5/16"x5" hex head screws)
+  if (addons.deckFastenerOption === 'hexHead516x5') {
+    const totalPosts = q.midPosts + q.endPosts + q.outsideCornerPosts + q.insideCornerPosts + q.endPostsLeft25 + q.endPostsRight25;
+    const screwsNeeded = totalPosts * 4;
+    const boxQty = Math.ceil(screwsNeeded / 50);
+    addLine('5/16" x 5" Hex Head Screws (box/50) — not included in Infinity Engineering', boxQty, PRICES_2026.fasteners.hexHeadScrew_516x5 * (1 - discount));
+  }
 
   const subtotal = lineItems.reduce((sum, item) => sum + item.total + (item.paintCost || 0), 0);
 
@@ -1006,6 +1035,8 @@ export function defaultConfig(): ConfigInputs {
       includeBasePlateCovers: false,
       includeShims: false,
       includeShoulderWashers: false,
+      deckFastenerOption: 'none' as const,
+      includeDeckNylonWashers: false,
     },
   };
 }

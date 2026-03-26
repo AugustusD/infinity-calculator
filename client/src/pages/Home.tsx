@@ -1147,6 +1147,69 @@ export default function Home() {
                           </FieldRow>
                         </>
                       )}
+                      {/* ── Deck Fasteners ── */}
+                      <div className="pt-3 mt-1" style={{ borderTop: '1px solid #E8E4DC' }}>
+                        <div className="text-[10px] font-bold uppercase tracking-widest mb-2" style={{ color: '#B69A5A' }}>Deck Fasteners</div>
+                        <p className="text-[10px] mb-3" style={{ color: '#8A8A8A' }}>
+                          Screws provided are not included in Infinity Engineering specifications. Dealer is responsible for confirming fastener suitability for substrate.
+                        </p>
+                        <div className="space-y-1">
+                          {/* Surface: 3 options — None, Pan Head 14x3, Hex Head 5/16x5 */}
+                          {isSurface && (
+                            <>
+                              {(['none', 'panHead14x3', 'hexHead516x5'] as const).map(opt => (
+                                <label key={opt} className="flex items-center gap-2 cursor-pointer py-1">
+                                  <input
+                                    type="radio"
+                                    name="deckFastenerOption"
+                                    value={opt}
+                                    checked={config.addOns.deckFastenerOption === opt}
+                                    onChange={() => updateAddOn('deckFastenerOption', opt as any)}
+                                    className="accent-[#B69A5A]"
+                                  />
+                                  <span className="text-xs" style={{ color: '#3A3A3A' }}>
+                                    {opt === 'none' && 'No deck fasteners'}
+                                    {opt === 'panHead14x3' && '#14 × 3" Pan Head Screws (box/100, 4 per post)'}
+                                    {opt === 'hexHead516x5' && '5/16" × 5" Hex Head Screws (box/50, 4 per post)'}
+                                  </span>
+                                </label>
+                              ))}
+                              {config.addOns.deckFastenerOption !== 'none' && (
+                                <label className="flex items-center gap-2 cursor-pointer py-1 ml-4">
+                                  <input
+                                    type="checkbox"
+                                    checked={config.addOns.includeDeckNylonWashers}
+                                    onChange={e => updateAddOn('includeDeckNylonWashers', e.target.checked)}
+                                    className="accent-[#B69A5A]"
+                                  />
+                                  <span className="text-xs" style={{ color: '#3A3A3A' }}>Add Nylon Shoulder Washers (box/100, 4 per post)</span>
+                                </label>
+                              )}
+                            </>
+                          )}
+                          {/* Fascia: only Hex Head 5/16x5 or None */}
+                          {isFascia && (
+                            <>
+                              {(['none', 'hexHead516x5'] as const).map(opt => (
+                                <label key={opt} className="flex items-center gap-2 cursor-pointer py-1">
+                                  <input
+                                    type="radio"
+                                    name="deckFastenerOption"
+                                    value={opt}
+                                    checked={config.addOns.deckFastenerOption === opt}
+                                    onChange={() => updateAddOn('deckFastenerOption', opt as any)}
+                                    className="accent-[#B69A5A]"
+                                  />
+                                  <span className="text-xs" style={{ color: '#3A3A3A' }}>
+                                    {opt === 'none' && 'No deck fasteners'}
+                                    {opt === 'hexHead516x5' && '5/16" × 5" Hex Head Screws (box/50, 4 per post)'}
+                                  </span>
+                                </label>
+                              ))}
+                            </>
+                          )}
+                        </div>
+                      </div>
 
                     </div>
                   </motion.div>
