@@ -550,6 +550,111 @@ export default function Home() {
         )}
       </div>
 
+      {/* ====== PRINT-ONLY: 2-column CAD + Material Quote ====== */}
+      <div className="print-only print-two-col" style={{ marginBottom: '12pt' }}>
+        {/* Left: CAD Diagram */}
+        <PostDiagram
+          mountType={config.mountType}
+          railHeight={config.railHeight}
+          postHeightAboveDeck={result.postHeightAboveDeck}
+          isShortPost={constraints.isShortPost}
+        />
+        {/* Right: Material Quote */}
+        <div className="calc-card p-5">
+          <div className="flex items-start justify-between mb-4 pb-3" style={{ borderBottom: '2px solid #B69A5A' }}>
+            <div>
+              <h2 className="text-base font-black uppercase tracking-widest" style={{ color: '#111111', letterSpacing: '0.12em' }}>
+                Material Estimate
+              </h2>
+              <p className="text-xs mt-0.5" style={{ color: '#6B6B6B' }}>
+                {config.mountType === 'surface' ? 'Surface Mount' : 'Fascia Mount'} &middot;{' '}
+                {config.railHeight}" Rail &middot; {config.glassThickness}mm Glass
+              </p>
+              {jobInfo.jobReference && (
+                <p className="text-xs mt-0.5" style={{ color: '#6B6B6B' }}>Ref: {jobInfo.jobReference}</p>
+              )}
+              {jobInfo.dealerName && (
+                <p className="text-xs" style={{ color: '#6B6B6B' }}>Dealer: {jobInfo.dealerName}</p>
+              )}
+              {jobInfo.color && (
+                <p className="text-xs" style={{ color: '#6B6B6B' }}>Color: <strong style={{ color: '#111111' }}>{jobInfo.color}</strong></p>
+              )}
+            </div>
+            <div className="text-right">
+              <div className="text-[10px] font-bold uppercase tracking-widest mb-0.5" style={{ color: '#6B6B6B' }}>Job Cost</div>
+              <div className="mono text-2xl font-black" style={{ color: '#111111' }}>
+                {fmtCurrency(result.jobCost)}
+              </div>
+              {config.discountLevel > 0 && (
+                <div className="text-xs" style={{ color: '#B69A5A' }}>
+                  {(config.discountLevel * 100).toFixed(1)}% discount applied
+                </div>
+              )}
+            </div>
+          </div>
+          {hasContent && (
+            <div className="grid grid-cols-2 gap-3 mb-4 p-3 rounded" style={{ background: '#F5F5F5', border: '1px solid #EBEBEB' }}>
+              <div>
+                <div className="text-[10px] font-bold uppercase tracking-widest mb-0.5" style={{ color: '#6B6B6B' }}>Deck Fasteners</div>
+                <div className="mono font-bold text-sm" style={{ color: '#111111' }}>{result.deckFasteners} required</div>
+                <div className="text-xs" style={{ color: '#6B6B6B' }}>Not included</div>
+              </div>
+              {result.wallFasteners > 0 && (
+                <div>
+                  <div className="text-[10px] font-bold uppercase tracking-widest mb-0.5" style={{ color: '#6B6B6B' }}>Wall Fasteners</div>
+                  <div className="mono font-bold text-sm" style={{ color: '#111111' }}>{result.wallFasteners} required</div>
+                  <div className="text-xs" style={{ color: '#6B6B6B' }}>Not included</div>
+                </div>
+              )}
+            </div>
+          )}
+          {hasContent ? (
+            <div className="overflow-x-auto">
+              <table className="results-table w-full text-left">
+                <thead>
+                  <tr style={{ background: '#111111' }}>
+                    <th style={{ color: '#B69A5A' }}>Description</th>
+                    <th className="text-right" style={{ color: '#B69A5A' }}>QTY</th>
+                    <th className="text-right" style={{ color: '#B69A5A' }}>Unit</th>
+                    <th className="text-right" style={{ color: '#B69A5A' }}>Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {result.lineItems.map((item, i) => (
+                    <tr key={i}>
+                      <td className="text-xs">{item.description}</td>
+                      <td className="mono text-right text-xs">{item.qty % 1 === 0 ? item.qty : fmt(item.qty, 2)}</td>
+                      <td className="mono text-right text-xs">{fmtCurrency(item.unitCost)}</td>
+                      <td className="mono text-right text-xs font-bold">{fmtCurrency(item.total)}</td>
+                    </tr>
+                  ))}
+                  {result.lineItems.some(i => i.paintCost) && (
+                    <tr>
+                      <td className="text-xs italic" colSpan={3} style={{ color: '#6B6B6B' }}>Paint costs included in totals</td>
+                      <td className="mono text-right text-xs" style={{ color: '#6B6B6B' }}>
+                        {fmtCurrency(result.lineItems.reduce((s, i) => s + (i.paintCost || 0), 0))}
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+                <tfoot>
+                  <tr className="total-row">
+                    <td colSpan={3} className="text-sm font-black uppercase tracking-wide" style={{ color: '#111111' }}>
+                      {config.glassThickness === 12 ? '12mm' : '13mm'} Job Cost
+                    </td>
+                    <td className="mono text-right text-sm font-black" style={{ color: '#111111' }}>{fmtCurrency(result.jobCost)}</td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          ) : (
+            <div className="text-center py-4" style={{ color: '#6B6B6B' }}>
+              <p className="text-sm">No quantities entered.</p>
+            </div>
+          )}
+        </div>
+      </div>
+
       <div className="container py-6">
         {/* 3-column layout: left sidebar (320px) | centre config | right quote (360px) */}
         <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr_360px] gap-6">
@@ -615,13 +720,15 @@ export default function Home() {
               </div>
             </div>
 
-            {/* ====== POST DIAGRAM ====== */}
-            <PostDiagram
-              mountType={config.mountType}
-              railHeight={config.railHeight}
-              postHeightAboveDeck={result.postHeightAboveDeck}
-              isShortPost={constraints.isShortPost}
-            />
+            {/* ====== POST DIAGRAM (screen only — print version is in print-two-col below) ====== */}
+            <div className="no-print">
+              <PostDiagram
+                mountType={config.mountType}
+                railHeight={config.railHeight}
+                postHeightAboveDeck={result.postHeightAboveDeck}
+                isShortPost={constraints.isShortPost}
+              />
+            </div>
 
             {/* Discount & Shipping — bottom left */}
             <div className="calc-card p-5 no-print">
@@ -847,8 +954,8 @@ export default function Home() {
               )}
             </div>
 
-            {/* Material Quote — centre column, after Configuration */}
-            <div className="calc-card p-5">
+            {/* Material Quote — centre column, after Configuration (screen only — print version is in print-two-col) */}
+            <div className="calc-card p-5 no-print">
               <div className="flex items-start justify-between mb-4 pb-3" style={{ borderBottom: '2px solid #B69A5A' }}>
                 <div>
                   <h2 className="text-base font-black uppercase tracking-widest" style={{ color: '#111111', letterSpacing: '0.12em' }}>

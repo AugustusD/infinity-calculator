@@ -310,6 +310,60 @@
   @media print {
     .no-print { display: none !important; }
     .print-only { display: block !important; }
+
+    /* Hide the platform-injected Manus branding footer */
+    iframe, [class*="manus-badge"], [id*="manus-badge"],
+    [class*="powered-by"], [id*="powered-by"],
+    body > div[style*="position: fixed"],
+    body > div[style*="position:fixed"] { display: none !important; }
+
+    /* Ensure the page body has enough bottom margin so content
+       never slides under any fixed overlay that may appear in print */
+    body { margin-bottom: 48pt !important; }
+    @page { margin: 14mm 12mm 20mm 12mm; }
+
+    /* Prevent any section card from being orphaned in the bottom quarter.
+       page-break-inside: avoid keeps a single card together;
+       page-break-before: auto lets the browser decide unless forced. */
+    .calc-card {
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+
+    /* Sections that are likely to start near the bottom of a page
+       should start fresh on the next page */
+    .print-break-before {
+      page-break-before: always;
+      break-before: page;
+    }
+
+    /* ── 2-column print layout: CAD diagram + Material Quote side by side ── */
+    .print-two-col {
+      display: grid !important;
+      grid-template-columns: 1fr 1fr !important;
+      gap: 12pt !important;
+      width: 100% !important;
+    }
+    .print-two-col > * {
+      width: 100% !important;
+      min-width: 0 !important;
+    }
+
+    /* Scale down the CAD image so it fits the half-width column */
+    .print-two-col img {
+      max-height: 260pt !important;
+      width: 100% !important;
+      object-fit: contain !important;
+    }
+
+    /* Flatten the 3-column screen grid to a single column for print */
+    .lg\:grid-cols-\[320px_1fr_360px\] {
+      grid-template-columns: 1fr !important;
+    }
+
+    /* Keep the BOM table readable */
+    .results-table { font-size: 9pt !important; }
+    .results-table th, .results-table td { padding: 3pt 5pt !important; }
   }
   @media screen {
     .print-only { display: none !important; }
