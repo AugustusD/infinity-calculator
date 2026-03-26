@@ -960,12 +960,7 @@ export default function Home() {
                 </>
               )}
 
-              {/* Surface: base plate gaskets */}
-              {isSurface && (
-                <FieldRow label="Include Base Plate Gaskets">
-                  <Toggle checked={config.basePlateGaskets} onChange={v => update('basePlateGaskets', v)} />
-                </FieldRow>
-              )}
+
             </div>
 
             {/* Material Quote — centre column, after Configuration (screen only — print version is in print-two-col) */}
@@ -1076,31 +1071,31 @@ export default function Home() {
             <div className="calc-card p-5 no-print">
               <SectionHeader title="Add-Ons & Accessories" />
               <div className="space-y-0 mt-2">
-                      {/* ── SURFACE: Base Plate Covers at top ── */}
+                      {/* ── SURFACE: Base Plate Covers + Gaskets at top ── */}
                       {isSurface && (
-                        <FieldRow label="Include Base Plate Covers" hint="Mid + End posts get mid covers; outside/inside corners get respective covers">
-                          <Toggle
-                            checked={config.addOns.includeBasePlateCovers}
-                            onChange={v => updateAddOn('includeBasePlateCovers', v)}
-                          />
-                        </FieldRow>
-                      )}
-                      {/* ── FASCIA: Shims + Shoulder Washers at top ── */}
-                      {isFascia && (
                         <>
-                          <FieldRow label={'Include Shims (1/4" Base Plate Gaskets)'} hint="MP/IC: RPLFINFSH25 / OC: RPLFINFOSH25 - subject to discount">
+                          <FieldRow label="Include Base Plate Covers" hint="Mid + End posts get mid covers; outside/inside corners get respective covers">
                             <Toggle
-                              checked={config.addOns.includeShims}
-                              onChange={v => updateAddOn('includeShims', v)}
+                              checked={config.addOns.includeBasePlateCovers}
+                              onChange={v => updateAddOn('includeBasePlateCovers', v)}
                             />
                           </FieldRow>
-                          <FieldRow label="Include Shoulder Washers" hint={'5/16" Nylon Insulator Box/100 RPLSCI516 - list price, no discount'}>
+                          <FieldRow label="Include Base Plate Gaskets" hint="RPLBPG - 4x4 Neoprene Rubber, 1 per post - subject to discount">
                             <Toggle
-                              checked={config.addOns.includeShoulderWashers}
-                              onChange={v => updateAddOn('includeShoulderWashers', v)}
+                              checked={config.basePlateGaskets}
+                              onChange={v => update('basePlateGaskets', v)}
                             />
                           </FieldRow>
                         </>
+                      )}
+                      {/* ── FASCIA: Shims only at top (shoulder washers moved under hex head screw) ── */}
+                      {isFascia && (
+                        <FieldRow label={'Include Shims (1/4" Base Plate Gaskets)'} hint="MP/IC: RPLFINFSH25 / OC: RPLFINFOSH25 - subject to discount">
+                          <Toggle
+                            checked={config.addOns.includeShims}
+                            onChange={v => updateAddOn('includeShims', v)}
+                          />
+                        </FieldRow>
                       )}
                       {/* ── Deck Fasteners (moved up, before other add-ons) ── */}
                       <div className="pt-3 mt-1" style={{ borderTop: '1px solid #E8E4DC' }}>
@@ -1171,6 +1166,15 @@ export default function Home() {
                                   className="accent-[#B69A5A]" />
                                 <span className="text-xs" style={{ color: '#3A3A3A' }}>5/16" x 5" Hex Head Screws (box/50, 4 per post)</span>
                               </label>
+                              {config.addOns.deckFastenerOption === 'hexHead516x5' && (
+                                <label className="flex items-center gap-2 cursor-pointer py-1 ml-5">
+                                  <input type="checkbox"
+                                    checked={config.addOns.includeShoulderWashers}
+                                    onChange={e => updateAddOn('includeShoulderWashers', e.target.checked)}
+                                    className="accent-[#B69A5A]" />
+                                  <span className="text-xs" style={{ color: '#3A3A3A' }}>Add 5/16" Nylon Insulators RPLSCI516 (box/100, 4 per post)</span>
+                                </label>
+                              )}
                             </>
                           )}
                         </div>
