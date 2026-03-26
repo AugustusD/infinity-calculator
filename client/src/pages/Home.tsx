@@ -1074,25 +1074,111 @@ export default function Home() {
 
             {/* Add-Ons */}
             <div className="calc-card p-5 no-print">
-              <button
-                onClick={() => setShowAddOns(!showAddOns)}
-                className="flex items-center justify-between w-full"
-              >
-                <SectionHeader title="Add-Ons & Accessories" />
-                {showAddOns
-                  ? <ChevronUp size={16} style={{ color: '#B69A5A' }} />
-                  : <ChevronDown size={16} style={{ color: '#B69A5A' }} />}
-              </button>
-              <AnimatePresence>
-                {showAddOns && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: 'auto', opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                    className="overflow-hidden"
-                  >
-                    <div className="space-y-0 mt-2">
+              <SectionHeader title="Add-Ons & Accessories" />
+              <div className="space-y-0 mt-2">
+                      {/* ── SURFACE: Base Plate Covers at top ── */}
+                      {isSurface && (
+                        <FieldRow label="Include Base Plate Covers" hint="Mid + End posts get mid covers; outside/inside corners get respective covers">
+                          <Toggle
+                            checked={config.addOns.includeBasePlateCovers}
+                            onChange={v => updateAddOn('includeBasePlateCovers', v)}
+                          />
+                        </FieldRow>
+                      )}
+                      {/* ── FASCIA: Shims + Shoulder Washers at top ── */}
+                      {isFascia && (
+                        <>
+                          <FieldRow label={'Include Shims (1/4" Base Plate Gaskets)'} hint="MP/IC: RPLFINFSH25 / OC: RPLFINFOSH25 - subject to discount">
+                            <Toggle
+                              checked={config.addOns.includeShims}
+                              onChange={v => updateAddOn('includeShims', v)}
+                            />
+                          </FieldRow>
+                          <FieldRow label="Include Shoulder Washers" hint={'5/16" Nylon Insulator Box/100 RPLSCI516 - list price, no discount'}>
+                            <Toggle
+                              checked={config.addOns.includeShoulderWashers}
+                              onChange={v => updateAddOn('includeShoulderWashers', v)}
+                            />
+                          </FieldRow>
+                        </>
+                      )}
+                      {/* ── Deck Fasteners (moved up, before other add-ons) ── */}
+                      <div className="pt-3 mt-1" style={{ borderTop: '1px solid #E8E4DC' }}>
+                        <div className="text-[10px] font-bold uppercase tracking-widest mb-2" style={{ color: '#B69A5A' }}>Deck Fasteners</div>
+                        <p className="text-[10px] mb-3" style={{ color: '#8A8A8A' }}>
+                          Screws provided are not included in Infinity Engineering specifications. Dealer is responsible for confirming fastener suitability for substrate.
+                        </p>
+                        <div className="space-y-1">
+                          {isSurface && (
+                            <>
+                              {/* None option */}
+                              <label className="flex items-center gap-2 cursor-pointer py-1">
+                                <input type="radio" name="deckFastenerOption" value="none"
+                                  checked={config.addOns.deckFastenerOption === 'none'}
+                                  onChange={() => updateAddOn('deckFastenerOption', 'none')}
+                                  className="accent-[#B69A5A]" />
+                                <span className="text-xs" style={{ color: '#3A3A3A' }}>No deck fasteners</span>
+                              </label>
+                              {/* Pan Head 14x3 + its washer */}
+                              <label className="flex items-center gap-2 cursor-pointer py-1">
+                                <input type="radio" name="deckFastenerOption" value="panHead14x3"
+                                  checked={config.addOns.deckFastenerOption === 'panHead14x3'}
+                                  onChange={() => updateAddOn('deckFastenerOption', 'panHead14x3')}
+                                  className="accent-[#B69A5A]" />
+                                <span className="text-xs" style={{ color: '#3A3A3A' }}>#14 x 3" Pan Head Screws (box/100, 4 per post)</span>
+                              </label>
+                              {config.addOns.deckFastenerOption === 'panHead14x3' && (
+                                <label className="flex items-center gap-2 cursor-pointer py-1 ml-5">
+                                  <input type="checkbox"
+                                    checked={config.addOns.includeDeckNylonWashers}
+                                    onChange={e => updateAddOn('includeDeckNylonWashers', e.target.checked)}
+                                    className="accent-[#B69A5A]" />
+                                  <span className="text-xs" style={{ color: '#3A3A3A' }}>Add #14 Nylon Insulators RPLSCI14 (box/100, 4 per post)</span>
+                                </label>
+                              )}
+                              {/* Hex Head 5/16x5 + its washer */}
+                              <label className="flex items-center gap-2 cursor-pointer py-1">
+                                <input type="radio" name="deckFastenerOption" value="hexHead516x5"
+                                  checked={config.addOns.deckFastenerOption === 'hexHead516x5'}
+                                  onChange={() => updateAddOn('deckFastenerOption', 'hexHead516x5')}
+                                  className="accent-[#B69A5A]" />
+                                <span className="text-xs" style={{ color: '#3A3A3A' }}>5/16" x 5" Hex Head Screws (box/50, 4 per post)</span>
+                              </label>
+                              {config.addOns.deckFastenerOption === 'hexHead516x5' && (
+                                <label className="flex items-center gap-2 cursor-pointer py-1 ml-5">
+                                  <input type="checkbox"
+                                    checked={config.addOns.includeDeckNylonWashers}
+                                    onChange={e => updateAddOn('includeDeckNylonWashers', e.target.checked)}
+                                    className="accent-[#B69A5A]" />
+                                  <span className="text-xs" style={{ color: '#3A3A3A' }}>Add 5/16" Nylon Insulators RPLSCI516 (box/100, 4 per post)</span>
+                                </label>
+                              )}
+                            </>
+                          )}
+                          {isFascia && (
+                            <>
+                              <label className="flex items-center gap-2 cursor-pointer py-1">
+                                <input type="radio" name="deckFastenerOption" value="none"
+                                  checked={config.addOns.deckFastenerOption === 'none'}
+                                  onChange={() => updateAddOn('deckFastenerOption', 'none')}
+                                  className="accent-[#B69A5A]" />
+                                <span className="text-xs" style={{ color: '#3A3A3A' }}>No deck fasteners</span>
+                              </label>
+                              <label className="flex items-center gap-2 cursor-pointer py-1">
+                                <input type="radio" name="deckFastenerOption" value="hexHead516x5"
+                                  checked={config.addOns.deckFastenerOption === 'hexHead516x5'}
+                                  onChange={() => updateAddOn('deckFastenerOption', 'hexHead516x5')}
+                                  className="accent-[#B69A5A]" />
+                                <span className="text-xs" style={{ color: '#3A3A3A' }}>5/16" x 5" Hex Head Screws (box/50, 4 per post)</span>
+                              </label>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                      {/* ── Separator before other add-ons ── */}
+                      <div className="pt-3 mt-1" style={{ borderTop: '1px solid #E8E4DC' }}>
+                        <div className="text-[10px] font-bold uppercase tracking-widest mb-2" style={{ color: '#B69A5A' }}>Other Add-Ons</div>
+                      </div>
                       {isSurface && [
                         { key: 'removeTrackFromPost', label: 'Remove Track From Post' },
                         { key: 'cutDownTrack', label: 'Cut Down One Track' },
@@ -1128,98 +1214,7 @@ export default function Home() {
                           min={0}
                         />
                       </FieldRow>
-                      {isSurface && (
-                        <FieldRow label="Include Base Plate Covers" hint="Mid + End posts get mid covers; outside/inside corners get respective covers">
-                          <Toggle
-                            checked={config.addOns.includeBasePlateCovers}
-                            onChange={v => updateAddOn('includeBasePlateCovers', v)}
-                          />
-                        </FieldRow>
-                      )}
-                      {isFascia && (
-                        <>
-                          <FieldRow label={'Include Shims (1/4" Base Plate Gaskets)'} hint="MP/IC: RPLFINFSH25 / OC: RPLFINFOSH25 - subject to discount">
-                            <Toggle
-                              checked={config.addOns.includeShims}
-                              onChange={v => updateAddOn('includeShims', v)}
-                            />
-                          </FieldRow>
-                          <FieldRow label="Include Shoulder Washers" hint={'5/16" Nylon Insulator Box/100 RPLSCI516 - list price, no discount'}>
-                            <Toggle
-                              checked={config.addOns.includeShoulderWashers}
-                              onChange={v => updateAddOn('includeShoulderWashers', v)}
-                            />
-                          </FieldRow>
-                        </>
-                      )}
-                      {/* ── Deck Fasteners ── */}
-                      <div className="pt-3 mt-1" style={{ borderTop: '1px solid #E8E4DC' }}>
-                        <div className="text-[10px] font-bold uppercase tracking-widest mb-2" style={{ color: '#B69A5A' }}>Deck Fasteners</div>
-                        <p className="text-[10px] mb-3" style={{ color: '#8A8A8A' }}>
-                          Screws provided are not included in Infinity Engineering specifications. Dealer is responsible for confirming fastener suitability for substrate.
-                        </p>
-                        <div className="space-y-1">
-                          {/* Surface: 3 options — None, Pan Head 14x3, Hex Head 5/16x5 */}
-                          {isSurface && (
-                            <>
-                              {(['none', 'panHead14x3', 'hexHead516x5'] as const).map(opt => (
-                                <label key={opt} className="flex items-center gap-2 cursor-pointer py-1">
-                                  <input
-                                    type="radio"
-                                    name="deckFastenerOption"
-                                    value={opt}
-                                    checked={config.addOns.deckFastenerOption === opt}
-                                    onChange={() => updateAddOn('deckFastenerOption', opt as any)}
-                                    className="accent-[#B69A5A]"
-                                  />
-                                  <span className="text-xs" style={{ color: '#3A3A3A' }}>
-                                    {opt === 'none' && 'No deck fasteners'}
-                                    {opt === 'panHead14x3' && '#14 × 3" Pan Head Screws (box/100, 4 per post)'}
-                                    {opt === 'hexHead516x5' && '5/16" × 5" Hex Head Screws (box/50, 4 per post)'}
-                                  </span>
-                                </label>
-                              ))}
-                              {config.addOns.deckFastenerOption !== 'none' && (
-                                <label className="flex items-center gap-2 cursor-pointer py-1 ml-4">
-                                  <input
-                                    type="checkbox"
-                                    checked={config.addOns.includeDeckNylonWashers}
-                                    onChange={e => updateAddOn('includeDeckNylonWashers', e.target.checked)}
-                                    className="accent-[#B69A5A]"
-                                  />
-                                  <span className="text-xs" style={{ color: '#3A3A3A' }}>Add Nylon Shoulder Washers (box/100, 4 per post)</span>
-                                </label>
-                              )}
-                            </>
-                          )}
-                          {/* Fascia: only Hex Head 5/16x5 or None */}
-                          {isFascia && (
-                            <>
-                              {(['none', 'hexHead516x5'] as const).map(opt => (
-                                <label key={opt} className="flex items-center gap-2 cursor-pointer py-1">
-                                  <input
-                                    type="radio"
-                                    name="deckFastenerOption"
-                                    value={opt}
-                                    checked={config.addOns.deckFastenerOption === opt}
-                                    onChange={() => updateAddOn('deckFastenerOption', opt as any)}
-                                    className="accent-[#B69A5A]"
-                                  />
-                                  <span className="text-xs" style={{ color: '#3A3A3A' }}>
-                                    {opt === 'none' && 'No deck fasteners'}
-                                    {opt === 'hexHead516x5' && '5/16" × 5" Hex Head Screws (box/50, 4 per post)'}
-                                  </span>
-                                </label>
-                              ))}
-                            </>
-                          )}
-                        </div>
-                      </div>
-
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+              </div>
             </div>
           </div>
 
