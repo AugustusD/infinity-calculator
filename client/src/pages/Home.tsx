@@ -968,7 +968,7 @@ export default function Home() {
               <div className="flex items-start justify-between mb-4 pb-3" style={{ borderBottom: '2px solid #B69A5A' }}>
                 <div>
                   <h2 className="text-base font-black uppercase tracking-widest" style={{ color: '#111111', letterSpacing: '0.12em' }}>
-                    Material Quote
+                    Cost Estimation
                   </h2>
                   <p className="text-xs mt-0.5" style={{ color: '#6B6B6B' }}>
                     {config.mountType === 'surface' ? 'Surface Mount' : 'Fascia Mount'} &middot;{' '}
@@ -997,23 +997,7 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* Fastener info */}
-              {hasContent && (
-                <div className="grid grid-cols-2 gap-3 mb-4 p-3 rounded" style={{ background: '#F5F5F5', border: '1px solid #EBEBEB' }}>
-                  <div>
-                    <div className="text-[10px] font-bold uppercase tracking-widest mb-0.5" style={{ color: '#6B6B6B' }}>Deck Fasteners</div>
-                    <div className="mono font-bold text-sm" style={{ color: '#111111' }}>{result.deckFasteners} required</div>
-                    <div className="text-xs" style={{ color: '#6B6B6B' }}>Not included</div>
-                  </div>
-                  {result.wallFasteners > 0 && (
-                    <div>
-                      <div className="text-[10px] font-bold uppercase tracking-widest mb-0.5" style={{ color: '#6B6B6B' }}>Wall Fasteners</div>
-                      <div className="mono font-bold text-sm" style={{ color: '#111111' }}>{result.wallFasteners} required</div>
-                      <div className="text-xs" style={{ color: '#6B6B6B' }}>Not included</div>
-                    </div>
-                  )}
-                </div>
-              )}
+
 
               {/* Bill of Materials */}
               {hasContent ? (
@@ -1071,157 +1055,168 @@ export default function Home() {
             <div className="calc-card p-5 no-print">
               <SectionHeader title="Add-Ons & Accessories" />
               <div className="space-y-0 mt-2">
-                      {/* ── SURFACE: Base Plate Covers + Gaskets at top ── */}
-                      {isSurface && (
-                        <>
-                          <FieldRow label="Include Base Plate Covers" hint="Mid + End posts get mid covers; outside/inside corners get respective covers">
-                            <Toggle
-                              checked={config.addOns.includeBasePlateCovers}
-                              onChange={v => updateAddOn('includeBasePlateCovers', v)}
-                            />
-                          </FieldRow>
-                          <FieldRow label="Include Base Plate Gaskets" hint="RPLBPG - 4x4 Neoprene Rubber, 1 per post - subject to discount">
-                            <Toggle
-                              checked={config.basePlateGaskets}
-                              onChange={v => update('basePlateGaskets', v)}
-                            />
-                          </FieldRow>
-                        </>
-                      )}
-                      {/* ── FASCIA: Shims only at top (shoulder washers moved under hex head screw) ── */}
-                      {isFascia && (
-                        <FieldRow label={'Include Shims (1/4" Base Plate Gaskets)'} hint="MP/IC: RPLFINFSH25 / OC: RPLFINFOSH25 - subject to discount">
-                          <Toggle
-                            checked={config.addOns.includeShims}
-                            onChange={v => updateAddOn('includeShims', v)}
-                          />
-                        </FieldRow>
-                      )}
-                      {/* ── Deck Fasteners (moved up, before other add-ons) ── */}
-                      <div className="pt-3 mt-1" style={{ borderTop: '1px solid #E8E4DC' }}>
-                        <div className="text-[10px] font-bold uppercase tracking-widest mb-2" style={{ color: '#B69A5A' }}>Deck Fasteners</div>
-                        <p className="text-[10px] mb-3" style={{ color: '#8A8A8A' }}>
-                          Screws provided are not included in Infinity Engineering specifications. Dealer is responsible for confirming fastener suitability for substrate.
-                        </p>
-                        <div className="space-y-1">
-                          {isSurface && (
-                            <>
-                              {/* None option */}
-                              <label className="flex items-center gap-2 cursor-pointer py-1">
-                                <input type="radio" name="deckFastenerOption" value="none"
-                                  checked={config.addOns.deckFastenerOption === 'none'}
-                                  onChange={() => updateAddOn('deckFastenerOption', 'none')}
-                                  className="accent-[#B69A5A]" />
-                                <span className="text-xs" style={{ color: '#3A3A3A' }}>No deck fasteners</span>
-                              </label>
-                              {/* Pan Head 14x3 + its washer */}
-                              <label className="flex items-center gap-2 cursor-pointer py-1">
-                                <input type="radio" name="deckFastenerOption" value="panHead14x3"
-                                  checked={config.addOns.deckFastenerOption === 'panHead14x3'}
-                                  onChange={() => updateAddOn('deckFastenerOption', 'panHead14x3')}
-                                  className="accent-[#B69A5A]" />
-                                <span className="text-xs" style={{ color: '#3A3A3A' }}>#14 x 3" Pan Head Screws (box/100, 4 per post)</span>
-                              </label>
-                              {config.addOns.deckFastenerOption === 'panHead14x3' && (
-                                <label className="flex items-center gap-2 cursor-pointer py-1 ml-5">
-                                  <input type="checkbox"
-                                    checked={config.addOns.includeDeckNylonWashers}
-                                    onChange={e => updateAddOn('includeDeckNylonWashers', e.target.checked)}
-                                    className="accent-[#B69A5A]" />
-                                  <span className="text-xs" style={{ color: '#3A3A3A' }}>Add #14 Nylon Insulators RPLSCI14 (box/100, 4 per post)</span>
-                                </label>
-                              )}
-                              {/* Hex Head 5/16x5 + its washer */}
-                              <label className="flex items-center gap-2 cursor-pointer py-1">
-                                <input type="radio" name="deckFastenerOption" value="hexHead516x5"
-                                  checked={config.addOns.deckFastenerOption === 'hexHead516x5'}
-                                  onChange={() => updateAddOn('deckFastenerOption', 'hexHead516x5')}
-                                  className="accent-[#B69A5A]" />
-                                <span className="text-xs" style={{ color: '#3A3A3A' }}>5/16" x 5" Hex Head Screws (box/50, 4 per post)</span>
-                              </label>
-                              {config.addOns.deckFastenerOption === 'hexHead516x5' && (
-                                <label className="flex items-center gap-2 cursor-pointer py-1 ml-5">
-                                  <input type="checkbox"
-                                    checked={config.addOns.includeDeckNylonWashers}
-                                    onChange={e => updateAddOn('includeDeckNylonWashers', e.target.checked)}
-                                    className="accent-[#B69A5A]" />
-                                  <span className="text-xs" style={{ color: '#3A3A3A' }}>Add 5/16" Nylon Insulators RPLSCI516 (box/100, 4 per post)</span>
-                                </label>
-                              )}
-                            </>
-                          )}
-                          {isFascia && (
-                            <>
-                              <label className="flex items-center gap-2 cursor-pointer py-1">
-                                <input type="radio" name="deckFastenerOption" value="none"
-                                  checked={config.addOns.deckFastenerOption === 'none'}
-                                  onChange={() => updateAddOn('deckFastenerOption', 'none')}
-                                  className="accent-[#B69A5A]" />
-                                <span className="text-xs" style={{ color: '#3A3A3A' }}>No deck fasteners</span>
-                              </label>
-                              <label className="flex items-center gap-2 cursor-pointer py-1">
-                                <input type="radio" name="deckFastenerOption" value="hexHead516x5"
-                                  checked={config.addOns.deckFastenerOption === 'hexHead516x5'}
-                                  onChange={() => updateAddOn('deckFastenerOption', 'hexHead516x5')}
-                                  className="accent-[#B69A5A]" />
-                                <span className="text-xs" style={{ color: '#3A3A3A' }}>5/16" x 5" Hex Head Screws (box/50, 4 per post)</span>
-                              </label>
-                              {config.addOns.deckFastenerOption === 'hexHead516x5' && (
-                                <label className="flex items-center gap-2 cursor-pointer py-1 ml-5">
-                                  <input type="checkbox"
-                                    checked={config.addOns.includeShoulderWashers}
-                                    onChange={e => updateAddOn('includeShoulderWashers', e.target.checked)}
-                                    className="accent-[#B69A5A]" />
-                                  <span className="text-xs" style={{ color: '#3A3A3A' }}>Add 5/16" Nylon Insulators RPLSCI516 (box/100, 4 per post)</span>
-                                </label>
-                              )}
-                            </>
-                          )}
+
+                {/* ── SURFACE: Covers + Gaskets (full width) then Deck Fasteners ── */}
+                {isSurface && (
+                  <>
+                    <FieldRow label="Include Base Plate Covers" hint="Mid + End posts get mid covers; outside/inside corners get respective covers">
+                      <Toggle
+                        checked={config.addOns.includeBasePlateCovers}
+                        onChange={v => updateAddOn('includeBasePlateCovers', v)}
+                      />
+                    </FieldRow>
+                    <FieldRow label="Include Base Plate Gaskets" hint="RPLBPG - 4x4 Neoprene Rubber, 1 per post - subject to discount">
+                      <Toggle
+                        checked={config.basePlateGaskets}
+                        onChange={v => update('basePlateGaskets', v)}
+                      />
+                    </FieldRow>
+                    {/* Deck Fasteners — full width for surface */}
+                    <div className="pt-3 mt-1" style={{ borderTop: '1px solid #E8E4DC' }}>
+                      <div className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: '#B69A5A' }}>Deck Fasteners</div>
+                      <p className="text-[10px] mb-2" style={{ color: '#8A8A8A' }}>
+                        Screws provided are not included in Infinity Engineering specifications.
+                      </p>
+                      <div className="space-y-1">
+                        <label className="flex items-center gap-2 cursor-pointer py-1">
+                          <input type="radio" name="deckFastenerOption" value="none"
+                            checked={config.addOns.deckFastenerOption === 'none'}
+                            onChange={() => updateAddOn('deckFastenerOption', 'none')}
+                            className="accent-[#B69A5A]" />
+                          <span className="text-xs" style={{ color: '#3A3A3A' }}>No deck fasteners</span>
+                        </label>
+                        <label className="flex items-center gap-2 cursor-pointer py-1">
+                          <input type="radio" name="deckFastenerOption" value="panHead14x3"
+                            checked={config.addOns.deckFastenerOption === 'panHead14x3'}
+                            onChange={() => updateAddOn('deckFastenerOption', 'panHead14x3')}
+                            className="accent-[#B69A5A]" />
+                          <span className="text-xs" style={{ color: '#3A3A3A' }}>#14 x 3&quot; Pan Head Screws (box/100, 4 per post)</span>
+                        </label>
+                        {config.addOns.deckFastenerOption === 'panHead14x3' && (
+                          <label className="flex items-center gap-2 cursor-pointer py-1 ml-5">
+                            <input type="checkbox"
+                              checked={config.addOns.includeDeckNylonWashers}
+                              onChange={e => updateAddOn('includeDeckNylonWashers', e.target.checked)}
+                              className="accent-[#B69A5A]" />
+                            <span className="text-xs" style={{ color: '#3A3A3A' }}>Add #14 Nylon Insulators RPLSCI14 (box/100, 4 per post)</span>
+                          </label>
+                        )}
+                        <label className="flex items-center gap-2 cursor-pointer py-1">
+                          <input type="radio" name="deckFastenerOption" value="hexHead516x5"
+                            checked={config.addOns.deckFastenerOption === 'hexHead516x5'}
+                            onChange={() => updateAddOn('deckFastenerOption', 'hexHead516x5')}
+                            className="accent-[#B69A5A]" />
+                          <span className="text-xs" style={{ color: '#3A3A3A' }}>5/16&quot; x 5&quot; Hex Head Screws (box/50, 4 per post)</span>
+                        </label>
+                        {config.addOns.deckFastenerOption === 'hexHead516x5' && (
+                          <label className="flex items-center gap-2 cursor-pointer py-1 ml-5">
+                            <input type="checkbox"
+                              checked={config.addOns.includeDeckNylonWashers}
+                              onChange={e => updateAddOn('includeDeckNylonWashers', e.target.checked)}
+                              className="accent-[#B69A5A]" />
+                            <span className="text-xs" style={{ color: '#3A3A3A' }}>Add 5/16&quot; Nylon Insulators RPLSCI516 (box/100, 4 per post)</span>
+                          </label>
+                        )}
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {/* ── FASCIA: Shims (left) + Deck Fasteners (right) side by side ── */}
+                {isFascia && (
+                  <div className="grid grid-cols-2 gap-4 mb-2">
+                    {/* Left: Shims */}
+                    <div>
+                      <div className="flex items-center justify-between py-2">
+                        <div>
+                          <div className="text-xs font-semibold" style={{ color: '#3A3A3A' }}>Include Shims</div>
+                          <div className="text-[11px]" style={{ color: '#8A8A8A' }}>(1/4&quot; Base Plate Gaskets)</div>
                         </div>
-                      </div>
-                      {/* ── Separator before other add-ons ── */}
-                      <div className="pt-3 mt-1" style={{ borderTop: '1px solid #E8E4DC' }}>
-                        <div className="text-[10px] font-bold uppercase tracking-widest mb-2" style={{ color: '#B69A5A' }}>Other Add-Ons</div>
-                      </div>
-                      {isSurface && [
-                        { key: 'removeTrackFromPost', label: 'Remove Track From Post' },
-                        { key: 'cutDownTrack', label: 'Cut Down One Track' },
-                        { key: 'add5x5BasePlate', label: 'Add 5"x5"x0.5" Base Plate (Infinity Post)' },
-                        { key: 'addWeldedSurfaceBase', label: 'Add Welded Surface Base' },
-                        { key: 'addWeldedExtrudedSideMount', label: 'Add Welded Extruded Side Mount 1.9 Pipe' },
-                      ].map(({ key, label }) => (
-                        <FieldRow key={key} label={label}>
-                          <NumInput
-                            value={config.addOns[key as keyof typeof config.addOns] as number}
-                            onChange={v => updateAddOn(key as keyof typeof config.addOns, v)}
-                            min={0}
-                          />
-                        </FieldRow>
-                      ))}
-                      {isFascia && [
-                        { key: 'removeTrackFromPost', label: 'Remove Track From Post' },
-                        { key: 'cutDownTrack', label: 'Cut Down One Track' },
-                        { key: 'addWeldedExtrudedSideMount', label: 'Add Welded Extruded Side Mount 1.9 Pipe' },
-                      ].map(({ key, label }) => (
-                        <FieldRow key={key} label={label}>
-                          <NumInput
-                            value={config.addOns[key as keyof typeof config.addOns] as number}
-                            onChange={v => updateAddOn(key as keyof typeof config.addOns, v)}
-                            min={0}
-                          />
-                        </FieldRow>
-                      ))}
-                      <FieldRow label="Glass Shelf Kits">
-                        <NumInput
-                          value={config.addOns.glassShelfKits}
-                          onChange={v => updateAddOn('glassShelfKits', v)}
-                          min={0}
+                        <Toggle
+                          checked={config.addOns.includeShims}
+                          onChange={v => updateAddOn('includeShims', v)}
                         />
-                      </FieldRow>
+                      </div>
+                    </div>
+                    {/* Right: Deck Fasteners */}
+                    <div>
+                      <div className="text-[10px] font-bold uppercase tracking-widest mb-1 pt-2" style={{ color: '#B69A5A' }}>Deck Fasteners</div>
+                      <p className="text-[10px] mb-2" style={{ color: '#8A8A8A' }}>
+                        Not in Infinity Engineering specs.
+                      </p>
+                      <div className="space-y-1">
+                        <label className="flex items-center gap-2 cursor-pointer py-1">
+                          <input type="radio" name="deckFastenerOption" value="none"
+                            checked={config.addOns.deckFastenerOption === 'none'}
+                            onChange={() => updateAddOn('deckFastenerOption', 'none')}
+                            className="accent-[#B69A5A]" />
+                          <span className="text-xs" style={{ color: '#3A3A3A' }}>No fasteners</span>
+                        </label>
+                        <label className="flex items-center gap-2 cursor-pointer py-1">
+                          <input type="radio" name="deckFastenerOption" value="hexHead516x5"
+                            checked={config.addOns.deckFastenerOption === 'hexHead516x5'}
+                            onChange={() => updateAddOn('deckFastenerOption', 'hexHead516x5')}
+                            className="accent-[#B69A5A]" />
+                          <span className="text-xs" style={{ color: '#3A3A3A' }}>5/16&quot; x 5&quot; Hex Head (box/50)</span>
+                        </label>
+                        {config.addOns.deckFastenerOption === 'hexHead516x5' && (
+                          <label className="flex items-center gap-2 cursor-pointer py-1 ml-5">
+                            <input type="checkbox"
+                              checked={config.addOns.includeShoulderWashers}
+                              onChange={e => updateAddOn('includeShoulderWashers', e.target.checked)}
+                              className="accent-[#B69A5A]" />
+                            <span className="text-xs" style={{ color: '#3A3A3A' }}>Add 5/16&quot; Nylon RPLSCI516 (box/100)</span>
+                          </label>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* ── Other Add-Ons ── */}
+                <div className="pt-3 mt-1" style={{ borderTop: '1px solid #E8E4DC' }}>
+                  <div className="text-[10px] font-bold uppercase tracking-widest mb-2" style={{ color: '#B69A5A' }}>Other Add-Ons</div>
+                </div>
+                {isSurface && [
+                  { key: 'removeTrackFromPost', label: 'Remove Track From Post' },
+                  { key: 'cutDownTrack', label: 'Cut Down One Track' },
+                  { key: 'add5x5BasePlate', label: 'Add 5"x5"x0.5" Base Plate (Infinity Post)' },
+                  { key: 'addWeldedSurfaceBase', label: 'Add Welded Surface Base' },
+                  { key: 'addWeldedExtrudedSideMount', label: 'Add Welded Extruded Side Mount 1.9 Pipe' },
+                ].map(({ key, label }) => (
+                  <FieldRow key={key} label={label}>
+                    <NumInput
+                      value={config.addOns[key as keyof typeof config.addOns] as number}
+                      onChange={v => updateAddOn(key as keyof typeof config.addOns, v)}
+                      min={0}
+                    />
+                  </FieldRow>
+                ))}
+                {isFascia && [
+                  { key: 'removeTrackFromPost', label: 'Remove Track From Post' },
+                  { key: 'cutDownTrack', label: 'Cut Down One Track' },
+                  { key: 'addWeldedExtrudedSideMount', label: 'Add Welded Extruded Side Mount 1.9 Pipe' },
+                ].map(({ key, label }) => (
+                  <FieldRow key={key} label={label}>
+                    <NumInput
+                      value={config.addOns[key as keyof typeof config.addOns] as number}
+                      onChange={v => updateAddOn(key as keyof typeof config.addOns, v)}
+                      min={0}
+                    />
+                  </FieldRow>
+                ))}
+                <FieldRow label="Glass Shelf Kits">
+                  <NumInput
+                    value={config.addOns.glassShelfKits}
+                    onChange={v => updateAddOn('glassShelfKits', v)}
+                    min={0}
+                  />
+                </FieldRow>
               </div>
             </div>
-          </div>
 
+
+          </div>
           {/* ====== RIGHT COLUMN: Post Quantities, Computed Dimensions, Material Details, Footer ====== */}
           <div className="space-y-4">
 
@@ -1347,8 +1342,8 @@ export default function Home() {
               <span className="text-[10px] tracking-widest uppercase" style={{ color: '#B69A5A' }}>Innovative Aluminum Systems</span>
             </div>
           </div>
+          </div>
         </div>
       </div>
-    </div>
   );
 }
