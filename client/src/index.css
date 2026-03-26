@@ -309,6 +309,10 @@
   /* Print styles */
   @media print {
     .no-print { display: none !important; }
+    .print-only { display: block !important; }
+  }
+  @media screen {
+    .print-only { display: none !important; }
     .print-full { width: 100% !important; }
     body { background: white; font-family: Helvetica, Arial, sans-serif; }
     .calc-card { box-shadow: none; border: 1px solid #ddd; }

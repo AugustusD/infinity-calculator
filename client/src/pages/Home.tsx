@@ -297,11 +297,15 @@ export default function Home() {
     return 0;
   })();
 
+  const savedDealer = (() => { try { return localStorage.getItem(DEALER_STORAGE_KEY) || ''; } catch { return ''; } })();
+  const savedMarket = (() => { try { return (localStorage.getItem('ias-infinity-market') as 'US' | 'CA') || 'CA'; } catch { return 'CA' as const; } })();
   const [config, setConfig] = useState<ConfigInputs>(() => ({
     ...defaultConfig(),
     discountLevel: savedDiscount,
+    country: savedMarket,
+    glassThickness: savedMarket === 'US' ? 12 : 13,
   }));
-  const [jobInfo, setJobInfo] = useState({ dealerName: '', jobReference: '', color: 'Innovative Series Black' });
+  const [jobInfo, setJobInfo] = useState({ dealerName: savedDealer, jobReference: '', color: '', notes: '' });
   const [showAddOns, setShowAddOns] = useState(false);
   const [revealUnlocked, setRevealUnlocked] = useState(false);
   const [bottomGapUnlocked, setBottomGapUnlocked] = useState(false);
@@ -418,9 +422,27 @@ export default function Home() {
             </div>
           </div>
           <div className="flex items-center gap-3 flex-wrap">
-            <span className="text-xs hidden sm:block" style={{ color: '#6B6B6B', letterSpacing: '0.06em' }}>
-              2026 Dealer Pricing
-            </span>
+            <button
+              onClick={() => {
+                const country = config.country;
+                setConfig(prev => ({
+                  ...defaultConfig(),
+                  discountLevel: prev.discountLevel,
+                  country,
+                  glassThickness: country === 'CA' ? 13 : 12,
+                }));
+                setJobInfo(prev => ({ ...prev, color: '', notes: '' }));
+                setRevealUnlocked(false);
+                setBottomGapUnlocked(false);
+                toast.success('Configuration reset to defaults');
+              }}
+              className="flex items-center gap-1.5 px-3 py-2 text-sm font-semibold transition-all no-print"
+              style={{ background: '#3A3A3A', color: '#FFFFFF', borderRadius: '2px', letterSpacing: '0.04em' }}
+              title="Reset configuration to defaults"
+            >
+              <span style={{ fontSize: '14px', lineHeight: '1' }}>&#8635;</span>
+              <span className="hidden sm:inline">Reset</span>
+            </button>
             <button
               onClick={async () => {
                 if (!colorSelected) { toast.error(requireColorMsg); return; }
@@ -521,6 +543,17 @@ export default function Home() {
                       <AlertTriangle size={11} /> Contact IAS for custom color pricing
                     </p>
                   )}
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold text-[#6B6B6B] uppercase tracking-widest block mb-1">Notes</label>
+                  <textarea
+                    value={jobInfo.notes}
+                    onChange={e => setJobInfo(p => ({ ...p, notes: e.target.value }))}
+                    placeholder="Job notes, special instructions, site conditions..."
+                    rows={3}
+                    className="w-full px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#B69A5A] bg-white resize-y"
+                    style={{ border: '1px solid #D8D8D8', borderRadius: '2px', minHeight: '60px' }}
+                  />
                 </div>
               </div>
             </div>
@@ -955,7 +988,7 @@ export default function Home() {
           <div className="space-y-4">
 
             {/* Post Quantities — top of right column */}
-            <div className="calc-card p-5">
+            <div className="calc-card p-5 no-print">
               <SectionHeader title="Post Quantities" />
               <div className="space-y-0">
                 {[
@@ -1032,6 +1065,17 @@ export default function Home() {
                 <SectionHeader title="Material Details" subtitle="Cut lengths and quantities for ordering" />
                 <div className="space-y-0 text-xs">
                   {[
+                    // Overall post heights
+                    ...(isSurface ? [
+                      { label: 'Post Height Above Deck', value: fmtIn(result.postHeightAboveDeck) },
+                      { label: '2.5" End Post Height', value: fmtIn(result.endPost25Height) },
+                    ] : [
+                      { label: 'Post Height Above Deck', value: fmtIn(result.postHeightAboveDeck) },
+                      { label: 'Physical Post Length (overall)', value: fmtIn(result.physicalPostLength || 0) },
+                      { label: '2.5" End Post Overall Length', value: fmtIn(result.endPost25Height) },
+                    ]),
+                    // Wall track height (only if wall tracks are used)
+                    ...(config.quantities.wallTracks > 0 ? [{ label: 'Wall Track Height', value: fmtIn(result.wallTrackHeight) }] : []),
                     { label: 'Glass Insert — Post', value: fmtIn(result.glassInsertLength) },
                     { label: 'Glass Insert — End Post', value: fmtIn(result.endPostInsertLength) },
                     { label: 'Glass Insert — Wall Track', value: fmtIn(result.glassInsertLengthTrack) },
