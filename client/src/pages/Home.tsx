@@ -718,9 +718,13 @@ export default function Home() {
                   />
                 </div>
                 <div style={{ borderTop: '1px solid #E8E4DC', paddingTop: '10px', marginTop: '4px' }}>
-                  <FieldRow label="Ship Via Courier (Vinyl Cut Down)" hint="Vinyl glass inserts cut to courier length">
+                  <div className="flex items-center justify-between gap-3">
+                    <div>
+                      <div className="text-[10px] font-bold text-[#6B6B6B] uppercase tracking-widest">Ship Via Courier</div>
+                      <div className="text-[10px] text-[#8A8A8A] mt-0.5">(Vinyl Cut Down for courier friendly lengths)</div>
+                    </div>
                     <Toggle checked={config.shipViaCourier} onChange={v => update('shipViaCourier', v)} />
-                  </FieldRow>
+                  </div>
                 </div>
               </div>
             </div>
