@@ -633,14 +633,7 @@ export default function Home() {
                       <td className="mono text-right text-xs font-bold">{fmtCurrency(item.total)}</td>
                     </tr>
                   ))}
-                  {result.lineItems.some(i => i.paintCost) && (
-                    <tr>
-                      <td className="text-xs italic" colSpan={3} style={{ color: '#6B6B6B' }}>Paint costs included in totals</td>
-                      <td className="mono text-right text-xs" style={{ color: '#6B6B6B' }}>
-                        {fmtCurrency(result.lineItems.reduce((s, i) => s + (i.paintCost || 0), 0))}
-                      </td>
-                    </tr>
-                  )}
+
                 </tbody>
                 <tfoot>
                   <tr className="total-row">
@@ -1020,14 +1013,7 @@ export default function Home() {
                           <td className="mono text-right text-xs font-bold">{fmtCurrency(item.total)}</td>
                         </tr>
                       ))}
-                      {result.lineItems.some(i => i.paintCost) && (
-                        <tr>
-                          <td className="text-xs italic" colSpan={3} style={{ color: '#6B6B6B' }}>Paint costs included in totals</td>
-                          <td className="mono text-right text-xs" style={{ color: '#6B6B6B' }}>
-                            {fmtCurrency(result.lineItems.reduce((s, i) => s + (i.paintCost || 0), 0))}
-                          </td>
-                        </tr>
-                      )}
+
                     </tbody>
                     <tfoot>
                       <tr className="total-row">
