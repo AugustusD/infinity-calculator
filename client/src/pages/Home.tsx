@@ -1045,13 +1045,13 @@ export default function Home() {
                 {/* ── SURFACE: Covers + Gaskets (full width) then Deck Fasteners ── */}
                 {isSurface && (
                   <>
-                    <FieldRow label="Include Base Plate Covers" hint="Mid + End posts get mid covers; outside/inside corners get respective covers">
+                    <FieldRow label="Include Base Plate Covers" >
                       <Toggle
                         checked={config.addOns.includeBasePlateCovers}
                         onChange={v => updateAddOn('includeBasePlateCovers', v)}
                       />
                     </FieldRow>
-                    <FieldRow label="Include Base Plate Gaskets" hint="RPLBPG - 4x4 Neoprene Rubber, 1 per post - subject to discount">
+                    <FieldRow label="Include Base Plate Gaskets" >
                       <Toggle
                         checked={config.basePlateGaskets}
                         onChange={v => update('basePlateGaskets', v)}
