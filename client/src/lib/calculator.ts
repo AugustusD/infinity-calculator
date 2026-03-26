@@ -524,7 +524,8 @@ export function calculateSurface(config: ConfigInputs): CalculationResult {
 
   // Setting block calculations
   const totalSettingBlockPieces = q.midPosts * 2 + q.endPosts + q.outsideCornerPosts * 2 + q.insideCornerPosts * 2 + q.wallTracks + q.endPostsLeft25;
-  const totalSettingBlock025Pieces = q.endPostsRight25 + q.endPostsLeft25 - addons.add5x5BasePlate;
+  // Only subtract 5x5 plates assigned specifically to 2.5" end posts — not the full add5x5BasePlate total
+  const totalSettingBlock025Pieces = Math.max(0, q.endPostsRight25 + q.endPostsLeft25 - addons.basePlate5x5_endPost25);
 
   // 0.5" setting blocks
   const sb05Length = settingBlock05Height;
