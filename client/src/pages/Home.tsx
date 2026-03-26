@@ -717,6 +717,11 @@ export default function Home() {
                     style={{ border: '1px solid #D8D8D8', borderRadius: '2px', minHeight: '60px' }}
                   />
                 </div>
+                <div style={{ borderTop: '1px solid #E8E4DC', paddingTop: '10px', marginTop: '4px' }}>
+                  <FieldRow label="Ship Via Courier (Vinyl Cut Down)" hint="Vinyl glass inserts cut to courier length">
+                    <Toggle checked={config.shipViaCourier} onChange={v => update('shipViaCourier', v)} />
+                  </FieldRow>
+                </div>
               </div>
             </div>
 
@@ -1138,9 +1143,7 @@ export default function Home() {
                           </FieldRow>
                         </>
                       )}
-                      <FieldRow label="Ship Via Courier (Vinyl Cut Down)" hint="Vinyl glass inserts cut to courier length">
-                        <Toggle checked={config.shipViaCourier} onChange={v => update('shipViaCourier', v)} />
-                      </FieldRow>
+
                     </div>
                   </motion.div>
                 )}
