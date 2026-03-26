@@ -65,8 +65,8 @@ function getCaption(
 ): string {
   const mount = mountType === 'surface' ? 'Surface Mount' : 'Fascia Mount';
   const rail = railHeight >= 40 ? '42 1/8"' : '36 1/8"';
-  if (isShortPost) return `${mount} \u00b7 ${rail} Rail \u00b7 Post finishes 24" above deck`;
-  return `${mount} \u00b7 ${rail} Rail \u00b7 Post finishes ${Math.round(postHeightAboveDeck)}" above deck`;
+  if (isShortPost) return `${mount} · ${rail} Rail · Post finishes 24in above deck`;
+  return `${mount} · ${rail} Rail · Post finishes ${Math.round(postHeightAboveDeck)}" above deck`;
 }
 
 export default function PostDiagram({

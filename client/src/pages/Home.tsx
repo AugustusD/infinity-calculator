@@ -307,6 +307,7 @@ export default function Home() {
   }));
   const [jobInfo, setJobInfo] = useState({ dealerName: savedDealer, jobReference: '', color: '', notes: '' });
   const [showAddOns, setShowAddOns] = useState(false);
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [revealUnlocked, setRevealUnlocked] = useState(false);
   const [bottomGapUnlocked, setBottomGapUnlocked] = useState(false);
 
@@ -423,19 +424,7 @@ export default function Home() {
           </div>
           <div className="flex items-center gap-3 flex-wrap">
             <button
-              onClick={() => {
-                const country = config.country;
-                setConfig(prev => ({
-                  ...defaultConfig(),
-                  discountLevel: prev.discountLevel,
-                  country,
-                  glassThickness: country === 'CA' ? 13 : 12,
-                }));
-                setJobInfo(prev => ({ ...prev, color: '', notes: '' }));
-                setRevealUnlocked(false);
-                setBottomGapUnlocked(false);
-                toast.success('Configuration reset to defaults');
-              }}
+              onClick={() => setShowResetConfirm(true)}
               className="flex items-center gap-1.5 px-3 py-2 text-sm font-semibold transition-all no-print"
               style={{ background: '#3A3A3A', color: '#FFFFFF', borderRadius: '2px', letterSpacing: '0.04em' }}
               title="Reset configuration to defaults"
@@ -443,6 +432,40 @@ export default function Home() {
               <span style={{ fontSize: '14px', lineHeight: '1' }}>&#8635;</span>
               <span className="hidden sm:inline">Reset</span>
             </button>
+            {/* Reset Confirmation Dialog */}
+            {showResetConfirm && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.45)' }}>
+                <div className="bg-white rounded shadow-xl p-6 max-w-sm w-full mx-4" style={{ border: '2px solid #B69A5A' }}>
+                  <h3 className="font-bold text-base mb-2" style={{ color: '#111' }}>Reset Configuration?</h3>
+                  <p className="text-sm mb-4" style={{ color: '#555' }}>This will clear the color selection, all post quantities, all add-ons, and reset the configuration to default settings (Tall Post / 42" / 13mm CA or 12mm US). Your dealer name and discount level will be preserved.</p>
+                  <div className="flex gap-3 justify-end">
+                    <button
+                      onClick={() => setShowResetConfirm(false)}
+                      className="px-4 py-2 text-sm font-semibold"
+                      style={{ background: '#F0F0F0', color: '#333', borderRadius: '2px' }}
+                    >Cancel</button>
+                    <button
+                      onClick={() => {
+                        const country = config.country;
+                        setConfig(prev => ({
+                          ...defaultConfig(),
+                          discountLevel: prev.discountLevel,
+                          country,
+                          glassThickness: country === 'CA' ? 13 : 12,
+                        }));
+                        setJobInfo(prev => ({ ...prev, color: '', notes: '' }));
+                        setRevealUnlocked(false);
+                        setBottomGapUnlocked(false);
+                        setShowResetConfirm(false);
+                        toast.success('Configuration reset to defaults');
+                      }}
+                      className="px-4 py-2 text-sm font-semibold"
+                      style={{ background: '#B69A5A', color: '#FFFFFF', borderRadius: '2px' }}
+                    >Yes, Reset</button>
+                  </div>
+                </div>
+              </div>
+            )}
             <button
               onClick={async () => {
                 if (!colorSelected) { toast.error(requireColorMsg); return; }
@@ -492,6 +515,40 @@ export default function Home() {
 
       {/* ====== GOLD ACCENT BAR ====== */}
       <div className="no-print" style={{ background: '#B69A5A', height: '2px' }} />
+
+      {/* ====== PRINT-ONLY JOB SUMMARY HEADER ====== */}
+      <div className="print-only" style={{ background: '#FFFFFF', borderBottom: '2px solid #B69A5A', padding: '14px 24px 12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '10px' }}>
+          <img src={IAS_LOGO_URL} alt="Innovative Aluminum Systems" style={{ height: '44px', width: 'auto' }} />
+          <img src={INFINITY_LOGO_URL} alt="Infinity" style={{ height: '24px', width: 'auto' }} />
+          <span style={{ fontSize: '9px', color: '#B69A5A', letterSpacing: '0.18em', textTransform: 'uppercase', fontFamily: 'Helvetica, Arial, sans-serif' }}>Estimation Tool</span>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px 20px', fontSize: '11px', fontFamily: 'Helvetica, Arial, sans-serif' }}>
+          {jobInfo.dealerName && (
+            <div><span style={{ color: '#888', textTransform: 'uppercase', fontSize: '8px', letterSpacing: '0.08em', display: 'block' }}>Dealer</span><strong>{jobInfo.dealerName}</strong></div>
+          )}
+          {jobInfo.jobReference && (
+            <div><span style={{ color: '#888', textTransform: 'uppercase', fontSize: '8px', letterSpacing: '0.08em', display: 'block' }}>Job Reference</span><strong>{jobInfo.jobReference}</strong></div>
+          )}
+          {jobInfo.color && (
+            <div><span style={{ color: '#888', textTransform: 'uppercase', fontSize: '8px', letterSpacing: '0.08em', display: 'block' }}>Color</span><strong>{jobInfo.color}</strong></div>
+          )}
+          <div><span style={{ color: '#888', textTransform: 'uppercase', fontSize: '8px', letterSpacing: '0.08em', display: 'block' }}>Mount Type</span><strong>{config.mountType === 'surface' ? 'Surface Mount' : 'Fascia Mount'}</strong></div>
+          <div><span style={{ color: '#888', textTransform: 'uppercase', fontSize: '8px', letterSpacing: '0.08em', display: 'block' }}>Rail Height</span><strong>{config.railHeight >= 40 ? '42 1/8"' : '36 1/8"'}</strong></div>
+          <div><span style={{ color: '#888', textTransform: 'uppercase', fontSize: '8px', letterSpacing: '0.08em', display: 'block' }}>Glass</span><strong>{config.glassThickness}mm</strong></div>
+          <div><span style={{ color: '#888', textTransform: 'uppercase', fontSize: '8px', letterSpacing: '0.08em', display: 'block' }}>Market</span><strong>{config.country === 'US' ? 'United States (IRC)' : 'Canada (NBC)'}</strong></div>
+          <div><span style={{ color: '#888', textTransform: 'uppercase', fontSize: '8px', letterSpacing: '0.08em', display: 'block' }}>Post Config</span><strong>{config.postConfig === 'tall' ? 'Tall Post' : 'Short Post'}</strong></div>
+          {isFascia && (
+            <div><span style={{ color: '#888', textTransform: 'uppercase', fontSize: '8px', letterSpacing: '0.08em', display: 'block' }}>Fascia Offset</span><strong>{config.fasciaOffset}"</strong></div>
+          )}
+        </div>
+        {jobInfo.notes && (
+          <div style={{ marginTop: '8px', paddingTop: '8px', borderTop: '1px solid #E8E4DC', fontSize: '11px', fontFamily: 'Helvetica, Arial, sans-serif' }}>
+            <span style={{ color: '#888', textTransform: 'uppercase', fontSize: '8px', letterSpacing: '0.08em', display: 'block', marginBottom: '2px' }}>Notes</span>
+            <span style={{ whiteSpace: 'pre-wrap' }}>{jobInfo.notes}</span>
+          </div>
+        )}
+      </div>
 
       <div className="container py-6">
         {/* 3-column layout: left sidebar (320px) | centre config | right quote (360px) */}
