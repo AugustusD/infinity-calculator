@@ -654,7 +654,7 @@ export function calculateSurface(config: ConfigInputs): CalculationResult {
   addLine('Setting Block (10 Ft Length)', settingBlockLengthsOrdered, sbLengthPrice);
   addLine('Setting Block (Per Ft)', isCourier ? totalSBFootage : (settingBlockLeftover < 7 ? settingBlockLeftover : 0), sbFtPrice);
   addLine('Setting Block (1.5" Pieces)', settingBlock15Pieces, sb15Price);
-  addLine(thickness === 12 ? 'Glass Wedge 12mm (3 Inch Piece)' : 'Glass Wedge 10mm (4 Inch Piece)', glassWedgeQty, wedgePrice);
+  addLine(thickness === 12 ? 'Glass Wedge 12mm (3 Inch Piece)' : 'Glass Wedge 13mm (3 Inch Piece)', glassWedgeQty, wedgePrice);
   addLine('Base Plate Gasket - Neoprene 1/8x4x4 (RPLBPG)', basePlateGasketQty, basePlateGasketPrice);
   // ── 3. SCREWS (net price) ──
   if (addons.deckFastenerOption !== 'none') {
@@ -946,7 +946,7 @@ export function calculateFascia(config: ConfigInputs): CalculationResult {
   addLine('Setting Block (10 Ft Length)', settingBlockLengthsOrdered, sbLengthPrice);
   addLine('Setting Block (Per Ft)', settingBlockFt, sbFtPrice);
   addLine('Setting Block (1.5" Pieces)', sb15Pieces, sb15Price);
-  addLine(thickness === 12 ? 'Glass Wedge 12mm (3 Inch Pieces)' : 'Glass Wedge 10mm (4 Inch Pieces)', glassWedgeQty, wedgePrice);
+  addLine(thickness === 12 ? 'Glass Wedge 12mm (3 Inch Pieces)' : 'Glass Wedge 13mm (3 Inch Pieces)', glassWedgeQty, wedgePrice);
   // ── 3. SCREWS (net price) ──
   addLine('#10 × 3/4" S.S. Tek Screws (box/100)', tekScrewBoxes, PRICES_2026.fasteners.tekScrew_10x075);
   if (addons.deckFastenerOption === 'hexHead516x5') {
