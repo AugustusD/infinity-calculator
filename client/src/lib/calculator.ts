@@ -613,12 +613,7 @@ export function calculateSurface(config: ConfigInputs): CalculationResult {
     });
   };
 
-  addLine(gasketDescription, gasketLengths, gasketUnitPrice);
-  addLine('Setting Block (10 Ft Length)', settingBlockLengthsOrdered, sbLengthPrice);
-  addLine('Setting Block (Per Ft)', isCourier ? totalSBFootage : (settingBlockLeftover < 7 ? settingBlockLeftover : 0), sbFtPrice);
-  addLine('Setting Block (1.5" Pieces)', settingBlock15Pieces, sb15Price);
-  addLine(thickness === 12 ? 'Glass Wedge 12mm (3 Inch Piece)' : 'Glass Wedge 10mm (4 Inch Piece)', glassWedgeQty, wedgePrice);
-  addLine('Base Plate Gasket - Neoprene 1/8x4x4 (RPLBPG)', basePlateGasketQty, basePlateGasketPrice);
+  // ── 1. ALUMINUM: Posts → Wall Tracks → End Caps → 2.5" Posts → Post Caps ──
   addLine('Infinity Mid Post', totalMidEndPosts, postPriceEa, postPaintEa);
   addLine('Infinity Outside Corner Post', q.outsideCornerPosts, postPriceEa, postPaintEa);
   addLine('Infinity Inside Corner Post', q.insideCornerPosts, postPriceEa, postPaintEa);
@@ -627,63 +622,63 @@ export function calculateSurface(config: ConfigInputs): CalculationResult {
   addLine('2.5" End Left Posts', q.endPostsLeft25, endPost25PriceEa, postPaintEa);
   addLine('2.5" End Right Posts', q.endPostsRight25, endPost25PriceEa, postPaintEa);
   addLine('2.5" Post Caps', q.endPostsLeft25 + q.endPostsRight25, postCap25Price);
-
-  // Add-ons
+  // Aluminum add-ons
   if (addons.removeTrackFromPost > 0) {
-    const price = 75.2902047 * (1 - discount); // U7 from original
-    addLine('Remove Track From Post', addons.removeTrackFromPost, price);
+    addLine('Remove Track From Post', addons.removeTrackFromPost, 75.2902047 * (1 - discount));
   }
   if (addons.cutDownTrack > 0) {
-    const price = 61.257983 * (1 - discount); // U8
-    addLine('Cut Down One Track', addons.cutDownTrack, price);
+    addLine('Cut Down One Track', addons.cutDownTrack, 61.257983 * (1 - discount));
   }
   if (addons.add5x5BasePlate > 0) {
-    const price = 19.2733069 * (1 - discount); // U11
-    addLine('Add 5"×5"×0.5" Base Plate to Surface Mount Infinity Post', addons.add5x5BasePlate, price);
+    addLine('Add 5"×5"×0.5" Base Plate to Surface Mount Infinity Post', addons.add5x5BasePlate, 19.2733069 * (1 - discount));
   }
   if (addons.addWeldedSurfaceBase > 0) {
-    const price = 15.980830300000001 * (1 - discount); // U14
-    addLine('Add Welded Surface Base', addons.addWeldedSurfaceBase, price);
+    addLine('Add Welded Surface Base', addons.addWeldedSurfaceBase, 15.980830300000001 * (1 - discount));
   }
   if (addons.addWeldedExtrudedSideMount > 0) {
-    const price = 49.5327347 * (1 - discount); // U16
-    addLine('Add Welded Extruded Side Mount 1.9 Pipe', addons.addWeldedExtrudedSideMount, price);
-  }
-  if (addons.glassShelfKits > 0) {
-    addLine('Glass Shelf Kits', addons.glassShelfKits, PRICES_2026.parts.glassShelfKit * (1 - discount));
+    addLine('Add Welded Extruded Side Mount 1.9 Pipe', addons.addWeldedExtrudedSideMount, 49.5327347 * (1 - discount));
   }
   if (addons.includeBasePlateCovers) {
-    const midQty = q.midPosts + q.endPosts; // end posts count as mid
+    const midQty = q.midPosts + q.endPosts;
     const outsideQty = q.outsideCornerPosts;
     const insideQty = q.insideCornerPosts;
     if (midQty > 0) addLine('Mid Base Plate Covers', midQty, PRICES_2026.parts.basePlateCover_mid * (1 - discount));
     if (outsideQty > 0) addLine('Outside Base Plate Covers', outsideQty, PRICES_2026.parts.basePlateCover_outside * (1 - discount));
     if (insideQty > 0) addLine('Inside Base Plate Covers', insideQty, PRICES_2026.parts.basePlateCover_inside * (1 - discount));
   }
-  // Deck fasteners add-on (surface mount) — all NET PRICE, no discount
+  if (addons.glassShelfKits > 0) {
+    addLine('Glass Shelf Kits', addons.glassShelfKits, PRICES_2026.parts.glassShelfKit * (1 - discount));
+  }
+  // ── 2. PLASTICS / VINYL ──
+  addLine(gasketDescription, gasketLengths, gasketUnitPrice);
+  addLine('Setting Block (10 Ft Length)', settingBlockLengthsOrdered, sbLengthPrice);
+  addLine('Setting Block (Per Ft)', isCourier ? totalSBFootage : (settingBlockLeftover < 7 ? settingBlockLeftover : 0), sbFtPrice);
+  addLine('Setting Block (1.5" Pieces)', settingBlock15Pieces, sb15Price);
+  addLine(thickness === 12 ? 'Glass Wedge 12mm (3 Inch Piece)' : 'Glass Wedge 10mm (4 Inch Piece)', glassWedgeQty, wedgePrice);
+  addLine('Base Plate Gasket - Neoprene 1/8x4x4 (RPLBPG)', basePlateGasketQty, basePlateGasketPrice);
+  // ── 3. SCREWS (net price) ──
   if (addons.deckFastenerOption !== 'none') {
     const totalPosts = q.midPosts + q.endPosts + q.outsideCornerPosts + q.insideCornerPosts + q.endPostsLeft25 + q.endPostsRight25;
     const screwsNeeded = totalPosts * 4;
     if (addons.deckFastenerOption === 'panHead14x3') {
       const boxQty = Math.ceil(screwsNeeded / 100);
-      // Use mill finish when base plate covers are included, painted otherwise
       const panPrice = addons.includeBasePlateCovers
-        ? PRICES_2026.fasteners.panHeadScrew_14x3_mill   // RSC14X300FHD $30.30
-        : PRICES_2026.fasteners.panHeadScrew_14x3_painted; // PSC14X300PHS $56.85
+        ? PRICES_2026.fasteners.panHeadScrew_14x3_mill
+        : PRICES_2026.fasteners.panHeadScrew_14x3_painted;
       const panLabel = addons.includeBasePlateCovers
         ? '#14×3" Pan Head Screws Mill Finish RSC14X300FHD (box/100) — not in Infinity Engineering'
         : '#14×3" Pan Head Screws Painted PSC14X300PHS (box/100) — not in Infinity Engineering';
       addLine(panLabel, boxQty, panPrice);
+      // ── 4. NYLON WASHERS (net price) ──
       if (addons.includeDeckNylonWashers) {
-        const washerBoxQty = Math.ceil(screwsNeeded / 100);
-        addLine('#14 Nylon Insulator RPLSCI14 (box/100) — not in Infinity Engineering', washerBoxQty, PRICES_2026.fasteners.nylonWasher_14);
+        addLine('#14 Nylon Insulator RPLSCI14 (box/100) — not in Infinity Engineering', Math.ceil(screwsNeeded / 100), PRICES_2026.fasteners.nylonWasher_14);
       }
     } else if (addons.deckFastenerOption === 'hexHead516x5') {
       const boxQty = Math.ceil(screwsNeeded / 50);
       addLine('5/16"×5" Hex Head Screws Painted PSC516X500HHS (box/50) — not in Infinity Engineering', boxQty, PRICES_2026.fasteners.hexHeadScrew_516x5);
+      // ── 4. NYLON WASHERS (net price) ──
       if (addons.includeDeckNylonWashers) {
-        const washerBoxQty = Math.ceil(screwsNeeded / 100);
-        addLine('5/16" Nylon Insulator RPLSCI516 (box/100) — not in Infinity Engineering', washerBoxQty, PRICES_2026.fasteners.nylonWasher_516);
+        addLine('5/16" Nylon Insulator RPLSCI516 (box/100) — not in Infinity Engineering', Math.ceil(screwsNeeded / 100), PRICES_2026.fasteners.nylonWasher_516);
       }
     }
   }
@@ -907,26 +902,19 @@ export function calculateFascia(config: ConfigInputs): CalculationResult {
     });
   };
 
-  addLine(gasketDescription, gasketLengths, gasketUnitPrice);
-  addLine('Setting Block (10 Ft Length)', settingBlockLengthsOrdered, sbLengthPrice);
-  addLine('Setting Block (Per Ft)', settingBlockFt, sbFtPrice);
-  addLine('Setting Block (1.5" Pieces)', sb15Pieces, sb15Price);
-  addLine(thickness === 12 ? 'Glass Wedge 12mm (3 Inch Pieces)' : 'Glass Wedge 10mm (4 Inch Pieces)', glassWedgeQty, wedgePrice);
+  // ── 1. ALUMINUM: Posts → Plates → Wall Tracks → End Caps → 2.5" Posts → Post Caps ──
   addLine('Infinity Mid Post', q.midPosts + q.endPosts, postPriceEa, postPaintEa);
   addLine('Infinity Outside Corner Post', q.outsideCornerPosts, postPriceEa, postPaintEa);
   addLine('Infinity Inside Corner Post', q.insideCornerPosts, postPriceEa, postPaintEa);
   addLine('Infinity Wall Tracks', q.wallTracks, wallTrackPriceEa, trackPaintEa);
-
   const offsetLabel = isStdOffset ? 'Standard 7/16"' : 'Extended 1.5"';
   addLine(`Infinity Mid/Inside Plates (${offsetLabel})`, midInsidePlatesQty, midInsidePlatePrice, undefined, undefined);
   addLine(`Infinity Outside Plates (${offsetLabel})`, outsidePlatesQty, outsidePlatePrice, undefined, undefined);
   addLine('End Caps', q.endPosts - addons.removeTrackFromPost, endCapPrice);
-  addLine('#10 × 3/4" S.S. Tek Screws (box/100)', tekScrewBoxes, PRICES_2026.fasteners.tekScrew_10x075);
   addLine('2.5" End Left Posts', q.endPostsLeft25, endPost25PriceEa, postPaintEa);
   addLine('2.5" End Right Posts', q.endPostsRight25, endPost25PriceEa, postPaintEa);
   addLine('2.5" Post Caps', q.endPostsLeft25 + q.endPostsRight25, postCap25Price);
-
-  // Add-ons
+  // Aluminum add-ons
   if (addons.removeTrackFromPost > 0) {
     addLine('Remove Track From Post', addons.removeTrackFromPost, 75.2902047 * (1 - discount));
   }
@@ -936,34 +924,43 @@ export function calculateFascia(config: ConfigInputs): CalculationResult {
   if (addons.addWeldedExtrudedSideMount > 0) {
     addLine('Add Welded Extruded Side Mount 1.9 Pipe', addons.addWeldedExtrudedSideMount, 49.5327347 * (1 - discount));
   }
-  if (addons.glassShelfKits > 0) {
-    addLine('Glass Shelf Kits', addons.glassShelfKits, PRICES_2026.parts.glassShelfKit * (1 - discount));
-  }
   if (addons.includeBasePlateCovers) {
-    const midQty = q.midPosts + q.endPosts; // end posts count as mid
+    const midQty = q.midPosts + q.endPosts;
     const outsideQty = q.outsideCornerPosts;
     const insideQty = q.insideCornerPosts;
     if (midQty > 0) addLine('Mid Base Plate Covers', midQty, PRICES_2026.parts.basePlateCover_mid * (1 - discount));
     if (outsideQty > 0) addLine('Outside Base Plate Covers', outsideQty, PRICES_2026.parts.basePlateCover_outside * (1 - discount));
     if (insideQty > 0) addLine('Inside Base Plate Covers', insideQty, PRICES_2026.parts.basePlateCover_inside * (1 - discount));
   }
-  // Fascia shims (1/4" base plate rubber gaskets) — discountable
   if (addons.includeShims) {
-    const shimMidQty = (q.midPosts + q.endPosts + q.insideCornerPosts) * 2; // 2 shims per MP/IC post
-    const shimOutsideQty = q.outsideCornerPosts * 2; // 2 shims per OC post
+    const shimMidQty = (q.midPosts + q.endPosts + q.insideCornerPosts) * 2;
+    const shimOutsideQty = q.outsideCornerPosts * 2;
     if (shimMidQty > 0) addLine('Fascia Base Plate Gasket 1/4" (MP/IC) RPLFINFSH25', shimMidQty, PRICES_2026.parts.fasciaShim_midInside * (1 - discount));
     if (shimOutsideQty > 0) addLine('Fascia Base Plate Gasket 1/4" (OC) RPLFINFOSH25', shimOutsideQty, PRICES_2026.parts.fasciaShim_outside * (1 - discount));
   }
-  // Shoulder washers (5/16" nylon insulators) — NO discount
-  if (addons.includeShoulderWashers) {
-    addLine('5/16" Screw Nylon Insulator Box/100 RPLSCI516', 1, PRICES_2026.parts.shoulderWasherBox);
+  if (addons.glassShelfKits > 0) {
+    addLine('Glass Shelf Kits', addons.glassShelfKits, PRICES_2026.parts.glassShelfKit * (1 - discount));
   }
-  // Deck fasteners add-on (fascia mount — only 5/16"x5" hex head screws) — NET PRICE, no discount
+  // ── 2. PLASTICS / VINYL ──
+  addLine(gasketDescription, gasketLengths, gasketUnitPrice);
+  addLine('Setting Block (10 Ft Length)', settingBlockLengthsOrdered, sbLengthPrice);
+  addLine('Setting Block (Per Ft)', settingBlockFt, sbFtPrice);
+  addLine('Setting Block (1.5" Pieces)', sb15Pieces, sb15Price);
+  addLine(thickness === 12 ? 'Glass Wedge 12mm (3 Inch Pieces)' : 'Glass Wedge 10mm (4 Inch Pieces)', glassWedgeQty, wedgePrice);
+  // ── 3. SCREWS (net price) ──
+  addLine('#10 × 3/4" S.S. Tek Screws (box/100)', tekScrewBoxes, PRICES_2026.fasteners.tekScrew_10x075);
   if (addons.deckFastenerOption === 'hexHead516x5') {
     const totalPosts = q.midPosts + q.endPosts + q.outsideCornerPosts + q.insideCornerPosts + q.endPostsLeft25 + q.endPostsRight25;
     const screwsNeeded = totalPosts * 4;
     const boxQty = Math.ceil(screwsNeeded / 50);
     addLine('5/16"×5" Hex Head Screws Painted PSC516X500HHS (box/50) — not in Infinity Engineering', boxQty, PRICES_2026.fasteners.hexHeadScrew_516x5);
+    // ── 4. NYLON WASHERS (net price) ──
+    if (addons.includeShoulderWashers) {
+      addLine('5/16" Screw Nylon Insulator Box/100 RPLSCI516', 1, PRICES_2026.parts.shoulderWasherBox);
+    }
+  } else if (addons.includeShoulderWashers) {
+    // shoulder washers without deck fasteners (standalone toggle)
+    addLine('5/16" Screw Nylon Insulator Box/100 RPLSCI516', 1, PRICES_2026.parts.shoulderWasherBox);
   }
 
   const subtotal = lineItems.reduce((sum, item) => sum + item.total + (item.paintCost || 0), 0);
@@ -1059,6 +1056,7 @@ export const COLOR_OPTIONS = [
   'Innovative Series Beige',
   'Innovative Series Black',
   'Innovative Series Coastal Grey',
+  'Innovative Series Flat Black',
   'Innovative Series Hartford Green',
   'Innovative Series Light Ivory',
   'Innovative Series Oyster Grey',
@@ -1066,9 +1064,8 @@ export const COLOR_OPTIONS = [
   'Innovative Series Rideau Brown',
   'Innovative Series Sandalwood',
   'Innovative Series Silver Matte',
+  'Innovative Series Sparrow Grey',
   'Innovative Series Textured Black',
   'Innovative Series White',
-  'Innovative Series Sparrow Grey',
-  'Innovative Series Flat Black',
   'Custom',
 ];
