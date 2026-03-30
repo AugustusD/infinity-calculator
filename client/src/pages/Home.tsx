@@ -420,11 +420,9 @@ export default function Home() {
               <img
                 src={INFINITY_LOGO_URL}
                 alt="Infinity"
-                style={{ height: 'auto', width: '130px', objectFit: 'contain' }}
+                style={{ height: 'auto', width: '200px', objectFit: 'contain' }}
               />
-              <span className="text-[10px] tracking-[0.18em] uppercase" style={{ color: '#B69A5A', letterSpacing: '0.18em' }}>
-                Estimation Tool
-              </span>
+
             </div>
           </div>
           <div className="flex items-center gap-3 flex-wrap justify-end ml-auto">
