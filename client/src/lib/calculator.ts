@@ -617,13 +617,14 @@ export function calculateSurface(config: ConfigInputs): CalculationResult {
 
   const addLine = (desc: string, qty: number, unitCost: number, paintCostEa?: number, note?: string, partCode?: string) => {
     if (qty === 0) return;
+    const effectiveUnit = unitCost + (paintCostEa || 0);
     lineItems.push({
       description: desc,
       partCode,
       qty,
-      unitCost,
-      total: qty * unitCost,
-      paintCost: paintCostEa ? qty * paintCostEa : undefined,
+      unitCost: effectiveUnit,
+      total: qty * effectiveUnit,
+      paintCost: undefined,
       note,
     });
   };
@@ -921,18 +922,19 @@ export function calculateFascia(config: ConfigInputs): CalculationResult {
 
   const addLine = (desc: string, qty: number, unitCost: number, paintCostEa?: number, note?: string, partCode?: string) => {
     if (qty === 0) return;
+    const effectiveUnit = unitCost + (paintCostEa || 0);
     lineItems.push({
       description: desc,
       partCode,
       qty,
-      unitCost,
-      total: qty * unitCost,
-      paintCost: paintCostEa ? qty * paintCostEa : undefined,
+      unitCost: effectiveUnit,
+      total: qty * effectiveUnit,
+      paintCost: undefined,
       note,
     });
   };
 
-  // ── 1. ALUMINUM: Posts → Plates → Wall Tracks → End Caps → 2.5" Posts → Post Caps ──
+  // ── 1. ALUMINUM: Posts → Wall Tracks → End Caps → 2.5" Posts → Post Caps ──
   addLine('Infinity Mid Post', q.midPosts + q.endPosts, postPriceEa, postPaintEa);
   addLine('Infinity Outside Corner Post', q.outsideCornerPosts, postPriceEa, postPaintEa);
   addLine('Infinity Inside Corner Post', q.insideCornerPosts, postPriceEa, postPaintEa);
