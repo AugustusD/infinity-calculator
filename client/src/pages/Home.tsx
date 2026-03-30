@@ -410,24 +410,24 @@ export default function Home() {
       {/* ====== HEADER ====== */}
       <header className="no-print" style={{ background: '#FFFFFF', borderBottom: '3px solid #B69A5A', borderTop: '3px solid #B69A5A' }}>
         <div className="container py-2 flex items-center justify-between">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <img
               src={IAS_LOGO_URL}
               alt="Innovative Aluminum Systems"
               style={{ height: '68px', width: 'auto', objectFit: 'contain', display: 'block' }}
             />
-            <div className="flex flex-col justify-center">
+            <div className="flex flex-col justify-center gap-1">
               <img
                 src={INFINITY_LOGO_URL}
                 alt="Infinity"
-                style={{ height: '22px', width: 'auto', objectFit: 'contain' }}
+                style={{ height: 'auto', width: '130px', objectFit: 'contain' }}
               />
-              <span className="text-[10px] tracking-[0.18em] uppercase mt-0.5" style={{ color: '#B69A5A', letterSpacing: '0.18em' }}>
+              <span className="text-[10px] tracking-[0.18em] uppercase" style={{ color: '#B69A5A', letterSpacing: '0.18em' }}>
                 Estimation Tool
               </span>
             </div>
           </div>
-          <div className="flex items-center gap-3 flex-wrap">
+          <div className="flex items-center gap-3 flex-wrap justify-end ml-auto">
             <button
               onClick={() => setShowResetConfirm(true)}
               className="flex items-center gap-1.5 px-3 py-2 text-sm font-semibold transition-all no-print"
