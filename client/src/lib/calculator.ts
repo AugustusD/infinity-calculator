@@ -617,14 +617,13 @@ export function calculateSurface(config: ConfigInputs): CalculationResult {
 
   const addLine = (desc: string, qty: number, unitCost: number, paintCostEa?: number, note?: string, partCode?: string) => {
     if (qty === 0) return;
-    const effectiveUnit = unitCost + (paintCostEa || 0);
     lineItems.push({
       description: desc,
       partCode,
       qty,
-      unitCost: effectiveUnit,
-      total: qty * effectiveUnit,
-      paintCost: undefined,
+      unitCost,
+      total: qty * unitCost,
+      paintCost: paintCostEa ? qty * paintCostEa : undefined,
       note,
     });
   };
@@ -714,7 +713,7 @@ export function calculateSurface(config: ConfigInputs): CalculationResult {
     }
   }
 
-  const subtotal = lineItems.reduce((sum, item) => sum + item.total + (item.paintCost || 0), 0);
+  const subtotal = lineItems.reduce((sum, item) => sum + item.total, 0);
 
   return {
     railHeightActual: actualRailHeight,
@@ -922,14 +921,13 @@ export function calculateFascia(config: ConfigInputs): CalculationResult {
 
   const addLine = (desc: string, qty: number, unitCost: number, paintCostEa?: number, note?: string, partCode?: string) => {
     if (qty === 0) return;
-    const effectiveUnit = unitCost + (paintCostEa || 0);
     lineItems.push({
       description: desc,
       partCode,
       qty,
-      unitCost: effectiveUnit,
-      total: qty * effectiveUnit,
-      paintCost: undefined,
+      unitCost,
+      total: qty * unitCost,
+      paintCost: paintCostEa ? qty * paintCostEa : undefined,
       note,
     });
   };
@@ -995,7 +993,7 @@ export function calculateFascia(config: ConfigInputs): CalculationResult {
     addLine('5/16" Screw Nylon Insulator Box/100 RPLSCI516', 1, PRICES_2026.parts.shoulderWasherBox);
   }
 
-  const subtotal = lineItems.reduce((sum, item) => sum + item.total + (item.paintCost || 0), 0);
+  const subtotal = lineItems.reduce((sum, item) => sum + item.total, 0);
 
   return {
     railHeightActual: actualRailHeight,
