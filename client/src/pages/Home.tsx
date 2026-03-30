@@ -420,7 +420,7 @@ export default function Home() {
               <img
                 src={INFINITY_LOGO_URL}
                 alt="Infinity"
-                className="h-10 w-auto object-contain"
+                style={{ height: '22px', width: 'auto', objectFit: 'contain' }}
               />
               <span className="text-[10px] tracking-[0.18em] uppercase mt-0.5" style={{ color: '#B69A5A', letterSpacing: '0.18em' }}>
                 Estimation Tool
