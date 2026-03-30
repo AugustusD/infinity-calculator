@@ -237,10 +237,9 @@ export interface AddOns {
   add5x5BasePlate: number;
   // Per-post-type breakdown for 5x5 base plate (surface mount only)
   // Each value = how many of that post type get the 5x5 plate
-  basePlate5x5_midPost: number;
+  basePlate5x5_midPost: number; // covers both mid posts and end posts (they share a BOM line)
   basePlate5x5_outsideCorner: number;
   basePlate5x5_insideCorner: number;
-  basePlate5x5_endPost: number;
   basePlate5x5_endPost25: number; // combined left + right 2.5" end posts
   addWeldedSurfaceBase: number;
   addWeldedExtrudedSideMount: number;
@@ -595,12 +594,12 @@ export function calculateSurface(config: ConfigInputs): CalculationResult {
   const postCap25Price = PRICES_2026.surface.postCap_25 * (1 - discount);
 
   // 5x5 base plate breakdown — clamp each type to available post count
+  // Note: mid posts and end posts share a single BOM line, so basePlate5x5_midPost covers both MP and EP
   const bp5_mid = Math.min(addons.basePlate5x5_midPost, q.midPosts + q.endPosts);
   const bp5_oc  = Math.min(addons.basePlate5x5_outsideCorner, q.outsideCornerPosts);
   const bp5_ic  = Math.min(addons.basePlate5x5_insideCorner, q.insideCornerPosts);
-  const bp5_ep  = Math.min(addons.basePlate5x5_endPost, q.endPosts);
   const bp5_ep25 = Math.min(addons.basePlate5x5_endPost25, q.endPostsLeft25 + q.endPostsRight25);
-  const total5x5Assigned = bp5_mid + bp5_oc + bp5_ic + bp5_ep + bp5_ep25;
+  const total5x5Assigned = bp5_mid + bp5_oc + bp5_ic + bp5_ep25;
 
   const totalMidEndPosts = q.midPosts + q.endPosts;
   const totalCornerPosts = q.outsideCornerPosts + q.insideCornerPosts;
@@ -633,7 +632,7 @@ export function calculateSurface(config: ConfigInputs): CalculationResult {
 
   // ── 1. ALUMINUM: Posts → Wall Tracks → End Caps → 2.5" Posts → Post Caps ──
   // Standard posts (excluding those getting 5x5 plates)
-  const stdMidEnd = totalMidEndPosts - bp5_mid - bp5_ep;
+  const stdMidEnd = totalMidEndPosts - bp5_mid;
   const stdOC = q.outsideCornerPosts - bp5_oc;
   const stdIC = q.insideCornerPosts - bp5_ic;
   const stdEP25 = (q.endPostsLeft25 + q.endPostsRight25) - bp5_ep25;
@@ -670,7 +669,7 @@ export function calculateSurface(config: ConfigInputs): CalculationResult {
   }
   if (addons.includeBasePlateCovers) {
     // Deduct covers for posts that got 5x5 plates (those posts don't use standard covers)
-    const midCoverQty = (q.midPosts + q.endPosts) - bp5_mid - bp5_ep;
+    const midCoverQty = (q.midPosts + q.endPosts) - bp5_mid;
     const outsideCoverQty = q.outsideCornerPosts - bp5_oc;
     const insideCoverQty = q.insideCornerPosts - bp5_ic;
     if (midCoverQty > 0) addLine('Mid Base Plate Covers', midCoverQty, PRICES_2026.parts.basePlateCover_mid * (1 - discount));
@@ -1074,7 +1073,6 @@ export function defaultConfig(): ConfigInputs {
       basePlate5x5_midPost: 0,
       basePlate5x5_outsideCorner: 0,
       basePlate5x5_insideCorner: 0,
-      basePlate5x5_endPost: 0,
       basePlate5x5_endPost25: 0,
       addWeldedSurfaceBase: 0,
       addWeldedExtrudedSideMount: 0,

@@ -1176,12 +1176,11 @@ export default function Home() {
                         onChange={v => {
                           updateAddOn('add5x5BasePlate', v);
                           // If reduced below current assigned total, zero out sub-spinners
-                          const assigned = config.addOns.basePlate5x5_midPost + config.addOns.basePlate5x5_outsideCorner + config.addOns.basePlate5x5_insideCorner + config.addOns.basePlate5x5_endPost + config.addOns.basePlate5x5_endPost25;
+                          const assigned = config.addOns.basePlate5x5_midPost + config.addOns.basePlate5x5_outsideCorner + config.addOns.basePlate5x5_insideCorner + config.addOns.basePlate5x5_endPost25;
                           if (v < assigned) {
                             updateAddOn('basePlate5x5_midPost', 0);
                             updateAddOn('basePlate5x5_outsideCorner', 0);
                             updateAddOn('basePlate5x5_insideCorner', 0);
-                            updateAddOn('basePlate5x5_endPost', 0);
                             updateAddOn('basePlate5x5_endPost25', 0);
                           }
                         }}
@@ -1190,7 +1189,7 @@ export default function Home() {
                     </FieldRow>
 
                     {config.addOns.add5x5BasePlate > 0 && (() => {
-                      const assigned = config.addOns.basePlate5x5_midPost + config.addOns.basePlate5x5_outsideCorner + config.addOns.basePlate5x5_insideCorner + config.addOns.basePlate5x5_endPost + config.addOns.basePlate5x5_endPost25;
+                      const assigned = config.addOns.basePlate5x5_midPost + config.addOns.basePlate5x5_outsideCorner + config.addOns.basePlate5x5_insideCorner + config.addOns.basePlate5x5_endPost25;
                       const remaining = config.addOns.add5x5BasePlate - assigned;
                       const isOver = assigned > config.addOns.add5x5BasePlate;
                       return (
@@ -1204,10 +1203,9 @@ export default function Home() {
                                 : `${remaining} plate${remaining !== 1 ? 's' : ''} unassigned`}
                           </div>
                           {([
-                            { key: 'basePlate5x5_midPost' as const,        label: 'MP — Mid/End Posts',        max: config.quantities.midPosts + config.quantities.endPosts },
+                            { key: 'basePlate5x5_midPost' as const,        label: 'MP/EP — Mid & End Posts',   max: config.quantities.midPosts + config.quantities.endPosts },
                             { key: 'basePlate5x5_outsideCorner' as const,  label: 'OC — Outside Corner Posts', max: config.quantities.outsideCornerPosts },
                             { key: 'basePlate5x5_insideCorner' as const,   label: 'IC — Inside Corner Posts',  max: config.quantities.insideCornerPosts },
-                            { key: 'basePlate5x5_endPost' as const,        label: 'EP — End Posts',            max: config.quantities.endPosts },
                             { key: 'basePlate5x5_endPost25' as const,      label: '2.5" EP — 2.5" End Posts',  max: config.quantities.endPostsLeft25 + config.quantities.endPostsRight25 },
                           ] as { key: keyof typeof config.addOns; label: string; max: number }[]).filter(({ max }) => max > 0).map(({ key, label, max }) => (
                             <div key={key} className="flex items-center gap-2 py-1 border-b border-[#EBEBEB] last:border-0">
