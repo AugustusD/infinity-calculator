@@ -479,9 +479,15 @@ export function calculateSurface(config: ConfigInputs): CalculationResult {
   const maxCutLength = Math.max(glassInsertLength, endPostInsertLength, glassInsertLengthTrack);
   let courierLength: number;
   if (isCourier) {
-    if (maxCutLength > 60) courierLength = 72;
-    else if (maxCutLength > 40) courierLength = 60;
-    else courierLength = 40;
+    if (thickness === 12) {
+      // 12mm stock = 12 ft (144"). Courier cut sizes: 48" or 72"
+      courierLength = maxCutLength > 48 ? 72 : 48;
+    } else {
+      // 13mm stock = 10 ft (120"). Courier cut sizes: 40", 60", or 72"
+      if (maxCutLength > 60) courierLength = 72;
+      else if (maxCutLength > 40) courierLength = 60;
+      else courierLength = 40;
+    }
   } else {
     courierLength = thickness === 13 ? 120 : 144;
   }
