@@ -850,10 +850,13 @@ export default function Home() {
                         key={pc}
                         onClick={() => {
                           update('postConfig', pc as PostConfig);
-                          if (config.country === 'CA') {
-                            update('topGlassReveal', pc === 'short' ? 18.125 : 2.125);
-                            setRevealUnlocked(false);
-                          }
+                          // Set top reveal based on post config
+                          // Short post: reveal = actualRailHeight - 24 (floors post at 24" above deck)
+                          // Tall post: reveal = 2.125" (default)
+                          const actualRailHeight = config.railHeight === 36 ? 36.125 : 42.125;
+                          const shortReveal = actualRailHeight - 24;
+                          update('topGlassReveal', pc === 'short' ? shortReveal : 2.125);
+                          setRevealUnlocked(false);
                         }}
                         className="flex-1 py-1.5 text-sm font-bold capitalize transition-all"
                         style={{

@@ -454,15 +454,15 @@ export function calculateSurface(config: ConfigInputs): CalculationResult {
   const errors: string[] = [];
 
   // --- Computed dimensions ---
-  const postHeightAboveDeck = actualRailHeight - topReveal;
+  const postHeightAboveDeck = Math.max(24, actualRailHeight - topReveal);
   const wallTrackHeight = actualRailHeight - 2;
   const endPost25Height = actualRailHeight + 1;
 
   // Glass insert lengths
-  // Post glass panel: rail height - top reveal - bottom gap - 3
-  const glassInsertLength = actualRailHeight - topReveal - bottomGap - 3;
-  // End post insert: rail height - top reveal - 0.75
-  const endPostInsertLength = actualRailHeight - topReveal - 0.75;
+  // Post glass panel: post height above deck - bottom gap - 3
+  const glassInsertLength = postHeightAboveDeck - bottomGap - 3;
+  // End post insert: post height above deck - 0.75
+  const endPostInsertLength = postHeightAboveDeck - 0.75;
   // Wall track panel: wall track height - bottom gap - 3
   const glassInsertLengthTrack = wallTrackHeight - bottomGap - 3;
 
@@ -764,7 +764,7 @@ export function calculateFascia(config: ConfigInputs): CalculationResult {
   const errors: string[] = [];
 
   // --- Computed dimensions ---
-  const postHeightAboveDeck = actualRailHeight - topReveal;
+  const postHeightAboveDeck = Math.max(24, actualRailHeight - topReveal);
   const physicalPostLength = postHeightAboveDeck + distToDeck + BASE_PLATE_HEIGHT;
   const wallTrackHeight = actualRailHeight - 2;
   const endPost25Height = postHeightAboveDeck + 1 + distToDeck + BASE_PLATE_HEIGHT;
