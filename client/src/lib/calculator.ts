@@ -183,6 +183,45 @@ export function fasciaEndPostPrice(physicalPostLength: number): number {
 }
 
 // ============================================================
+// COURIER CUT OPTIMIZATION
+// ============================================================
+
+/**
+ * For a given insert length and stock length, find the smallest cut size >= insertLength
+ * that maximizes the number of cuts per stock length (zero kerf — no allowance added).
+ *
+ * Returns { cutSize, cutsPerLength } where:
+ *   cutSize      = the optimal cut length in inches
+ *   cutsPerLength = floor(stockLength / cutSize)
+ *
+ * Algorithm: iterate candidate cut sizes from insertLength up to stockLength,
+ * pick the one that gives the most cuts per length (ties → smallest cut size).
+ * We only need to check up to stockLength/1 = stockLength candidates, but in
+ * practice the optimum is found quickly because cutsPerLength decreases monotonically.
+ */
+export function optimizeCut(insertLength: number, stockLength: number): { cutSize: number; cutsPerLength: number } {
+  if (insertLength <= 0) return { cutSize: stockLength, cutsPerLength: 1 };
+  if (insertLength >= stockLength) return { cutSize: stockLength, cutsPerLength: 1 };
+
+  let bestCuts = 1;
+  let bestCutSize = stockLength;
+
+  // Try every integer cut size from ceil(insertLength) up to stockLength
+  const minCut = Math.ceil(insertLength);
+  for (let c = minCut; c <= stockLength; c++) {
+    const cuts = Math.floor(stockLength / c);
+    if (cuts > bestCuts) {
+      bestCuts = cuts;
+      bestCutSize = c;
+    }
+    // Once cuts drops to 1 and we already have a candidate, stop
+    if (cuts <= 1 && bestCuts >= 1 && c > minCut) break;
+  }
+
+  return { cutSize: bestCutSize, cutsPerLength: bestCuts };
+}
+
+// ============================================================
 // PAINT COST PER INCH (from original calculator)
 // ============================================================
 const PAINT_MARKUP = 49.67 / 11.03;
@@ -475,56 +514,49 @@ export function calculateSurface(config: ConfigInputs): CalculationResult {
   const totalTrackPieces = q.wallTracks + q.endPostsLeft25 + q.endPostsRight25;
   const totalEndPostPieces = q.endPosts - addons.removeTrackFromPost;
 
-  // Courier length determination
-  const maxCutLength = Math.max(glassInsertLength, endPostInsertLength, glassInsertLengthTrack);
-  let courierLength: number;
-  if (isCourier) {
-    if (thickness === 12) {
-      // 12mm stock = 12 ft (144"). Courier cut sizes: 48" or 72"
-      courierLength = maxCutLength > 48 ? 72 : 48;
-    } else {
-      // 13mm stock = 10 ft (120"). Courier cut sizes: 40", 60", or 72"
-      if (maxCutLength > 60) courierLength = 72;
-      else if (maxCutLength > 40) courierLength = 60;
-      else courierLength = 40;
-    }
-  } else {
-    courierLength = thickness === 13 ? 120 : 144;
-  }
+  // ── COURIER / VINYL CUT OPTIMIZATION ──
+  // Stock lengths: 12mm = 144" (12 ft), 13mm = 120" (10 ft)
+  const stockLength = thickness === 12 ? 144 : 120;
+  const stockLabel = thickness === 12 ? 'Gasket 12mm 12 Ft Lengths' : 'Gasket 13mm 10 Ft Lengths';
+  // Courier price multiplier (from Patrick's original workbook)
+  const courierMultiplier = thickness === 12 ? 1.181 : 1.337;
 
-  // Gasket (glass insert) quantities
-  const cutsPerLength_post = Math.floor(courierLength / (glassInsertLength + 0.125));
-  const cutsPerLength_end = Math.floor(courierLength / (endPostInsertLength + 0.125));
-  const cutsPerLength_track = Math.floor(courierLength / (glassInsertLengthTrack + 0.125));
+  // Optimize cut sizes for each insert group (no kerf)
+  const postOpt   = optimizeCut(glassInsertLength, stockLength);
+  const endOpt    = optimizeCut(endPostInsertLength, stockLength);
+  const trackOpt  = optimizeCut(glassInsertLengthTrack, stockLength);
 
-  const lengths_post = totalPostPieces / cutsPerLength_post;
-  const lengths_end = totalEndPostPieces / cutsPerLength_end;
-  const lengths_track = totalTrackPieces / cutsPerLength_track;
+  // Surface mount: end post vinyl-only side = trackOpening - 0.25"
+  // trackOpening = postHeightAboveDeck - 0.5" (base plate)
+  const surfaceTrackOpening = postHeightAboveDeck - 0.5;
+  const endPostVinylLength = surfaceTrackOpening - 0.25;
+  const endPostVinylOpt = optimizeCut(endPostVinylLength, stockLength);
 
+  // Lengths needed per group
+  const stockLengths_post  = totalPostPieces  > 0 ? Math.ceil(totalPostPieces  / postOpt.cutsPerLength)  : 0;
+  const stockLengths_end   = totalEndPostPieces > 0 ? Math.ceil(totalEndPostPieces / endOpt.cutsPerLength) : 0;
+  const stockLengths_track = totalTrackPieces  > 0 ? Math.ceil(totalTrackPieces  / trackOpt.cutsPerLength) : 0;
+  // End post vinyl-only side: one piece per end post (one side only)
+  const endPostVinylQty = q.endPosts;
+  const stockLengths_endVinyl = endPostVinylQty > 0 ? Math.ceil(endPostVinylQty / endPostVinylOpt.cutsPerLength) : 0;
+
+  // Group post + track together if they share the same cut size; otherwise separate
+  // End post glass insert: separate if cut size differs from post
+  // For non-courier: all groups share a single "full lengths" count
   let gasketLengths: number;
-  if (isCourier) {
-    gasketLengths = Math.ceil((lengths_post + lengths_end + lengths_track) / Math.floor(courierLength / courierLength));
-  } else {
-    gasketLengths = Math.ceil(lengths_post + lengths_end + lengths_track);
-  }
-
-  // Determine gasket description
   let gasketDescription: string;
-  if (thickness === 13) {
-    if (isCourier) {
-      if (courierLength >= 72) gasketDescription = 'Gasket 13mm 10 Ft Cut To 72 Inches';
-      else if (courierLength >= 60) gasketDescription = 'Gasket 13mm 10 Ft Cut To 60 Inches';
-      else gasketDescription = 'Gasket 13mm 10 Ft Cut To 40 Inches';
-    } else {
-      gasketDescription = 'Gasket 13mm 10 Ft Lengths';
-    }
+  const maxCutLength = Math.max(glassInsertLength, endPostInsertLength, glassInsertLengthTrack);
+  const courierLength = isCourier ? postOpt.cutSize : stockLength; // for return value compat
+
+  if (!isCourier) {
+    gasketLengths = Math.ceil(totalPostPieces / postOpt.cutsPerLength
+      + totalEndPostPieces / endOpt.cutsPerLength
+      + totalTrackPieces / trackOpt.cutsPerLength);
+    gasketDescription = stockLabel;
   } else {
-    if (isCourier) {
-      if (courierLength >= 72) gasketDescription = 'Gasket 12mm 12 Ft Cut To 72 Inches';
-      else gasketDescription = 'Gasket 12mm 12 Ft Cut To 48 Inches';
-    } else {
-      gasketDescription = 'Gasket 12mm 12 Ft Lengths';
-    }
+    // Courier: post + track grouped if same cut size
+    gasketLengths = stockLengths_post + stockLengths_track;
+    gasketDescription = stockLabel;
   }
 
   // Setting block calculations
@@ -582,14 +614,9 @@ export function calculateSurface(config: ConfigInputs): CalculationResult {
   const wallTrackPriceEa = surfaceWallTrackPrice(actualRailHeight) * (1 - discount);
   const endPost25PriceEa = surfaceEndPostPrice(postHeightAboveDeck) * (1 - discount);
 
-  const gasketPriceEa = thickness === 13
-    ? (isCourier ? PRICES_2026.parts.glassInsert_13mm_10ft * 1.337 : PRICES_2026.parts.glassInsert_13mm_10ft) * (1 - discount)
-    : (isCourier ? PRICES_2026.parts.glassInsert_12mm_12ft * 1.181 : PRICES_2026.parts.glassInsert_12mm_12ft) * (1 - discount);
-
-  // Use actual 2026 prices for gaskets
-  const gasketUnitPrice = thickness === 13
-    ? (isCourier ? PRICES_2026.parts.glassInsert_13mm_10ft * 1.337 : PRICES_2026.parts.glassInsert_13mm_10ft) * (1 - discount)
-    : (isCourier ? PRICES_2026.parts.glassInsert_12mm_12ft * 1.181 : PRICES_2026.parts.glassInsert_12mm_12ft) * (1 - discount);
+  // Gasket unit price: full stock length price × courier multiplier (if courier) × discount
+  const baseGasketPrice = thickness === 13 ? PRICES_2026.parts.glassInsert_13mm_10ft : PRICES_2026.parts.glassInsert_12mm_12ft;
+  const gasketUnitPrice = baseGasketPrice * (isCourier ? courierMultiplier : 1) * (1 - discount);
 
   const sbLengthPrice = PRICES_2026.parts.settingBlock_10ft * (1 - discount);
   const sbFtPrice = (PRICES_2026.parts.settingBlock_10ft / 10) * (1 - discount);
@@ -686,7 +713,47 @@ export function calculateSurface(config: ConfigInputs): CalculationResult {
     addLine('Glass Shelf Kits', addons.glassShelfKits, PRICES_2026.parts.glassShelfKit * (1 - discount));
   }
   // ── 2. PLASTICS / VINYL ──
-  addLine(gasketDescription, gasketLengths, gasketUnitPrice);
+  if (isCourier) {
+    // Courier mode: price full stock lengths, note the cut instruction
+    // Main post + track group
+    if (gasketLengths > 0) {
+      const postCutNote = `Cut to ${postOpt.cutSize}" — ${postOpt.cutsPerLength} piece${postOpt.cutsPerLength > 1 ? 's' : ''} per length`
+        + (trackOpt.cutSize === postOpt.cutSize && totalTrackPieces > 0
+          ? ` (posts & tracks combined)`
+          : '');
+      addLine(gasketDescription, gasketLengths, gasketUnitPrice, undefined, postCutNote);
+    }
+    // Track group if different cut size from post
+    if (totalTrackPieces > 0 && trackOpt.cutSize !== postOpt.cutSize) {
+      const trackCutNote = `Cut to ${trackOpt.cutSize}" — ${trackOpt.cutsPerLength} piece${trackOpt.cutsPerLength > 1 ? 's' : ''} per length (wall tracks)`;
+      addLine(gasketDescription + ' (Wall Tracks)', stockLengths_track, gasketUnitPrice, undefined, trackCutNote);
+    }
+    // End post glass insert group if different cut size from post
+    if (stockLengths_end > 0 && endOpt.cutSize !== postOpt.cutSize) {
+      const endCutNote = `Cut to ${endOpt.cutSize}" — ${endOpt.cutsPerLength} piece${endOpt.cutsPerLength > 1 ? 's' : ''} per length (end post glass side)`;
+      addLine(gasketDescription + ' (End Post Glass Side)', stockLengths_end, gasketUnitPrice, undefined, endCutNote);
+    } else if (stockLengths_end > 0 && endOpt.cutSize === postOpt.cutSize) {
+      // Same cut size — already counted in gasketLengths (post group includes end post pieces)
+      // Note: end post glass insert pieces were NOT included in gasketLengths above, add them
+      // (gasketLengths = stockLengths_post + stockLengths_track, end post is separate)
+      const endCutNote = `Cut to ${endOpt.cutSize}" — ${endOpt.cutsPerLength} piece${endOpt.cutsPerLength > 1 ? 's' : ''} per length (end post glass side)`;
+      addLine(gasketDescription + ' (End Post Glass Side)', stockLengths_end, gasketUnitPrice, undefined, endCutNote);
+    }
+    // End post vinyl-only side
+    if (stockLengths_endVinyl > 0) {
+      const vinylCutNote = `Cut to ${endPostVinylOpt.cutSize}" — ${endPostVinylOpt.cutsPerLength} piece${endPostVinylOpt.cutsPerLength > 1 ? 's' : ''} per length`
+        + (endPostVinylOpt.cutSize !== postOpt.cutSize ? ' (end post termination side — different length)' : '');
+      addLine(gasketDescription + ' (End Post Termination Side)', stockLengths_endVinyl, gasketUnitPrice, undefined, vinylCutNote);
+    }
+  } else {
+    // Non-courier: single line, full lengths
+    addLine(gasketDescription, gasketLengths, gasketUnitPrice);
+    // End post vinyl-only side (non-courier)
+    const nonCourierEndVinylLengths = endPostVinylQty > 0 ? Math.ceil(endPostVinylQty / endPostVinylOpt.cutsPerLength) : 0;
+    if (nonCourierEndVinylLengths > 0) {
+      addLine(gasketDescription + ' (End Post Termination Side)', nonCourierEndVinylLengths, gasketUnitPrice);
+    }
+  }
   addLine('Setting Block (10 Ft Length)', settingBlockLengthsOrdered, sbLengthPrice);
   addLine('Setting Block (Per Ft)', isCourier ? totalSBFootage : (settingBlockLeftover < 7 ? settingBlockLeftover : 0), sbFtPrice);
   addLine('Setting Block (1.5" Pieces)', settingBlock15Pieces, sb15Price);
@@ -786,14 +853,17 @@ export function calculateFascia(config: ConfigInputs): CalculationResult {
   // Setting block height = bottomGap + distToDeck
   const settingBlockHeight = bottomGap + distToDeck;
 
-  // Check if setting block > 5" → use wedge rule
-  const useWedgeInsteadOfBlock = settingBlockHeight > 5;
+  // Check if setting block > 5 1/8" (5.125") → use wedge rule
+  // Maximum fascia setting block is 5 1/8": 3 1/8" below deck + 2" above deck
+  const MAX_FASCIA_SETTING_BLOCK = 5.125;
+  const useWedgeInsteadOfBlock = settingBlockHeight > MAX_FASCIA_SETTING_BLOCK;
   let extraWedgeLength: number | undefined;
   if (useWedgeInsteadOfBlock) {
     extraWedgeLength = settingBlockHeight - 1.5;
     warnings.push(
-      `Setting block height (${settingBlockHeight.toFixed(2)}") exceeds 5". ` +
-      `Replace setting block with wedge. Use 1.5" piece of setting block + ${extraWedgeLength.toFixed(2)}" extra wedge at each side of post.`
+      `Setting block height (${settingBlockHeight.toFixed(3)}") exceeds maximum 5 1/8". ` +
+      `Extended fascia post height is not supported by the engineering. ` +
+      `Use 1.5" setting block + ${extraWedgeLength.toFixed(3)}" extra wedge piece per post side.`
     );
   }
 
@@ -801,56 +871,53 @@ export function calculateFascia(config: ConfigInputs): CalculationResult {
     errors.push(`Fascia post physical length (${physicalPostLength.toFixed(2)}") is below minimum 32". Increase bottom gap or reduce glass reveal.`);
   }
 
-  // Courier length
-  const maxCutLength = Math.max(glassInsertLength, endPostInsertLength, glassInsertLengthTrack);
-  let courierLength: number;
-  if (isCourier) {
-    if (maxCutLength > 72) {
-      courierLength = 120;
-      warnings.push('Vinyl lengths too long for courier at this configuration.');
-    } else if (maxCutLength > 48) courierLength = 72;
-    else courierLength = 48;
-  } else {
-    courierLength = thickness === 13 ? 120 : 144;
-  }
+  // ── COURIER / VINYL CUT OPTIMIZATION ──
+  // Stock lengths: 12mm = 144" (12 ft), 13mm = 120" (10 ft)
+  const stockLength = thickness === 12 ? 144 : 120;
+  const stockLabel = thickness === 12 ? 'Gasket 12mm 12 Ft Lengths' : 'Gasket 13mm 10 Ft Lengths';
+  const courierMultiplier = thickness === 12 ? 1.181 : 1.337;
 
   // Gasket quantities
   const totalPostPieces = q.midPosts * 2 + q.endPosts * 2 + q.outsideCornerPosts * 2 + q.insideCornerPosts * 2;
   const totalTrackPieces = q.wallTracks + q.endPostsLeft25 + q.endPostsRight25;
   const totalEndPostPieces = q.endPosts - addons.removeTrackFromPost;
 
-  const cutsPerLength_post = Math.floor(courierLength / (glassInsertLength + 0.125));
-  const cutsPerLength_end = Math.floor(courierLength / (endPostInsertLength + 0.125));
-  const cutsPerLength_track = Math.floor(courierLength / (glassInsertLengthTrack + 0.125));
+  // Optimize cut sizes for each insert group (no kerf)
+  const postOpt  = optimizeCut(glassInsertLength, stockLength);
+  const endOpt   = optimizeCut(endPostInsertLength, stockLength);
+  const trackOpt = optimizeCut(glassInsertLengthTrack, stockLength);
 
-  const lengths_post = cutsPerLength_post > 0 ? totalPostPieces / cutsPerLength_post : 0;
-  const lengths_end = cutsPerLength_end > 0 ? totalEndPostPieces / cutsPerLength_end : 0;
-  const lengths_track = cutsPerLength_track > 0 ? totalTrackPieces / cutsPerLength_track : 0;
+  // Fascia end post vinyl-only side:
+  // trackOpening = postHeightAboveDeck + distToDeck (full channel)
+  // vinylLength = trackOpening - 0.25" (end cap)
+  // If setting block is maxed (useWedgeInsteadOfBlock), the termination side is still full trackOpening - 0.25"
+  const fasciaTrackOpening = postHeightAboveDeck + distToDeck;
+  const endPostVinylLength = fasciaTrackOpening - 0.25;
+  const endPostVinylOpt = optimizeCut(endPostVinylLength, stockLength);
+  const endPostVinylQty = q.endPosts;
+
+  // Stock lengths needed per group
+  const stockLengths_post  = totalPostPieces   > 0 ? Math.ceil(totalPostPieces   / postOpt.cutsPerLength)  : 0;
+  const stockLengths_end   = totalEndPostPieces > 0 ? Math.ceil(totalEndPostPieces / endOpt.cutsPerLength)  : 0;
+  const stockLengths_track = totalTrackPieces   > 0 ? Math.ceil(totalTrackPieces   / trackOpt.cutsPerLength) : 0;
+  const stockLengths_endVinyl = endPostVinylQty > 0 ? Math.ceil(endPostVinylQty   / endPostVinylOpt.cutsPerLength) : 0;
 
   let gasketLengths: number;
-  if (isCourier) {
-    const fullLengthCuts = Math.floor(courierLength / courierLength);
-    gasketLengths = Math.ceil((lengths_post + lengths_end + lengths_track) / (fullLengthCuts || 1));
-  } else {
-    gasketLengths = Math.ceil(lengths_post + lengths_end + lengths_track);
-  }
-
   let gasketDescription: string;
-  if (thickness === 13) {
-    if (isCourier) {
-      if (courierLength >= 72) gasketDescription = 'Gasket 13mm 10 Ft Cut to 72 Inches';
-      else if (courierLength >= 60) gasketDescription = 'Gasket 13mm 10 Ft Cut To 60 Inches';
-      else gasketDescription = 'Gasket 13mm 10 Ft Cut to 40 Inches';
-    } else {
-      gasketDescription = 'Gasket 13mm (10 Ft Lengths)';
-    }
+  const maxCutLength = Math.max(glassInsertLength, endPostInsertLength, glassInsertLengthTrack);
+  const courierLength = isCourier ? postOpt.cutSize : stockLength; // for return value compat
+
+  if (!isCourier) {
+    gasketLengths = Math.ceil(totalPostPieces / postOpt.cutsPerLength
+      + totalEndPostPieces / endOpt.cutsPerLength
+      + totalTrackPieces / trackOpt.cutsPerLength);
+    gasketDescription = stockLabel;
   } else {
-    if (isCourier) {
-      if (courierLength >= 72) gasketDescription = 'Gasket 12mm 12 Ft Cut to 72 Inches';
-      else gasketDescription = 'Gasket 12mm 12 Ft Cut to 48 Inches';
-    } else {
-      gasketDescription = 'Gasket 12mm (12 Ft Lengths)';
+    if (maxCutLength > stockLength) {
+      warnings.push('Vinyl insert lengths exceed stock length — courier shipping not possible at this configuration.');
     }
+    gasketLengths = stockLengths_post + stockLengths_track;
+    gasketDescription = stockLabel;
   }
 
   // Setting block footage
@@ -903,9 +970,8 @@ export function calculateFascia(config: ConfigInputs): CalculationResult {
   const wallTrackPriceEa = fasciaWallTrackPrice(actualRailHeight) * (1 - discount);
   const endPost25PriceEa = fasciaEndPostPrice(endPost25Height) * (1 - discount);
 
-  const gasketUnitPrice = thickness === 13
-    ? (isCourier ? PRICES_2026.parts.glassInsert_13mm_10ft * 1.337 : PRICES_2026.parts.glassInsert_13mm_10ft) * (1 - discount)
-    : (isCourier ? PRICES_2026.parts.glassInsert_12mm_12ft * 1.181 : PRICES_2026.parts.glassInsert_12mm_12ft) * (1 - discount);
+  const baseGasketPrice = thickness === 13 ? PRICES_2026.parts.glassInsert_13mm_10ft : PRICES_2026.parts.glassInsert_12mm_12ft;
+  const gasketUnitPrice = baseGasketPrice * (isCourier ? courierMultiplier : 1) * (1 - discount);
 
   const sbLengthPrice = PRICES_2026.parts.settingBlock_10ft * (1 - discount);
   const sbFtPrice = (PRICES_2026.parts.settingBlock_10ft / 10) * (1 - discount);
@@ -978,7 +1044,33 @@ export function calculateFascia(config: ConfigInputs): CalculationResult {
     addLine('Glass Shelf Kits', addons.glassShelfKits, PRICES_2026.parts.glassShelfKit * (1 - discount));
   }
   // ── 2. PLASTICS / VINYL ──
-  addLine(gasketDescription, gasketLengths, gasketUnitPrice);
+  if (isCourier) {
+    if (gasketLengths > 0) {
+      const postCutNote = `Cut to ${postOpt.cutSize}" — ${postOpt.cutsPerLength} piece${postOpt.cutsPerLength > 1 ? 's' : ''} per length`
+        + (trackOpt.cutSize === postOpt.cutSize && totalTrackPieces > 0 ? ` (posts & tracks combined)` : '');
+      addLine(gasketDescription, gasketLengths, gasketUnitPrice, undefined, postCutNote);
+    }
+    if (totalTrackPieces > 0 && trackOpt.cutSize !== postOpt.cutSize) {
+      const trackCutNote = `Cut to ${trackOpt.cutSize}" — ${trackOpt.cutsPerLength} piece${trackOpt.cutsPerLength > 1 ? 's' : ''} per length (wall tracks)`;
+      addLine(gasketDescription + ' (Wall Tracks)', stockLengths_track, gasketUnitPrice, undefined, trackCutNote);
+    }
+    if (stockLengths_end > 0) {
+      const endCutNote = `Cut to ${endOpt.cutSize}" — ${endOpt.cutsPerLength} piece${endOpt.cutsPerLength > 1 ? 's' : ''} per length (end post glass side)`
+        + (endOpt.cutSize !== postOpt.cutSize ? ' — different length' : '');
+      addLine(gasketDescription + ' (End Post Glass Side)', stockLengths_end, gasketUnitPrice, undefined, endCutNote);
+    }
+    if (stockLengths_endVinyl > 0) {
+      const vinylCutNote = `Cut to ${endPostVinylOpt.cutSize}" — ${endPostVinylOpt.cutsPerLength} piece${endPostVinylOpt.cutsPerLength > 1 ? 's' : ''} per length`
+        + (endPostVinylOpt.cutSize !== postOpt.cutSize ? ' (end post termination side — different length)' : '');
+      addLine(gasketDescription + ' (End Post Termination Side)', stockLengths_endVinyl, gasketUnitPrice, undefined, vinylCutNote);
+    }
+  } else {
+    addLine(gasketDescription, gasketLengths, gasketUnitPrice);
+    const nonCourierEndVinylLengths = endPostVinylQty > 0 ? Math.ceil(endPostVinylQty / endPostVinylOpt.cutsPerLength) : 0;
+    if (nonCourierEndVinylLengths > 0) {
+      addLine(gasketDescription + ' (End Post Termination Side)', nonCourierEndVinylLengths, gasketUnitPrice);
+    }
+  }
   addLine('Setting Block (10 Ft Length)', settingBlockLengthsOrdered, sbLengthPrice);
   addLine('Setting Block (Per Ft)', settingBlockFt, sbFtPrice);
   addLine('Setting Block (1.5" Pieces)', sb15Pieces, sb15Price);

@@ -625,7 +625,10 @@ export default function Home() {
                 <tbody>
                   {result.lineItems.map((item, i) => (
                     <tr key={i}>
-                      <td className="text-xs">{item.description}</td>
+                      <td className="text-xs">
+                        <div>{item.description}</div>
+                        {item.note && <div className="text-[10px] text-amber-700 mt-0.5 italic">{item.note}</div>}
+                      </td>
                       <td className="mono text-right text-xs">{item.qty % 1 === 0 ? item.qty : fmt(item.qty, 2)}</td>
                       <td className="mono text-right text-xs">{fmtCurrency(item.unitCost)}</td>
                       <td className="mono text-right text-xs font-bold">{fmtCurrency(item.total)}</td>
@@ -1008,7 +1011,10 @@ export default function Home() {
                     <tbody>
                       {result.lineItems.map((item, i) => (
                         <tr key={i}>
-                          <td className="text-xs">{item.description}</td>
+                          <td className="text-xs">
+                            <div>{item.description}</div>
+                            {item.note && <div className="text-[10px] text-amber-700 mt-0.5 italic">{item.note}</div>}
+                          </td>
                           <td className="mono text-right text-xs">{item.qty % 1 === 0 ? item.qty : fmt(item.qty, 2)}</td>
                           <td className="mono text-right text-xs">{fmtCurrency(item.unitCost)}</td>
                           <td className="mono text-right text-xs font-bold">{fmtCurrency(item.total)}</td>
