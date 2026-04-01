@@ -500,8 +500,9 @@ export function calculateSurface(config: ConfigInputs): CalculationResult {
   // Glass insert lengths
   // Post glass panel: post height above deck - bottom gap - 3
   const glassInsertLength = postHeightAboveDeck - bottomGap - 3;
-  // End post insert: post height above deck - 0.75
-  const endPostInsertLength = postHeightAboveDeck - 0.75;
+  // End post glass side uses the SAME insert length as mid posts (one glass side per end post)
+  // The other side (termination side) is vinyl-only — handled separately
+  const endPostInsertLength = glassInsertLength;
   // Wall track panel: wall track height - bottom gap - 3
   const glassInsertLengthTrack = wallTrackHeight - bottomGap - 3;
 
@@ -510,6 +511,7 @@ export function calculateSurface(config: ConfigInputs): CalculationResult {
   const settingBlock025Height = bottomGap - 0.25; // 0.25" base plate setting block
 
   // Total pieces needing glass inserts
+  // End posts: one glass side (same length as mid post) + one vinyl-only side (separate)
   const totalPostPieces = q.midPosts * 2 + q.endPosts + q.outsideCornerPosts * 2 + q.insideCornerPosts * 2;
   const totalTrackPieces = q.wallTracks + q.endPostsLeft25 + q.endPostsRight25;
   const totalEndPostPieces = q.endPosts - addons.removeTrackFromPost;
@@ -728,17 +730,8 @@ export function calculateSurface(config: ConfigInputs): CalculationResult {
       const trackCutNote = `Cut to ${trackOpt.cutSize}" — ${trackOpt.cutsPerLength} piece${trackOpt.cutsPerLength > 1 ? 's' : ''} per length (wall tracks)`;
       addLine(gasketDescription + ' (Wall Tracks)', stockLengths_track, gasketUnitPrice, undefined, trackCutNote);
     }
-    // End post glass insert group if different cut size from post
-    if (stockLengths_end > 0 && endOpt.cutSize !== postOpt.cutSize) {
-      const endCutNote = `Cut to ${endOpt.cutSize}" — ${endOpt.cutsPerLength} piece${endOpt.cutsPerLength > 1 ? 's' : ''} per length (end post glass side)`;
-      addLine(gasketDescription + ' (End Post Glass Side)', stockLengths_end, gasketUnitPrice, undefined, endCutNote);
-    } else if (stockLengths_end > 0 && endOpt.cutSize === postOpt.cutSize) {
-      // Same cut size — already counted in gasketLengths (post group includes end post pieces)
-      // Note: end post glass insert pieces were NOT included in gasketLengths above, add them
-      // (gasketLengths = stockLengths_post + stockLengths_track, end post is separate)
-      const endCutNote = `Cut to ${endOpt.cutSize}" — ${endOpt.cutsPerLength} piece${endOpt.cutsPerLength > 1 ? 's' : ''} per length (end post glass side)`;
-      addLine(gasketDescription + ' (End Post Glass Side)', stockLengths_end, gasketUnitPrice, undefined, endCutNote);
-    }
+    // End post glass side uses the same insert length as mid posts, so it is already
+    // included in totalPostPieces and gasketLengths — no separate line needed.
     // End post vinyl-only side
     if (stockLengths_endVinyl > 0) {
       const vinylCutNote = `Cut to ${endPostVinylOpt.cutSize}" — ${endPostVinylOpt.cutsPerLength} piece${endPostVinylOpt.cutsPerLength > 1 ? 's' : ''} per length`
@@ -845,8 +838,9 @@ export function calculateFascia(config: ConfigInputs): CalculationResult {
   // Glass insert lengths
   // Post: post height above deck - 5 - distToDeck - bottom gap - 3
   const glassInsertLength = postHeightAboveDeck - 5 - distToDeck - bottomGap - 3;
-  // End post: post height above deck - 0.25 - 5
-  const endPostInsertLength = postHeightAboveDeck - 0.25 - 5;
+  // End post glass side uses the SAME insert length as mid posts (one glass side per end post)
+  // The other side (termination side) is vinyl-only — handled separately
+  const endPostInsertLength = glassInsertLength;
   // Wall track: wall track height - 3 - distToDeck
   const glassInsertLengthTrack = wallTrackHeight - 3 - distToDeck;
 
@@ -878,7 +872,8 @@ export function calculateFascia(config: ConfigInputs): CalculationResult {
   const courierMultiplier = thickness === 12 ? 1.181 : 1.337;
 
   // Gasket quantities
-  const totalPostPieces = q.midPosts * 2 + q.endPosts * 2 + q.outsideCornerPosts * 2 + q.insideCornerPosts * 2;
+  // End posts: one glass side (same length as mid post) + one vinyl-only side (separate)
+  const totalPostPieces = q.midPosts * 2 + q.endPosts + q.outsideCornerPosts * 2 + q.insideCornerPosts * 2;
   const totalTrackPieces = q.wallTracks + q.endPostsLeft25 + q.endPostsRight25;
   const totalEndPostPieces = q.endPosts - addons.removeTrackFromPost;
 
@@ -1054,11 +1049,8 @@ export function calculateFascia(config: ConfigInputs): CalculationResult {
       const trackCutNote = `Cut to ${trackOpt.cutSize}" — ${trackOpt.cutsPerLength} piece${trackOpt.cutsPerLength > 1 ? 's' : ''} per length (wall tracks)`;
       addLine(gasketDescription + ' (Wall Tracks)', stockLengths_track, gasketUnitPrice, undefined, trackCutNote);
     }
-    if (stockLengths_end > 0) {
-      const endCutNote = `Cut to ${endOpt.cutSize}" — ${endOpt.cutsPerLength} piece${endOpt.cutsPerLength > 1 ? 's' : ''} per length (end post glass side)`
-        + (endOpt.cutSize !== postOpt.cutSize ? ' — different length' : '');
-      addLine(gasketDescription + ' (End Post Glass Side)', stockLengths_end, gasketUnitPrice, undefined, endCutNote);
-    }
+    // End post glass side uses the same insert length as mid posts, so it is already
+    // included in totalPostPieces and gasketLengths — no separate line needed.
     if (stockLengths_endVinyl > 0) {
       const vinylCutNote = `Cut to ${endPostVinylOpt.cutSize}" — ${endPostVinylOpt.cutsPerLength} piece${endPostVinylOpt.cutsPerLength > 1 ? 's' : ''} per length`
         + (endPostVinylOpt.cutSize !== postOpt.cutSize ? ' (end post termination side — different length)' : '');
