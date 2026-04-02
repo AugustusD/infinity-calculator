@@ -420,7 +420,7 @@ export default function Home() {
               <img
                 src={INFINITY_LOGO_URL}
                 alt="Infinity"
-                style={{ height: 'auto', width: '200px', objectFit: 'contain' }}
+                style={{ height: 'auto', width: '150px', objectFit: 'contain' }}
               />
 
             </div>
