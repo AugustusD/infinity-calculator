@@ -183,80 +183,101 @@ export function fasciaEndPostPrice(physicalPostLength: number): number {
 }
 
 // ============================================================
-// COURIER CUT SIZE LOOKUP TABLE
+// COURIER CUT OPTIMIZATION
 // ============================================================
 
 /**
- * Manufacturer-defined courier cut sizes keyed on post height above deck.
- * These are batch-friendly sizes that divide evenly into stock lengths:
- *   12mm stock = 144" (12 ft)  →  tiers: 48" (×3), 36" (×4), 24" (×6)
- *   13mm stock = 120" (10 ft)  →  tiers: 40" (×3), 30" (×4), 24" (×5)
+ * For a given insert length and stock length, find the smallest cut size >= insertLength
+ * that maximizes the number of cuts per stock length (zero kerf — no allowance added).
  *
- * Tier thresholds (based on post height above deck):
- *   ≥ 38"  →  Tall Post tier   (40" above deck standard)
- *   ≥ 27"  →  Mid tier         (34" above deck standard)
- *   < 27"  →  Short Post tier  (24" above deck standard)
+ * Returns { cutSize, cutsPerLength } where:
+ *   cutSize      = the optimal cut length in inches
+ *   cutsPerLength = floor(stockLength / cutSize)
  *
- * The 1/8" base plate gasket is already embedded in the post height values
- * (e.g. 40 1/8" above deck for 42" rail tall post), so thresholds use round numbers.
+ * Algorithm: iterate candidate cut sizes from insertLength up to stockLength,
+ * pick the one that gives the most cuts per length (ties → smallest cut size).
+ * We only need to check up to stockLength/1 = stockLength candidates, but in
+ * practice the optimum is found quickly because cutsPerLength decreases monotonically.
  */
-export interface CutSpec { cutSize: number; cutsPerLength: number; stockLength: number; }
-
-export function courierCutSpec(postHeightAboveDeck: number, thickness: 12 | 13): CutSpec {
-  const stockLength = thickness === 12 ? 144 : 120;
-  let cutSize: number;
-  if (postHeightAboveDeck >= 38) {
-    // Tall Post tier: 40" above deck (42 1/8" rail)
-    cutSize = thickness === 12 ? 48 : 40;
-  } else if (postHeightAboveDeck >= 27) {
-    // Mid tier: 34" above deck (36 1/8" rail)
-    cutSize = thickness === 12 ? 36 : 30;
-  } else {
-    // Short Post tier: 24" above deck
-    cutSize = 24;
-  }
-  return { cutSize, cutsPerLength: Math.floor(stockLength / cutSize), stockLength };
-}
-
-/**
- * Cut spec for the end post termination side (vinyl-only, no glass).
- * Termination vinyl length = postHeightAboveDeck + distToDeck - 0.25" (end cap)
- * For surface mount: distToDeck = 0 (channel starts at deck), so length = postHeight - 0.75"
- * For fascia mount: distToDeck > 0, so length is longer.
- *
- * Tier thresholds mirror the glass insert tiers but for the longer termination lengths.
- * Surface termination sizes (distToDeck=0): ~39.25", ~33.25", ~23.25"
- *   12mm: 48" (×3), 36" (×4), 24" (×6)
- *   13mm: 40" (×3), 40" (×3), 24" (×5)  — 34" post termination uses 40" tier
- * Fascia termination adds distToDeck (typically 3"), making lengths ~42", ~36", ~26"
- *   These still fit within the same tier cut sizes.
- */
-export function courierTerminationCutSpec(terminationLength: number, thickness: 12 | 13): CutSpec {
-  const stockLength = thickness === 12 ? 144 : 120;
-  let cutSize: number;
-  if (terminationLength > 36) {
-    cutSize = thickness === 12 ? 48 : 40;
-  } else if (terminationLength > 27) {
-    cutSize = thickness === 12 ? 36 : 40; // 13mm: 30" too short for 33.25", use 40"
-  } else {
-    cutSize = 24;
-  }
-  return { cutSize, cutsPerLength: Math.floor(stockLength / cutSize), stockLength };
-}
-
-/** @deprecated Use courierCutSpec() instead. Kept for any legacy references. */
 export function optimizeCut(insertLength: number, stockLength: number): { cutSize: number; cutsPerLength: number } {
   if (insertLength <= 0) return { cutSize: stockLength, cutsPerLength: 1 };
   if (insertLength >= stockLength) return { cutSize: stockLength, cutsPerLength: 1 };
+
   let bestCuts = 1;
   let bestCutSize = stockLength;
+
+  // Try every integer cut size from ceil(insertLength) up to stockLength
   const minCut = Math.ceil(insertLength);
   for (let c = minCut; c <= stockLength; c++) {
     const cuts = Math.floor(stockLength / c);
-    if (cuts > bestCuts) { bestCuts = cuts; bestCutSize = c; }
+    if (cuts > bestCuts) {
+      bestCuts = cuts;
+      bestCutSize = c;
+    }
+    // Once cuts drops to 1 and we already have a candidate, stop
     if (cuts <= 1 && bestCuts >= 1 && c > minCut) break;
   }
+
   return { cutSize: bestCutSize, cutsPerLength: bestCuts };
+}
+
+// ============================================================
+// MANUFACTURER COURIER CUT SIZE LOOKUP TABLES
+// ============================================================
+
+export interface CutSpec {
+  cutSize: number;       // cut length in inches (manufacturer standard)
+  cutsPerLength: number; // pieces per stock length
+  stockLength: number;   // stock length in inches
+}
+
+/**
+ * Returns the manufacturer-standard cut spec for glass insert / wedge groups.
+ * Keyed on postHeightAboveDeck to select the correct batch-production tier.
+ *
+ * Tiers (12mm / 13mm):
+ *   ≥ 38" → 48" / 40"  (tall post, 40" above deck, 42 1/8" rail)
+ *   ≥ 27" → 36" / 30"  (mid-height, 34" above deck, 36 1/8" rail)
+ *   < 27" → 24" / 24"  (short post, 24" above deck)
+ *
+ * All tiers divide evenly into their stock length (zero waste, no kerf).
+ */
+export function courierCutSpec(postHeightAboveDeck: number, thickness: 12 | 13): CutSpec {
+  const stockLength = thickness === 12 ? 144 : 120;
+  if (postHeightAboveDeck >= 38) {
+    // Tall post tier: 48" (12mm, 3/144") or 40" (13mm, 3/120")
+    const cutSize = thickness === 12 ? 48 : 40;
+    return { cutSize, cutsPerLength: Math.floor(stockLength / cutSize), stockLength };
+  } else if (postHeightAboveDeck >= 27) {
+    // Mid-height tier: 36" (12mm, 4/144") or 30" (13mm, 4/120")
+    const cutSize = thickness === 12 ? 36 : 30;
+    return { cutSize, cutsPerLength: Math.floor(stockLength / cutSize), stockLength };
+  } else {
+    // Short post tier: 24" (12mm, 6/144") or 24" (13mm, 5/120")
+    return { cutSize: 24, cutsPerLength: Math.floor(stockLength / 24), stockLength };
+  }
+}
+
+/**
+ * Returns the manufacturer-standard cut spec for the end post termination side
+ * (vinyl-only channel, no glass). Keyed on the actual termination vinyl length.
+ *
+ * Tiers (12mm / 13mm):
+ *   > 36" → 48" / 40"
+ *   > 27" → 36" / 40"  (30" is too short for a ~33" termination side)
+ *   ≤ 27" → 24" / 24"
+ */
+export function courierTerminationCutSpec(terminationLength: number, thickness: 12 | 13): CutSpec {
+  const stockLength = thickness === 12 ? 144 : 120;
+  if (terminationLength > 36) {
+    const cutSize = thickness === 12 ? 48 : 40;
+    return { cutSize, cutsPerLength: Math.floor(stockLength / cutSize), stockLength };
+  } else if (terminationLength > 27) {
+    const cutSize = thickness === 12 ? 36 : 40;
+    return { cutSize, cutsPerLength: Math.floor(stockLength / cutSize), stockLength };
+  } else {
+    return { cutSize: 24, cutsPerLength: Math.floor(stockLength / 24), stockLength };
+  }
 }
 
 // ============================================================
@@ -559,38 +580,41 @@ export function calculateSurface(config: ConfigInputs): CalculationResult {
   // Courier price multiplier (from Patrick's original workbook)
   const courierMultiplier = thickness === 12 ? 1.181 : 1.337;
 
-  // Manufacturer lookup table cut specs (keyed on postHeightAboveDeck)
-  const postOpt  = courierCutSpec(postHeightAboveDeck, thickness);
-  // Wall track uses same tier as post (same post height drives the rail height)
-  const trackOpt = courierCutSpec(postHeightAboveDeck, thickness);
-  // End post glass side = same as mid post (mounting-style agnostic)
-  const endOpt   = postOpt;
+  // Manufacturer-standard cut specs (lookup table, not dynamic optimization)
+  // postOpt is keyed on postHeightAboveDeck; trackOpt uses same tier (track insert ≈ post insert)
+  // End post glass side uses same spec as mid post (glass insert formula is mount-agnostic)
+  const postOpt   = courierCutSpec(postHeightAboveDeck, thickness);
+  const trackOpt  = courierCutSpec(postHeightAboveDeck, thickness); // same tier as post
+  // endOpt is unused (end post glass side merged into post group)
 
-  // Surface mount: end post vinyl-only side = (postHeightAboveDeck - 0.5" base plate) - 0.25" end cap
+  // Surface mount: end post vinyl-only side = trackOpening - 0.25"
+  // trackOpening = postHeightAboveDeck - 0.5" (base plate)
   const surfaceTrackOpening = postHeightAboveDeck - 0.5;
   const endPostVinylLength = surfaceTrackOpening - 0.25;
   const endPostVinylOpt = courierTerminationCutSpec(endPostVinylLength, thickness);
 
-  // Stock lengths needed per group
-  const stockLengths_post  = totalPostPieces   > 0 ? Math.ceil(totalPostPieces   / postOpt.cutsPerLength)  : 0;
-  const stockLengths_track = totalTrackPieces   > 0 ? Math.ceil(totalTrackPieces   / trackOpt.cutsPerLength) : 0;
+  // Lengths needed per group
+  // End post glass side is merged into totalPostPieces (same cut spec as mid post)
+  const stockLengths_post  = totalPostPieces  > 0 ? Math.ceil(totalPostPieces  / postOpt.cutsPerLength)  : 0;
+  const stockLengths_track = totalTrackPieces  > 0 ? Math.ceil(totalTrackPieces  / trackOpt.cutsPerLength) : 0;
+  // End post vinyl-only side: one piece per end post (one side only)
   const endPostVinylQty = q.endPosts;
   const stockLengths_endVinyl = endPostVinylQty > 0 ? Math.ceil(endPostVinylQty / endPostVinylOpt.cutsPerLength) : 0;
 
+  // Group post + track together if they share the same cut size; otherwise separate
+  // For non-courier: all groups share a single "full lengths" count
   let gasketLengths: number;
   let gasketDescription: string;
   const maxCutLength = Math.max(glassInsertLength, glassInsertLengthTrack);
-  const courierLength = isCourier ? postOpt.cutSize : postOpt.stockLength; // for return value compat
+  const courierLength = isCourier ? postOpt.cutSize : stockLength; // for return value compat
 
   if (!isCourier) {
-    // Non-courier: all pieces come from full stock lengths
-    gasketLengths = Math.ceil(
-      totalPostPieces   / postOpt.cutsPerLength +
-      totalTrackPieces  / trackOpt.cutsPerLength
-    );
+    // Non-courier: combine all pieces into one count using post tier
+    const totalAllPieces = totalPostPieces + totalTrackPieces;
+    gasketLengths = totalAllPieces > 0 ? Math.ceil(totalAllPieces / postOpt.cutsPerLength) : 0;
     gasketDescription = stockLabel;
   } else {
-    // Courier: post + track grouped (same tier); end post vinyl is separate
+    // Courier: post + track grouped (same tier)
     gasketLengths = stockLengths_post + stockLengths_track;
     gasketDescription = stockLabel;
   }
@@ -764,9 +788,8 @@ export function calculateSurface(config: ConfigInputs): CalculationResult {
       const trackCutNote = `Cut to ${trackOpt.cutSize}" — ${trackOpt.cutsPerLength} piece${trackOpt.cutsPerLength > 1 ? 's' : ''} per length (wall tracks)`;
       addLine(gasketDescription + ' (Wall Tracks)', stockLengths_track, gasketUnitPrice, undefined, trackCutNote);
     }
-    // End post glass side uses same cut spec as mid post (mounting-style agnostic)
-    // End post glass pieces are already counted in totalPostPieces → stockLengths_post
-    // No separate line item needed for end post glass side
+    // End post glass side is merged into the main post group (same cut spec)
+    // No separate line item needed
     // End post vinyl-only side
     if (stockLengths_endVinyl > 0) {
       const vinylCutNote = `Cut to ${endPostVinylOpt.cutSize}" — ${endPostVinylOpt.cutsPerLength} piece${endPostVinylOpt.cutsPerLength > 1 ? 's' : ''} per length`
@@ -871,14 +894,12 @@ export function calculateFascia(config: ConfigInputs): CalculationResult {
   const endPost25Height = postHeightAboveDeck + 1 + distToDeck + BASE_PLATE_HEIGHT;
 
   // Glass insert lengths
-  // Insert and wedge are mounting-style agnostic: same formula as surface mount.
-  // The setting block (not the insert) absorbs the below-deck portion.
-  // Post: post height above deck - bottom gap - 3" (glass wedge)
-  const glassInsertLength = postHeightAboveDeck - bottomGap - 3;
-  // End post glass side = same as mid post (mounting-style agnostic)
-  const endPostInsertLength = glassInsertLength;
-  // Wall track: wall track height - 3" (glass wedge)
-  const glassInsertLengthTrack = wallTrackHeight - 3;
+  // Post: post height above deck - 5 - distToDeck - bottom gap - 3
+  const glassInsertLength = postHeightAboveDeck - 5 - distToDeck - bottomGap - 3;
+  // End post: post height above deck - 0.25 - 5
+  const endPostInsertLength = postHeightAboveDeck - 0.25 - 5;
+  // Wall track: wall track height - 3 - distToDeck
+  const glassInsertLengthTrack = wallTrackHeight - 3 - distToDeck;
 
   // Setting block height = bottomGap + distToDeck
   const settingBlockHeight = bottomGap + distToDeck;
@@ -912,21 +933,24 @@ export function calculateFascia(config: ConfigInputs): CalculationResult {
   const totalTrackPieces = q.wallTracks + q.endPostsLeft25 + q.endPostsRight25;
   const totalEndPostPieces = q.endPosts - addons.removeTrackFromPost;
 
-  // Manufacturer lookup table cut specs (keyed on postHeightAboveDeck)
+  // Manufacturer-standard cut specs (lookup table, not dynamic optimization)
+  // postOpt is keyed on postHeightAboveDeck; trackOpt uses same tier
+  // End post glass side uses same spec as mid post (glass insert formula is mount-agnostic)
   const postOpt  = courierCutSpec(postHeightAboveDeck, thickness);
   const trackOpt = courierCutSpec(postHeightAboveDeck, thickness); // same tier as post
-  const endOpt   = postOpt; // end post glass side = same as mid post
+  // endOpt is unused (end post glass side merged into post group)
 
   // Fascia end post vinyl-only side:
-  // trackOpening = postHeightAboveDeck + distToDeck (full channel above + below deck)
+  // trackOpening = postHeightAboveDeck + distToDeck (full channel)
   // vinylLength = trackOpening - 0.25" (end cap)
-  // If setting block is maxed (useWedgeInsteadOfBlock), termination side is still full trackOpening - 0.25"
+  // If setting block is maxed (useWedgeInsteadOfBlock), the termination side is still full trackOpening - 0.25"
   const fasciaTrackOpening = postHeightAboveDeck + distToDeck;
   const endPostVinylLength = fasciaTrackOpening - 0.25;
   const endPostVinylOpt = courierTerminationCutSpec(endPostVinylLength, thickness);
   const endPostVinylQty = q.endPosts;
 
   // Stock lengths needed per group
+  // End post glass side is merged into totalPostPieces (same cut spec as mid post)
   const stockLengths_post  = totalPostPieces   > 0 ? Math.ceil(totalPostPieces   / postOpt.cutsPerLength)  : 0;
   const stockLengths_track = totalTrackPieces   > 0 ? Math.ceil(totalTrackPieces   / trackOpt.cutsPerLength) : 0;
   const stockLengths_endVinyl = endPostVinylQty > 0 ? Math.ceil(endPostVinylQty   / endPostVinylOpt.cutsPerLength) : 0;
@@ -934,18 +958,14 @@ export function calculateFascia(config: ConfigInputs): CalculationResult {
   let gasketLengths: number;
   let gasketDescription: string;
   const maxCutLength = Math.max(glassInsertLength, glassInsertLengthTrack);
-  const courierLength = isCourier ? postOpt.cutSize : postOpt.stockLength; // for return value compat
+  const courierLength = isCourier ? postOpt.cutSize : stockLength; // for return value compat
 
   if (!isCourier) {
-    gasketLengths = Math.ceil(
-      totalPostPieces   / postOpt.cutsPerLength +
-      totalTrackPieces  / trackOpt.cutsPerLength
-    );
+    // Non-courier: combine all pieces into one count using post tier
+    const totalAllPieces = totalPostPieces + totalTrackPieces;
+    gasketLengths = totalAllPieces > 0 ? Math.ceil(totalAllPieces / postOpt.cutsPerLength) : 0;
     gasketDescription = stockLabel;
   } else {
-    if (maxCutLength > postOpt.stockLength) {
-      warnings.push('Vinyl insert lengths exceed stock length — courier shipping not possible at this configuration.');
-    }
     gasketLengths = stockLengths_post + stockLengths_track;
     gasketDescription = stockLabel;
   }
@@ -1084,9 +1104,8 @@ export function calculateFascia(config: ConfigInputs): CalculationResult {
       const trackCutNote = `Cut to ${trackOpt.cutSize}" — ${trackOpt.cutsPerLength} piece${trackOpt.cutsPerLength > 1 ? 's' : ''} per length (wall tracks)`;
       addLine(gasketDescription + ' (Wall Tracks)', stockLengths_track, gasketUnitPrice, undefined, trackCutNote);
     }
-    // End post glass side uses same cut spec as mid post (mounting-style agnostic)
-    // End post glass pieces are already counted in totalPostPieces → stockLengths_post
-    // No separate line item needed for end post glass side
+    // End post glass side is merged into the main post group (same cut spec)
+    // No separate line item needed
     if (stockLengths_endVinyl > 0) {
       const vinylCutNote = `Cut to ${endPostVinylOpt.cutSize}" — ${endPostVinylOpt.cutsPerLength} piece${endPostVinylOpt.cutsPerLength > 1 ? 's' : ''} per length`
         + (endPostVinylOpt.cutSize !== postOpt.cutSize ? ' (end post termination side — different length)' : '');
