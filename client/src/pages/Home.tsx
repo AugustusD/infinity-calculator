@@ -410,7 +410,7 @@ export default function Home() {
       {/* ====== HEADER ====== */}
       <header className="no-print" style={{ background: '#FFFFFF', borderBottom: '3px solid #B69A5A', borderTop: '3px solid #B69A5A' }}>
         <div className="container py-2 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-6">
             <img
               src={IAS_LOGO_URL}
               alt="Innovative Aluminum Systems"
@@ -420,7 +420,7 @@ export default function Home() {
               <img
                 src={INFINITY_LOGO_URL}
                 alt="Infinity"
-                style={{ height: 'auto', width: '150px', objectFit: 'contain' }}
+                style={{ height: 'auto', width: '113px', objectFit: 'contain' }}
               />
 
             </div>
