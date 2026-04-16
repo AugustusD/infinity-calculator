@@ -553,7 +553,9 @@ export function calculateSurface(config: ConfigInputs): CalculationResult {
 
   // --- Computed dimensions ---
   const postHeightAboveDeck = Math.max(24, actualRailHeight - topReveal);
-  const wallTrackHeight = actualRailHeight - 2;
+  // wallTrackHeight uses topReveal (same as postHeightAboveDeck) so the glass insert
+  // is not inflated by the 1/8" nominal rounding in actualRailHeight
+  const wallTrackHeight = actualRailHeight - topReveal;
   const endPost25Height = actualRailHeight + 1;
 
   // Glass insert lengths
@@ -890,7 +892,9 @@ export function calculateFascia(config: ConfigInputs): CalculationResult {
   // --- Computed dimensions ---
   const postHeightAboveDeck = Math.max(24, actualRailHeight - topReveal);
   const physicalPostLength = postHeightAboveDeck + distToDeck + BASE_PLATE_HEIGHT;
-  const wallTrackHeight = actualRailHeight - 2;
+  // wallTrackHeight uses topReveal (same as postHeightAboveDeck) so the glass insert
+  // is not inflated by the 1/8" nominal rounding in actualRailHeight
+  const wallTrackHeight = actualRailHeight - topReveal;
   const endPost25Height = postHeightAboveDeck + 1 + distToDeck + BASE_PLATE_HEIGHT;
 
   // Glass insert lengths
