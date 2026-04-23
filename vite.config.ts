@@ -22,5 +22,6 @@ export default defineConfig({
     port: 3000,
     strictPort: false,
     host: true,
+    allowedHosts: true,
   },
 });

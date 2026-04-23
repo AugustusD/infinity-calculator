@@ -553,9 +553,12 @@ export function calculateSurface(config: ConfigInputs): CalculationResult {
 
   // --- Computed dimensions ---
   const postHeightAboveDeck = Math.max(24, actualRailHeight - topReveal);
-  // wallTrackHeight uses topReveal (same as postHeightAboveDeck) so the glass insert
-  // is not inflated by the 1/8" nominal rounding in actualRailHeight
-  const wallTrackHeight = actualRailHeight - topReveal;
+  // wallTrackHeight always uses the tall-post equivalent height (min 34") so that
+  // wall track vinyl is consistent with tall post sizing even when short posts are selected.
+  // This matches the physical reality: the wall track channel is fixed to the rail height
+  // and does not shorten when shorter posts are used.
+  const wallTrackPostEquiv = Math.max(postHeightAboveDeck, 34);
+  const wallTrackHeight = wallTrackPostEquiv;
   const endPost25Height = actualRailHeight + 1;
 
   // Glass insert lengths
@@ -892,9 +895,10 @@ export function calculateFascia(config: ConfigInputs): CalculationResult {
   // --- Computed dimensions ---
   const postHeightAboveDeck = Math.max(24, actualRailHeight - topReveal);
   const physicalPostLength = postHeightAboveDeck + distToDeck + BASE_PLATE_HEIGHT;
-  // wallTrackHeight uses topReveal (same as postHeightAboveDeck) so the glass insert
-  // is not inflated by the 1/8" nominal rounding in actualRailHeight
-  const wallTrackHeight = actualRailHeight - topReveal;
+  // wallTrackHeight always uses the tall-post equivalent height (min 34") so that
+  // wall track vinyl is consistent with tall post sizing even when short posts are selected.
+  const wallTrackPostEquiv = Math.max(postHeightAboveDeck, 34);
+  const wallTrackHeight = wallTrackPostEquiv;
   const endPost25Height = postHeightAboveDeck + 1 + distToDeck + BASE_PLATE_HEIGHT;
 
   // Glass insert lengths
