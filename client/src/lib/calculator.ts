@@ -586,10 +586,11 @@ export function calculateSurface(config: ConfigInputs): CalculationResult {
   const courierMultiplier = thickness === 12 ? 1.181 : 1.337;
 
   // Manufacturer-standard cut specs (lookup table, not dynamic optimization)
-  // postOpt is keyed on postHeightAboveDeck; trackOpt uses same tier (track insert ≈ post insert)
+  // postOpt is keyed on postHeightAboveDeck; trackOpt uses wallTrackPostEquiv (min 34")
+  // so that wall track vinyl tier always matches tall post sizing even when short posts are selected.
   // End post glass side uses same spec as mid post (glass insert formula is mount-agnostic)
   const postOpt   = courierCutSpec(postHeightAboveDeck, thickness);
-  const trackOpt  = courierCutSpec(postHeightAboveDeck, thickness); // same tier as post
+  const trackOpt  = courierCutSpec(wallTrackPostEquiv, thickness); // tall-post equivalent tier
   // endOpt is unused (end post glass side merged into post group)
 
   // Surface mount: end post vinyl-only side = trackOpening - 0.25"
@@ -614,12 +615,16 @@ export function calculateSurface(config: ConfigInputs): CalculationResult {
   const courierLength = isCourier ? postOpt.cutSize : stockLength; // for return value compat
 
   if (!isCourier) {
-    // Non-courier: combine all pieces into one count using post tier
-    const totalAllPieces = totalPostPieces + totalTrackPieces;
-    gasketLengths = totalAllPieces > 0 ? Math.ceil(totalAllPieces / postOpt.cutsPerLength) : 0;
+    // Non-courier: if post and track share the same cut tier, combine; otherwise sum separately
+    if (postOpt.cutsPerLength === trackOpt.cutsPerLength) {
+      const totalAllPieces = totalPostPieces + totalTrackPieces;
+      gasketLengths = totalAllPieces > 0 ? Math.ceil(totalAllPieces / postOpt.cutsPerLength) : 0;
+    } else {
+      gasketLengths = stockLengths_post + stockLengths_track;
+    }
     gasketDescription = stockLabel;
   } else {
-    // Courier: post + track grouped (same tier)
+    // Courier: post + track grouped (tiers may differ when short post + wall track)
     gasketLengths = stockLengths_post + stockLengths_track;
     gasketDescription = stockLabel;
   }
@@ -942,10 +947,11 @@ export function calculateFascia(config: ConfigInputs): CalculationResult {
   const totalEndPostPieces = q.endPosts - addons.removeTrackFromPost;
 
   // Manufacturer-standard cut specs (lookup table, not dynamic optimization)
-  // postOpt is keyed on postHeightAboveDeck; trackOpt uses same tier
+  // postOpt is keyed on postHeightAboveDeck; trackOpt uses wallTrackPostEquiv (min 34")
+  // so that wall track vinyl tier always matches tall post sizing even when short posts are selected.
   // End post glass side uses same spec as mid post (glass insert formula is mount-agnostic)
   const postOpt  = courierCutSpec(postHeightAboveDeck, thickness);
-  const trackOpt = courierCutSpec(postHeightAboveDeck, thickness); // same tier as post
+  const trackOpt = courierCutSpec(wallTrackPostEquiv, thickness); // tall-post equivalent tier
   // endOpt is unused (end post glass side merged into post group)
 
   // Fascia end post vinyl-only side:
@@ -969,9 +975,13 @@ export function calculateFascia(config: ConfigInputs): CalculationResult {
   const courierLength = isCourier ? postOpt.cutSize : stockLength; // for return value compat
 
   if (!isCourier) {
-    // Non-courier: combine all pieces into one count using post tier
-    const totalAllPieces = totalPostPieces + totalTrackPieces;
-    gasketLengths = totalAllPieces > 0 ? Math.ceil(totalAllPieces / postOpt.cutsPerLength) : 0;
+    // Non-courier: if post and track share the same cut tier, combine; otherwise sum separately
+    if (postOpt.cutsPerLength === trackOpt.cutsPerLength) {
+      const totalAllPieces = totalPostPieces + totalTrackPieces;
+      gasketLengths = totalAllPieces > 0 ? Math.ceil(totalAllPieces / postOpt.cutsPerLength) : 0;
+    } else {
+      gasketLengths = stockLengths_post + stockLengths_track;
+    }
     gasketDescription = stockLabel;
   } else {
     gasketLengths = stockLengths_post + stockLengths_track;
