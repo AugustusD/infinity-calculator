@@ -553,12 +553,11 @@ export function calculateSurface(config: ConfigInputs): CalculationResult {
 
   // --- Computed dimensions ---
   const postHeightAboveDeck = Math.max(24, actualRailHeight - topReveal);
-  // wallTrackHeight always uses the tall-post equivalent height (min 34") so that
-  // wall track vinyl is consistent with tall post sizing even when short posts are selected.
-  // This matches the physical reality: the wall track channel is fixed to the rail height
-  // and does not shorten when shorter posts are used.
-  const wallTrackPostEquiv = Math.max(postHeightAboveDeck, 34);
-  const wallTrackHeight = wallTrackPostEquiv;
+  // wallTrackHeight always uses DEFAULT_TOP_REVEAL (2.125"), NOT the user's topGlassReveal.
+  // The wall track channel is a fixed-height element tied to the rail height, not the post height.
+  // When Short Post is selected, topGlassReveal is set to ~18.125" to push posts to 24" above deck,
+  // but the wall track must remain at the full rail height (42.125 - 2.125 = 40", or 36.125 - 2.125 = 34").
+  const wallTrackHeight = actualRailHeight - DEFAULT_TOP_REVEAL;
   const endPost25Height = actualRailHeight + 1;
 
   // Glass insert lengths
@@ -586,11 +585,11 @@ export function calculateSurface(config: ConfigInputs): CalculationResult {
   const courierMultiplier = thickness === 12 ? 1.181 : 1.337;
 
   // Manufacturer-standard cut specs (lookup table, not dynamic optimization)
-  // postOpt is keyed on postHeightAboveDeck; trackOpt uses wallTrackPostEquiv (min 34")
-  // so that wall track vinyl tier always matches tall post sizing even when short posts are selected.
+  // postOpt is keyed on postHeightAboveDeck; trackOpt uses wallTrackHeight (= actualRailHeight - topReveal)
+  // so that wall track vinyl tier is always based on the full rail height, independent of post type.
   // End post glass side uses same spec as mid post (glass insert formula is mount-agnostic)
   const postOpt   = courierCutSpec(postHeightAboveDeck, thickness);
-  const trackOpt  = courierCutSpec(wallTrackPostEquiv, thickness); // tall-post equivalent tier
+  const trackOpt  = courierCutSpec(wallTrackHeight, thickness); // full rail height tier
   // endOpt is unused (end post glass side merged into post group)
 
   // Surface mount: end post vinyl-only side = trackOpening - 0.25"
@@ -900,10 +899,11 @@ export function calculateFascia(config: ConfigInputs): CalculationResult {
   // --- Computed dimensions ---
   const postHeightAboveDeck = Math.max(24, actualRailHeight - topReveal);
   const physicalPostLength = postHeightAboveDeck + distToDeck + BASE_PLATE_HEIGHT;
-  // wallTrackHeight always uses the tall-post equivalent height (min 34") so that
-  // wall track vinyl is consistent with tall post sizing even when short posts are selected.
-  const wallTrackPostEquiv = Math.max(postHeightAboveDeck, 34);
-  const wallTrackHeight = wallTrackPostEquiv;
+  // wallTrackHeight always uses DEFAULT_TOP_REVEAL (2.125"), NOT the user's topGlassReveal.
+  // The wall track channel is a fixed-height element tied to the rail height, not the post height.
+  // When Short Post is selected, topGlassReveal is set to ~18.125" to push posts to 24" above deck,
+  // but the wall track must remain at the full rail height (42.125 - 2.125 = 40", or 36.125 - 2.125 = 34").
+  const wallTrackHeight = actualRailHeight - DEFAULT_TOP_REVEAL;
   const endPost25Height = postHeightAboveDeck + 1 + distToDeck + BASE_PLATE_HEIGHT;
 
   // Glass insert lengths
@@ -947,11 +947,11 @@ export function calculateFascia(config: ConfigInputs): CalculationResult {
   const totalEndPostPieces = q.endPosts - addons.removeTrackFromPost;
 
   // Manufacturer-standard cut specs (lookup table, not dynamic optimization)
-  // postOpt is keyed on postHeightAboveDeck; trackOpt uses wallTrackPostEquiv (min 34")
-  // so that wall track vinyl tier always matches tall post sizing even when short posts are selected.
+  // postOpt is keyed on postHeightAboveDeck; trackOpt uses wallTrackHeight (= actualRailHeight - topReveal)
+  // so that wall track vinyl tier is always based on the full rail height, independent of post type.
   // End post glass side uses same spec as mid post (glass insert formula is mount-agnostic)
   const postOpt  = courierCutSpec(postHeightAboveDeck, thickness);
-  const trackOpt = courierCutSpec(wallTrackPostEquiv, thickness); // tall-post equivalent tier
+  const trackOpt = courierCutSpec(wallTrackHeight, thickness); // full rail height tier
   // endOpt is unused (end post glass side merged into post group)
 
   // Fascia end post vinyl-only side:
