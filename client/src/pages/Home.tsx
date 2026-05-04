@@ -22,7 +22,7 @@ import {
   type GlassThickness,
   type FasciaOffset,
 } from '@/lib/calculator';
-import { Lock, Unlock, AlertTriangle, AlertCircle, Printer, ChevronDown, ChevronUp, Info, FileSpreadsheet, Mail } from 'lucide-react';
+import { Lock, Unlock, AlertTriangle, AlertCircle, Printer, ChevronDown, ChevronUp, Info, FileSpreadsheet, Mail, RotateCcw } from 'lucide-react';
 import { exportToExcel } from '@/lib/exportExcel';
 import { toast } from 'sonner';
 import PostDiagram from '@/components/PostDiagram';
@@ -101,37 +101,119 @@ function NumInput({
     setLocalVal(String(value));
   }
 
+  const clamp = (v: number) =>
+    Math.max(min, max !== undefined ? Math.min(max, v) : v);
+
+  // preventDefault on mousedown keeps focus where it is. Without this, clicking
+  // the button shifts focus to itself, which can trigger scroll-into-view and
+  // make surrounding content shift under the cursor between rapid clicks.
+  const bump = (delta: number) => (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    if (disabled) return;
+    const current = Number.isFinite(value) ? value : 0;
+    const next = clamp(current + delta);
+    if (next !== value) onChange(next);
+  };
+
+  const atMax = max !== undefined && value >= max;
+  const atMin = value <= min;
+
+  const wrapperStyle: React.CSSProperties = {
+    position: 'relative',
+    width: '100%',
+    display: 'block',
+  };
+  const inputStyle: React.CSSProperties = {
+    width: '100%',
+    boxSizing: 'border-box',
+    padding: '6px 26px 6px 12px',
+    fontSize: '14px',
+    textAlign: 'right',
+    background: disabled ? '#F5F5F5' : '#FFFFFF',
+    color: '#111111',
+    border: '1px solid #D8D8D8',
+    borderRadius: '4px',
+    outline: 'none',
+    appearance: 'none',
+    WebkitAppearance: 'none',
+    MozAppearance: 'textfield',
+  };
+  const btnLayerStyle: React.CSSProperties = {
+    position: 'absolute',
+    top: '1px',
+    right: '1px',
+    bottom: '1px',
+    width: '20px',
+    display: 'flex',
+    flexDirection: 'column',
+    pointerEvents: 'none',
+  };
+  const btnStyle = (atEdge: boolean): React.CSSProperties => ({
+    flex: 1,
+    display: 'grid',
+    placeItems: 'center',
+    fontSize: '9px',
+    lineHeight: 1,
+    color: (disabled || atEdge) ? '#C8C8C8' : '#3A3A3A',
+    background: 'transparent',
+    border: 'none',
+    padding: 0,
+    cursor: (disabled || atEdge) ? 'not-allowed' : 'pointer',
+    pointerEvents: (disabled || atEdge) ? 'none' : 'auto',
+  });
+
   return (
-    <input
-      type="number"
-      value={focused ? localVal : value}
-      min={min}
-      max={max}
-      step={step}
-      disabled={disabled}
-      onFocus={e => {
-        setFocused(true);
-        setLocalVal(String(value));
-        e.target.select();
-      }}
-      onBlur={() => {
-        setFocused(false);
-        const v = parseFloat(localVal);
-        if (!isNaN(v)) {
-          const clamped = max !== undefined ? Math.min(max, Math.max(min, v)) : Math.max(min, v);
-          onChange(clamped);
-          setLocalVal(String(clamped));
-        } else {
+    <div className={className} style={wrapperStyle}>
+      <input
+        type="number"
+        value={focused ? localVal : value}
+        min={min}
+        max={max}
+        step={step}
+        disabled={disabled}
+        onFocus={e => {
+          setFocused(true);
           setLocalVal(String(value));
-        }
-      }}
-      onChange={e => {
-        setLocalVal(e.target.value);
-        const v = parseFloat(e.target.value);
-        if (!isNaN(v)) onChange(v);
-      }}
-      className={`mono w-full rounded border border-[#D8D8D8] px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#B69A5A] disabled:bg-[#F5F5F5] disabled:cursor-not-allowed bg-white ${className}`}
-    />
+          e.target.select();
+        }}
+        onBlur={() => {
+          setFocused(false);
+          const v = parseFloat(localVal);
+          if (!isNaN(v)) {
+            const clamped = clamp(v);
+            onChange(clamped);
+            setLocalVal(String(clamped));
+          } else {
+            setLocalVal(String(value));
+          }
+        }}
+        onChange={e => {
+          setLocalVal(e.target.value);
+          const v = parseFloat(e.target.value);
+          if (!isNaN(v)) onChange(v);
+        }}
+        className="mono no-native-spin"
+        style={inputStyle}
+      />
+      <div style={btnLayerStyle}>
+        <button
+          type="button"
+          tabIndex={-1}
+          aria-label="Increment"
+          disabled={disabled || atMax}
+          onMouseDown={bump(step)}
+          style={btnStyle(atMax)}
+        >▲</button>
+        <button
+          type="button"
+          tabIndex={-1}
+          aria-label="Decrement"
+          disabled={disabled || atMin}
+          onMouseDown={bump(-step)}
+          style={btnStyle(atMin)}
+        >▼</button>
+      </div>
+    </div>
   );
 }
 
@@ -190,6 +272,7 @@ function UnlockableField({
   step = 0.125,
   hint,
   unit = '"',
+  defaultValue,
 }: {
   label: string;
   value: number;
@@ -201,7 +284,15 @@ function UnlockableField({
   step?: number;
   hint?: string;
   unit?: string;
+  defaultValue?: number;
 }) {
+  const isModified = defaultValue !== undefined && Math.abs(value - defaultValue) > 0.001;
+
+  const handleReset = () => {
+    if (defaultValue === undefined) return;
+    onChange(defaultValue);
+  };
+
   return (
     <FieldRow label={label} hint={hint}>
       <div className="flex items-center gap-2">
@@ -216,6 +307,15 @@ function UnlockableField({
           />
           <span className="absolute right-8 top-1/2 -translate-y-1/2 text-xs text-[#6B6B6B]">{unit}</span>
         </div>
+        {isModified && (
+          <button
+            onClick={handleReset}
+            title="Reset to standard"
+            className="p-1.5 rounded transition-colors text-[#8A7240] bg-[#F5F0E8] hover:bg-[#EDE5D0]"
+          >
+            <RotateCcw size={14} />
+          </button>
+        )}
         <button
           onClick={onUnlock}
           title={unlocked ? 'Lock to default' : 'Unlock to customize'}
@@ -401,6 +501,13 @@ export default function Home() {
   const hasContent = config.quantities.midPosts + config.quantities.endPosts +
     config.quantities.outsideCornerPosts + config.quantities.insideCornerPosts +
     config.quantities.wallTracks + config.quantities.endPostsLeft25 + config.quantities.endPostsRight25 > 0;
+
+  // Total posts that take a base plate / mount fixture (wall tracks excluded — they don't).
+  // Used to cap base-plate customization quantities so they can't exceed the post count.
+  const totalPostsForBasePlates =
+    config.quantities.midPosts + config.quantities.endPosts +
+    config.quantities.outsideCornerPosts + config.quantities.insideCornerPosts +
+    config.quantities.endPostsLeft25 + config.quantities.endPostsRight25;
   const colorSelected = !!jobInfo.color && jobInfo.color !== '';
   const requireColorMsg = 'Please select a powder coat color in Job Information before exporting or printing.';
 
@@ -906,6 +1013,7 @@ export default function Home() {
                 min={constraints.topRevealMin}
                 max={constraints.topRevealMax}
                 step={0.125}
+                defaultValue={constraints.topRevealDefault}
                 hint={revealUnlocked
                   ? `Range: ${fmt(constraints.topRevealMin, 3)}" - ${fmt(constraints.topRevealMax, 3)}"`
                   : `Default 2-1/8". Click lock to customize`}
@@ -920,6 +1028,7 @@ export default function Home() {
                 min={0}
                 max={6}
                 step={0.125}
+                defaultValue={constraints.bottomGapDefault}
                 hint={bottomGapUnlocked ? 'Gap from deck to bottom of glass' : 'Default 2". Click lock to customize'}
               />
 
@@ -1181,10 +1290,11 @@ export default function Home() {
                       <NumInput
                         value={config.addOns.add5x5BasePlate}
                         onChange={v => {
-                          updateAddOn('add5x5BasePlate', v);
+                          const clamped = Math.min(v, totalPostsForBasePlates);
+                          updateAddOn('add5x5BasePlate', clamped);
                           // If reduced below current assigned total, zero out sub-spinners
                           const assigned = config.addOns.basePlate5x5_midPost + config.addOns.basePlate5x5_outsideCorner + config.addOns.basePlate5x5_insideCorner + config.addOns.basePlate5x5_endPost25;
-                          if (v < assigned) {
+                          if (clamped < assigned) {
                             updateAddOn('basePlate5x5_midPost', 0);
                             updateAddOn('basePlate5x5_outsideCorner', 0);
                             updateAddOn('basePlate5x5_insideCorner', 0);
@@ -1192,6 +1302,7 @@ export default function Home() {
                           }
                         }}
                         min={0}
+                        max={totalPostsForBasePlates}
                       />
                     </FieldRow>
 
@@ -1232,25 +1343,42 @@ export default function Home() {
                     })()}
 
                     <FieldRow label="Add Welded Surface Base">
-                      <NumInput value={config.addOns.addWeldedSurfaceBase} onChange={v => updateAddOn('addWeldedSurfaceBase', v)} min={0} />
+                      <NumInput
+                        value={config.addOns.addWeldedSurfaceBase}
+                        onChange={v => updateAddOn('addWeldedSurfaceBase', Math.min(v, totalPostsForBasePlates))}
+                        min={0}
+                        max={totalPostsForBasePlates}
+                      />
                     </FieldRow>
                     <FieldRow label="Add Welded Extruded Side Mount 1.9 Pipe">
-                      <NumInput value={config.addOns.addWeldedExtrudedSideMount} onChange={v => updateAddOn('addWeldedExtrudedSideMount', v)} min={0} />
+                      <NumInput
+                        value={config.addOns.addWeldedExtrudedSideMount}
+                        onChange={v => updateAddOn('addWeldedExtrudedSideMount', Math.min(v, totalPostsForBasePlates))}
+                        min={0}
+                        max={totalPostsForBasePlates}
+                      />
                     </FieldRow>
                   </>
                 )}
-                {isFascia && [
-                  { key: 'removeTrackFromPost', label: 'Remove Track From Post' },
-                  { key: 'addWeldedExtrudedSideMount', label: 'Add Welded Extruded Side Mount 1.9 Pipe' },
-                ].map(({ key, label }) => (
-                  <FieldRow key={key} label={label}>
-                    <NumInput
-                      value={config.addOns[key as keyof typeof config.addOns] as number}
-                      onChange={v => updateAddOn(key as keyof typeof config.addOns, v)}
-                      min={0}
-                    />
-                  </FieldRow>
-                ))}
+                {isFascia && (
+                  <>
+                    <FieldRow label="Remove Track From Post">
+                      <NumInput
+                        value={config.addOns.removeTrackFromPost}
+                        onChange={v => updateAddOn('removeTrackFromPost', v)}
+                        min={0}
+                      />
+                    </FieldRow>
+                    <FieldRow label="Add Welded Extruded Side Mount 1.9 Pipe">
+                      <NumInput
+                        value={config.addOns.addWeldedExtrudedSideMount}
+                        onChange={v => updateAddOn('addWeldedExtrudedSideMount', Math.min(v, totalPostsForBasePlates))}
+                        min={0}
+                        max={totalPostsForBasePlates}
+                      />
+                    </FieldRow>
+                  </>
+                )}
                 <FieldRow label="Glass Shelf Kits">
                   <NumInput
                     value={config.addOns.glassShelfKits}

@@ -484,21 +484,21 @@ export function computeRevealConstraints(
   let topRevealMax: number;
 
   if (mountType === 'surface') {
-    if (country === 'US') {
-      // US: post can be max 2" shorter than rail height → reveal 0" to 2"
-      topRevealMax = 2.0;
-      topRevealMin = 0;
-    } else {
-      // Canada: post can go down to 24" above deck
-      // Max reveal = rail height - 24
-      topRevealMax = actualRailHeight - MIN_POST_HEIGHT_ABOVE_DECK;
-    }
+    // Surface: post can go down to 24" above deck
+    topRevealMax = actualRailHeight - MIN_POST_HEIGHT_ABOVE_DECK;
   } else {
     // Fascia: physical post length must be >= 32"
     // Physical length = (rail height - top reveal) + dist_to_deck + base_plate_height
     // Min physical = 32 → rail height - top reveal >= 32 - dist_to_deck - base_plate_height
     const minPostTop = 32 - distToDeck - BASE_PLATE_HEIGHT;
     topRevealMax = actualRailHeight - Math.max(MIN_POST_HEIGHT_ABOVE_DECK, minPostTop);
+  }
+
+  // US regulatory cap: short posts cannot be sold in the US. Without this cap, dealers
+  // can type a large reveal value to make a tall post behave as a short post and bypass
+  // the sales restriction. Applied to both mount types.
+  if (country === 'US') {
+    topRevealMax = Math.min(topRevealMax, 2.0);
   }
 
   // Clamp top reveal

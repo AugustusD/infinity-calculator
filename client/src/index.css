@@ -382,3 +382,15 @@ input[type="number"]::-webkit-outer-spin-button {
   opacity: 1;
   height: auto;
 }
+
+/* NumInput renders its own +/- buttons that don't shift focus on click.
+   Hide the native spinners on those inputs so only one set of controls shows. */
+input[type="number"].no-native-spin::-webkit-inner-spin-button,
+input[type="number"].no-native-spin::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"].no-native-spin {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
