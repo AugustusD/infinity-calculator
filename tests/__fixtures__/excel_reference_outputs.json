@@ -1,0 +1,410 @@
+[
+  {
+    "name": "US surface, 42\" rail, 12mm glass, 5 mid + 2 end posts, no discount, courier",
+    "config": {
+      "country": "US",
+      "mountType": "surface",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 12,
+      "discountLevel": 0,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "quantities": {
+        "midPosts": 5,
+        "endPosts": 2,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    },
+    "expected": {
+      "dimensions": {
+        "postHeightAboveDeck": 40.0,
+        "wallTrackHeight": 40.0,
+        "glassInsertLengthPost": 35.0,
+        "glassInsertLengthEndPost": 39.25,
+        "glassInsertLengthTrack": 35.0,
+        "settingBlockHeight05": 1.5,
+        "settingBlockHeight025": 1.75,
+        "cutSize": 48
+      },
+      "quantities": {
+        "gasketLengths": 5,
+        "settingBlock10ft": 0,
+        "settingBlockPerFt": 0,
+        "settingBlock15in": 12,
+        "glassWedge": 12,
+        "endCaps": 2,
+        "basePlateGasket": 0
+      },
+      "lineItems": [
+        {
+          "description": "Gasket 12mm 12 Ft Lengths Cut to 48\"",
+          "qty": 5,
+          "unitCost": 29.0816,
+          "total": 145.408
+        },
+        {
+          "description": "Setting Block (1.5\" Pieces)",
+          "qty": 12,
+          "unitCost": 2.6263,
+          "total": 31.5153
+        },
+        {
+          "description": "Glass Wedge 12mm (3 Inch Piece)",
+          "qty": 12,
+          "unitCost": 3.33,
+          "total": 39.96
+        },
+        {
+          "description": "Infinity Mid Post",
+          "qty": 7,
+          "unitCost": 231.0472,
+          "total": 1617.3305
+        },
+        {
+          "description": "End Caps",
+          "qty": 2,
+          "unitCost": 16.5767,
+          "total": 33.1535
+        }
+      ],
+      "subtotal": 1867.37
+    }
+  },
+  {
+    "name": "US surface, 36\" rail, 13mm glass, 3 mid + 1 end + 1 OC, 43.5% discount",
+    "config": {
+      "country": "US",
+      "mountType": "surface",
+      "railHeight": 36,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": true,
+      "quantities": {
+        "midPosts": 3,
+        "endPosts": 1,
+        "outsideCornerPosts": 1,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    },
+    "expected": {
+      "dimensions": {
+        "postHeightAboveDeck": 34.0,
+        "wallTrackHeight": 34.0,
+        "glassInsertLengthPost": 29.0,
+        "glassInsertLengthEndPost": 33.25,
+        "glassInsertLengthTrack": 29.0,
+        "settingBlockHeight05": 1.5,
+        "settingBlockHeight025": 1.75,
+        "cutSize": 40
+      },
+      "quantities": {
+        "gasketLengths": 4,
+        "settingBlock10ft": 0,
+        "settingBlockPerFt": 0,
+        "settingBlock15in": 9,
+        "glassWedge": 9,
+        "endCaps": 1,
+        "basePlateGasket": 5
+      },
+      "lineItems": [
+        {
+          "description": "Gasket 13mm 10 Ft Lengths Cut to 40\"",
+          "qty": 4,
+          "unitCost": 15.4985,
+          "total": 61.9939
+        },
+        {
+          "description": "Setting Block (1.5\" Pieces)",
+          "qty": 9,
+          "unitCost": 1.4838,
+          "total": 13.3546
+        },
+        {
+          "description": "Glass Wedge 12mm (3 Inch Piece)",
+          "qty": 9,
+          "unitCost": 1.8814,
+          "total": 16.933
+        },
+        {
+          "description": "Infinity Mid Post",
+          "qty": 4,
+          "unitCost": 122.3952,
+          "total": 489.5809
+        },
+        {
+          "description": "Infinity Outside Corner Post",
+          "qty": 1,
+          "unitCost": 122.3952,
+          "total": 122.3952
+        },
+        {
+          "description": "End Caps",
+          "qty": 1,
+          "unitCost": 9.3659,
+          "total": 9.3659
+        },
+        {
+          "description": "Base Plate Gasket - Neoprene 1/8x4x4 (RPLBPG)",
+          "qty": 5,
+          "unitCost": 2.1131,
+          "total": 10.5655
+        }
+      ],
+      "subtotal": 724.19
+    }
+  },
+  {
+    "name": "CA surface, 42\" rail, tall post, 13mm glass, 8 mid + 2 end + 2 wall tracks",
+    "config": {
+      "country": "CA",
+      "mountType": "surface",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "quantities": {
+        "midPosts": 8,
+        "endPosts": 2,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 2,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    },
+    "expected": {
+      "dimensions": {
+        "postHeightAboveDeck": 40.0,
+        "wallTrackHeight": 40.0,
+        "glassInsertLengthPost": 35.0,
+        "glassInsertLengthEndPost": 39.25,
+        "glassInsertLengthTrack": 35.0,
+        "settingBlockHeight05": 1.5,
+        "settingBlockHeight025": 1.75,
+        "cutSize": 40
+      },
+      "quantities": {
+        "gasketLengths": 8,
+        "settingBlock10ft": 0,
+        "settingBlockPerFt": 0,
+        "settingBlock15in": 20,
+        "glassWedge": 20,
+        "endCaps": 2,
+        "basePlateGasket": 0
+      },
+      "lineItems": [
+        {
+          "description": "Gasket 13mm 10 Ft Lengths Cut to 40\"",
+          "qty": 8,
+          "unitCost": 15.4985,
+          "total": 123.9879
+        },
+        {
+          "description": "Setting Block (1.5\" Pieces)",
+          "qty": 20,
+          "unitCost": 1.4838,
+          "total": 29.6769
+        },
+        {
+          "description": "Glass Wedge 12mm (3 Inch Piece)",
+          "qty": 20,
+          "unitCost": 1.8814,
+          "total": 37.629
+        },
+        {
+          "description": "Infinity Mid Post",
+          "qty": 10,
+          "unitCost": 130.5417,
+          "total": 1305.4168
+        },
+        {
+          "description": "Infinity Wall Tracks",
+          "qty": 2,
+          "unitCost": 35.9319,
+          "total": 71.8637
+        },
+        {
+          "description": "End Caps",
+          "qty": 2,
+          "unitCost": 9.3659,
+          "total": 18.7317
+        }
+      ],
+      "subtotal": 1587.31
+    }
+  },
+  {
+    "name": "CA surface, 42\" rail, SHORT POST, 12mm glass, 4 mid + 1 end",
+    "config": {
+      "country": "CA",
+      "mountType": "surface",
+      "railHeight": 42,
+      "topGlassReveal": 18.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 12,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "quantities": {
+        "midPosts": 4,
+        "endPosts": 1,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    },
+    "expected": {
+      "dimensions": {
+        "postHeightAboveDeck": 24.0,
+        "wallTrackHeight": 40.0,
+        "glassInsertLengthPost": 19.0,
+        "glassInsertLengthEndPost": 23.25,
+        "glassInsertLengthTrack": 35.0,
+        "settingBlockHeight05": 1.5,
+        "settingBlockHeight025": 1.75,
+        "cutSize": 48
+      },
+      "quantities": {
+        "gasketLengths": 2,
+        "settingBlock10ft": 0,
+        "settingBlockPerFt": 0,
+        "settingBlock15in": 9,
+        "glassWedge": 9,
+        "endCaps": 1,
+        "basePlateGasket": 0
+      },
+      "lineItems": [
+        {
+          "description": "Gasket 12mm 12 Ft Lengths Cut to 48\"",
+          "qty": 2,
+          "unitCost": 16.4311,
+          "total": 32.8622
+        },
+        {
+          "description": "Setting Block (1.5\" Pieces)",
+          "qty": 9,
+          "unitCost": 1.4838,
+          "total": 13.3546
+        },
+        {
+          "description": "Glass Wedge 12mm (3 Inch Piece)",
+          "qty": 9,
+          "unitCost": 1.8814,
+          "total": 16.933
+        },
+        {
+          "description": "Infinity Mid Post",
+          "qty": 5,
+          "unitCost": 114.8952,
+          "total": 574.4759
+        },
+        {
+          "description": "End Caps",
+          "qty": 1,
+          "unitCost": 9.3659,
+          "total": 9.3659
+        }
+      ],
+      "subtotal": 646.99
+    }
+  },
+  {
+    "name": "US surface, 42\" rail, custom 0.5\" reveal (clamped to 2\"), 6 mid + 2 OC",
+    "config": {
+      "country": "US",
+      "mountType": "surface",
+      "railHeight": 42,
+      "topGlassReveal": 2.0,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 12,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "quantities": {
+        "midPosts": 6,
+        "endPosts": 0,
+        "outsideCornerPosts": 2,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    },
+    "expected": {
+      "dimensions": {
+        "postHeightAboveDeck": 40.125,
+        "wallTrackHeight": 40.0,
+        "glassInsertLengthPost": 35.125,
+        "glassInsertLengthEndPost": 39.375,
+        "glassInsertLengthTrack": 35.0,
+        "settingBlockHeight05": 1.5,
+        "settingBlockHeight025": 1.75,
+        "cutSize": 48
+      },
+      "quantities": {
+        "gasketLengths": 6,
+        "settingBlock10ft": 0,
+        "settingBlockPerFt": 0,
+        "settingBlock15in": 16,
+        "glassWedge": 16,
+        "endCaps": 0,
+        "basePlateGasket": 0
+      },
+      "lineItems": [
+        {
+          "description": "Gasket 12mm 12 Ft Lengths Cut to 48\"",
+          "qty": 6,
+          "unitCost": 16.4311,
+          "total": 98.5866
+        },
+        {
+          "description": "Setting Block (1.5\" Pieces)",
+          "qty": 16,
+          "unitCost": 1.4838,
+          "total": 23.7415
+        },
+        {
+          "description": "Glass Wedge 12mm (3 Inch Piece)",
+          "qty": 16,
+          "unitCost": 1.8814,
+          "total": 30.1032
+        },
+        {
+          "description": "Infinity Mid Post",
+          "qty": 6,
+          "unitCost": 130.7114,
+          "total": 784.2684
+        },
+        {
+          "description": "Infinity Outside Corner Post",
+          "qty": 2,
+          "unitCost": 130.7114,
+          "total": 261.4228
+        }
+      ],
+      "subtotal": 1198.12
+    }
+  }
+]

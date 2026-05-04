@@ -1,0 +1,195 @@
+===== INFINITY POST TYPES (from Infinity_post_types.pdf) =====
+- Mid Post: 180°-136° (each way) - inline/straight runs
+- Inside Corner Post: 135°-45° Acute
+- Outside Corner Post: 135°-45° Acute
+- Wall Track: 22.5° (each way)
+Brand: Infinity - Railings for million dollar views
+Manufacturer: Innovative Aluminum Systems Inc.
+
+===== SURFACE MOUNT INSTALLATION GUIDE (InfinityInstallationGuideSurface.pdf) =====
+Typical dimensions shown (42 1/8" rail height example):
+- Overall Rail Height: 42 1/8"
+- From Deck to Top of Post: 40 1/8" (i.e., post top is 40 1/8" above deck)
+- 40" Tall Infinity Post (physical post length)
+- Glass height: 40" tall glass
+- From Deck to Bottom of Glass: 2 1/8"
+- Setting blocks stop 2 1/8" above deck level
+- Base Plate Gasket at base
+- Deck Fasteners as per site requirements
+
+Key notes:
+- Setting blocks should stop 2 1/8" above deck level
+- Glass insert should be cut 1/8"-3/16" shorter for thermal expansion
+- Glass wedge locks glass in place at top of glass track
+
+===== FASCIA MOUNT INSTALLATION GUIDE (InfinityInstallationGuideFascia.pdf) =====
+Typical dimensions shown (42 1/8" rail height example):
+- Overall Rail Height: 42 1/8"
+- From Deck to Bottom of Glass: 1" (note: different from surface - fascia uses 1" gap)
+- From Deck to Top of Post: 40 1/8" (post top is 40 1/8" above deck)
+- 48" Tall Infinity Posts (physical post length - longer than surface because part is below deck)
+- Glass height: 40" tall glass
+- 3" From Deck to Top of Base Plate (base plate top is 3" above deck level)
+- Setting blocks stop 2 1/8" above deck level
+- It is recommended that the setting block length does not exceed 5 inches
+- Fascia Plate Gasket at base
+
+Key notes from diagram labels:
+- Overall Rail Height: 42 1/8"
+- Glass: 40" tall
+- From Deck to Bottom of Glass: 1" (typical)  [NOTE: user says 2" typical - check]
+- From Deck to Top of Post: 40 1/8"
+- Post physical length: 48" (for 42 1/8" rail height, standard fascia)
+- Distance from top of base plate to deck: 3" (standard)
+- Setting block length should not exceed 5"
+
+Top View note: "The nominal offset of 7/16" & 1 1/2" is reflective of the dimension from the back of the post to fascia at corner post only. These offsets are 5/16" more at mid-posts, however, glass is maintained at a constant distance from the deck."
+
+===== FASCIA MEASURING TEMPLATE (Template_Measuring-Fascia-Infinity_Only.pdf) =====
+Measurement fields:
+A: Fascia height including decking
+B: Drip edge, nosing or flashing
+C: Gap from B to top of base plate
+D: Base plate height if not standard* (standard = 5")
+E: Offset if not standard* (standard 7/16", extended 1 1/2")
+F: Blocking depth at fascia** (min 4.5")
+G: Glass extension above post (2" typical) = top glass reveal
+H: Rail height at glass from deck
+I: Gap below glass to deck (2" typical) = bottom glass gap
+
+Notes:
+* Standard base plate height is 5" and standard offset is 7/16", extended offset is 1 1/2"
+** Important: Please ensure topless rail along with fastening details are acceptable to local building authorities.
+*** Glass is NOT included with the Infinity system
+
+===== DIMENSIONAL RELATIONSHIPS - SURFACE MOUNT =====
+Post height above deck = Rail Height - Top Glass Reveal (G)
+  Standard: 42.125 - 2.125 = 40" post top above deck
+  
+Physical post length (surface) = Post top above deck + base plate height (0" for surface - post sits on deck)
+  Actually for surface mount: post is bolted through base plate to deck
+  Post height = Rail Height - Top Glass Reveal
+  
+Setting block height = Bottom Glass Gap (I) - 0.5" (standard setting block stops 2 1/8" above deck, bottom of glass at 2 1/8")
+  Wait - setting block height = bottom glass gap (I) - 0.5" for 0.5" thick setting block
+  OR: setting block = bottom glass gap - 0.5 (for 0.5" base plate setting block)
+
+Glass insert length (in post) = Post height above deck - Top Glass Reveal - Bottom Glass Gap - 3"
+  = (Rail Height - Top Reveal) - Top Reveal - Bottom Gap - 3
+  = Rail Height - 2*Top Reveal - Bottom Gap - 3
+  Actually from formula: F15 = D38-D39-D40-3 = Rail Height - Top Reveal - Bottom Gap - 3
+
+===== DIMENSIONAL RELATIONSHIPS - FASCIA MOUNT =====
+Post top above deck = Rail Height - Top Glass Reveal
+  Standard 42 1/8": 42.125 - 2.125 = 40" post top above deck
+
+Physical post length (fascia) = Post top above deck + distance from top of base plate to deck + base plate height
+  = 40 + 3 + 5 = 48" (matches diagram!)
+  So: Physical fascia post length = (Rail Height - Top Reveal) + Distance_to_Deck + Base_Plate_Height
+  Standard: (42.125 - 2.125) + 3 + 5 = 48"
+
+Setting block height (fascia) = Bottom Glass Gap - Distance_from_BasePlate_Top_to_Deck + Base_Plate_Height
+  Wait - from original formula: I23 = D62 + D63 = Bottom Gap + Distance_to_Deck
+  So setting block = Bottom Gap + Distance_to_Deck (e.g., 2 + 3 = 5")
+  This makes sense: bottom of glass is 2" above deck, base plate top is 3" above deck
+  So setting block fills from base plate top (3" above deck) up to where glass bottom is (2" above deck)
+  Wait that's negative... Let me re-read.
+  
+  Actually: base plate top is 3" BELOW deck? No - "distance from top of base plate to deck level" = 3"
+  means the top of the base plate is 3" ABOVE deck level.
+  Bottom of glass is 2" above deck.
+  So setting block goes from top of base plate (3" above deck) DOWN to... 
+  No wait - setting block sits INSIDE the post track, above the base plate.
+  Setting block height = distance from base plate top to bottom of glass = bottom_glass_gap - base_plate_top_to_deck
+  = 2 - 3 = -1"? That can't be right.
+  
+  Re-reading: "Distance from top of base plate to deck level" = 3" means base plate top is 3" BELOW deck?
+  No - looking at the diagram again: the base plate is attached to the fascia BELOW the deck.
+  The "3" from deck to top of base plate" means the TOP of the base plate is 3" BELOW the deck surface.
+  
+  So: base plate top = -3" relative to deck (i.e., 3" below deck)
+  Bottom of glass = +2" above deck (2" bottom gap)
+  Setting block height = 2 - (-3) = 5" (fills from base plate top to bottom of glass)
+  This matches the diagram showing 5" max setting block recommendation!
+  
+  Formula confirms: I23 = D62 + D63 = Bottom_Gap + Distance_to_Deck = 2 + 3 = 5"
+
+Physical fascia post length:
+  Post top above deck = Rail Height - Top Reveal = 42.125 - 2.125 = 40"
+  Post extends below deck by: Distance_to_Deck + Base_Plate_Height = 3 + 5 = 8"
+  Total physical length = 40 + 8 = 48" ✓
+
+===== US vs CANADA RULES (from user specification) =====
+
+SURFACE MOUNT:
+US:
+- Rail heights: 36 1/8" or 42 1/8" (nominal 36" or 42")
+- Default top glass reveal: 2 1/8"
+- Custom reveal: unlockable, range 0" to 2 1/8" (post gets taller as reveal decreases)
+- Post top above deck = Rail Height - Top Reveal
+- Min post top = Rail Height - 2 1/8" (standard), max = Rail Height (0" reveal)
+- US: posts can be max 2" shorter than rail height → post top min = Rail Height - 2"
+  So reveal range: 0" to 2" for US
+
+CANADA:
+- Rail heights: 36 1/8" or 42 1/8" (nominal 36" or 42")
+- Post configurations: "Tall Post" or "Short Post"
+- Tall post: post top finishes between 34" and 40" above deck
+- Short post: post top finishes at minimum 24" above deck (at extreme: 42.125 - 18.125 = 24")
+- At 42 1/8" rail height, max glass protrusion = 18 1/8" → post top = 42.125 - 18.125 = 24"
+- If reveal increased such that post would go below 24", switch to short post system
+- Custom reveal: unlockable, can be modified
+- Min post height above deck: 24" (absolute minimum)
+
+FASCIA MOUNT:
+- Fascia post minimum overall length: 32"
+- Physical fascia post length = (Rail Height - Top Reveal) + Distance_to_Deck + Base_Plate_Height
+- Min physical length = 32" → (Rail Height - Top Reveal) + 3 + 5 ≥ 32"
+  → Rail Height - Top Reveal ≥ 24" → Top Reveal ≤ Rail Height - 24"
+  For 42 1/8": Top Reveal ≤ 18.125" (same as Canada surface constraint!)
+  For 36 1/8": Top Reveal ≤ 12.125"
+
+SETTING BLOCK > 5" RULE (FASCIA):
+- If setting block height > 5": Replace setting block with wedge
+- Use 1.5" piece of setting block
+- Extra wedge needed at EACH side of post = (setting block space - 1.5")
+- Setting block space = Bottom Gap + Distance_to_Deck
+
+===== PRICING INTERPOLATION LOGIC (from original calculator) =====
+Surface Mount - Infinity Post price at custom height:
+  Base prices: 34" post = $216.63, 40" post = $231.05
+  Per-inch increase from 34" to 40": ($231.05 - $216.63) / 6 = $2.403/inch
+  Calc A: price = $216.63 + (post_height - 34) * per_inch_A
+  Calc B: price = $216.63 + (post_height - 34) * per_inch_B  
+  Final: MAX(Calc A, Calc B)
+  
+  Below 34": base price = $216.63 (no reduction for shorter posts in original)
+  Actually looking at original: B3=187.4231 (24"), B4=199.65737 (34"), B5=212.94814 (40")
+  Per inch 24"→34" (10"): (199.65737-187.4231)/10 = 1.22343/inch
+  Per inch 34"→40" (6"): (212.94814-199.65737)/6 = 2.21513/inch
+  
+  2026 prices: 34" = $216.63, 40" = $231.05
+  Per inch 34"→40": ($231.05 - $216.63) / 6 = $2.403/inch
+  Need 24" price: extrapolate back: $216.63 - 10 * $2.403 = ... 
+  OR use ratio from original: 24" price / 34" price = 187.4231/199.65737 = 0.9387
+  2026 24" price = 0.9387 * $216.63 = $203.35 (matches price list! PPSINF24MID = $203.35)
+  
+  So per inch 24"→34": ($216.63 - $203.35) / 10 = $1.328/inch
+
+Wall Track price at custom height:
+  36" rail: $60.35, 42" rail: $63.53
+  Per inch: ($63.53 - $60.35) / 6 = $0.530/inch
+
+2.5" End Post price at custom height:
+  36 1/8" rail (37" post): $145.42, 42 1/8" rail (43" post): $165.77
+  Per inch: ($165.77 - $145.42) / 6 = $3.392/inch
+
+Fascia Mount - Infinity Post price at custom height:
+  36 1/8" (42" post): $186.99, 42 1/8" (48" post): $201.39
+  Per inch: ($201.39 - $186.99) / 6 = $2.400/inch
+  24" post (short post): $165.65 (from price list PPFINF24MID)
+  Per inch 32"→42": ($186.99 - $165.65) / 10 = $2.134/inch
+
+Fascia 2.5" End Post:
+  36 1/8" (45" post): $206.02, 42 1/8" (51" post): $220.15
+  Per inch: ($220.15 - $206.02) / 6 = $2.355/inch
