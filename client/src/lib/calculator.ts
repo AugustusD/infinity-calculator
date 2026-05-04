@@ -523,7 +523,10 @@ export function computeRevealConstraints(
   return {
     topRevealMin,
     topRevealMax,
-    topRevealDefault: DEFAULT_TOP_REVEAL,
+    // Clamp the canonical default to the country/mount-effective max. Without this,
+    // a US user (where max is 2.0") would see the reset button stay visible after
+    // resetting, because the canonical default 2.125 is above the US cap.
+    topRevealDefault: Math.min(topRevealMax, DEFAULT_TOP_REVEAL),
     bottomGapMin: 0,
     bottomGapMax: 6,
     bottomGapDefault: DEFAULT_BOTTOM_GAP,
@@ -758,8 +761,14 @@ export function calculateSurface(config: ConfigInputs): CalculationResult {
   if (addons.cutDownTrack > 0) {
     addLine('Cut Down One Track', addons.cutDownTrack, 61.257983 * (1 - discount));
   }
-  // Unassigned 5x5 plates (total entered minus assigned to post types)
-  const unassigned5x5 = Math.max(0, addons.add5x5BasePlate - total5x5Assigned);
+  // Unassigned 5x5 plates (total entered minus assigned to post types).
+  // Cap the total to the actual post count too — defense in depth in case the UI
+  // clamp lagged behind a post-quantity reduction (e.g., user lowered Mid Posts
+  // after setting add5x5BasePlate to a high value; the top-level add5x5BasePlate
+  // value isn't auto-revalidated until the user touches it).
+  const totalPostsForPlatesEng = q.midPosts + q.endPosts + q.outsideCornerPosts + q.insideCornerPosts + q.endPostsLeft25 + q.endPostsRight25;
+  const total5x5Capped = Math.min(addons.add5x5BasePlate, totalPostsForPlatesEng);
+  const unassigned5x5 = Math.max(0, total5x5Capped - total5x5Assigned);
   if (unassigned5x5 > 0) {
     addLine('Add 5"×5"×0.5" Base Plate (unassigned)', unassigned5x5, plate5x5UnitCost);
   }

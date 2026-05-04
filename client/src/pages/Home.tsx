@@ -475,7 +475,13 @@ export default function Home() {
 
   const handleCountryChange = (c: Country) => {
     update('country', c);
-    update('topGlassReveal', 2.125);
+    // Pick a country-appropriate default reveal so the value never starts above
+    // the country cap (US cap is 2.0", canonical default is 2.125").
+    const newConstraints = computeRevealConstraints(
+      c, config.mountType, config.railHeight, 'tall',
+      2.125, config.bottomGlassGap, config.distTopBasePlateToDeck,
+    );
+    update('topGlassReveal', newConstraints.topRevealDefault);
     update('postConfig', 'tall');
     setRevealUnlocked(false);
   };

@@ -4,6 +4,44 @@ All notable changes to the Infinity Calculator. Newest entries on top.
 
 ---
 
+## 2026-05-04 — QA pass: edge-case fixes from independent code review
+
+A code review of the day's earlier fixes flagged three real defects. All addressed in this entry.
+
+**1. US reset-button UX loop & default/cap mismatch**
+
+After the morning's *"US glass reveal capped at 2""* fix, the canonical `DEFAULT_TOP_REVEAL` (2.125") was still above the new US cap (2.0"). Two visible symptoms:
+
+- Switching country from Canada to US set `topGlassReveal = 2.125` explicitly (in `handleCountryChange`), which exceeded the new US cap. The displayed value was technically out of range until the user touched the field.
+- After resetting in US, the reset button stayed visible: `value=2.0` (clamped) ≠ `defaultValue=2.125` → button still showed → click did nothing visible (clamps right back to 2.0).
+
+**Fixes:**
+
+- [`computeRevealConstraints`](client/src/lib/calculator.ts) now returns `topRevealDefault: Math.min(topRevealMax, DEFAULT_TOP_REVEAL)` — so the default is country/mount-effective. US gets 2.0; Canada keeps 2.125.
+- [`handleCountryChange`](client/src/pages/Home.tsx) now derives the reveal value from `computeRevealConstraints` for the *new* country instead of hardcoding 2.125. So switching CA→US lands on 2.0 immediately.
+
+**2. 5×5 base-plate phantom line items when post count drops**
+
+The earlier UI cap on `add5x5BasePlate` only fires when the user *touches* that input. If they instead reduce post quantities (e.g., Mid Posts 10→2), the top-level `add5x5BasePlate` retains its old value and the calculator engine emits an "unassigned" line item for the difference — billing the dealer for non-existent plates.
+
+**Fix:** [`calculateSurface`](client/src/lib/calculator.ts) now caps `add5x5BasePlate` against the live total post count before computing `unassigned5x5`. Defense in depth — engine-level safety net regardless of UI clamp lag.
+
+Verified end-to-end: with `midPosts=10, add5x5BasePlate=10`, dropping `midPosts` to 2 — BOM correctly shows 2 unassigned plates instead of 10. Top-level `add5x5BasePlate` input still reads 10 (UI clamps lazily) but the engine produces correct output.
+
+**3. No-op findings**
+
+The review also flagged three lower-severity items that turned out to be correct as-is:
+- `NumInput`'s absolute-positioned button layer with `pointerEvents: none` and per-button `pointerEvents: auto` correctly passes clicks through to the input where it should.
+- `tabIndex={-1}` on the buttons + native focus behavior on the `<input type="number">` means keyboard arrow keys still increment/decrement.
+- `NumInput`'s public API (props) is unchanged; no callers needed updating.
+
+**Files touched**
+
+- `client/src/lib/calculator.ts` — `computeRevealConstraints` (clamped default), `calculateSurface` (5×5 engine cap).
+- `client/src/pages/Home.tsx` — `handleCountryChange` (country-effective default).
+
+---
+
 ## 2026-05-04 — Reset-to-standard button on glass reveal and bottom gap
 
 **Source:** Action item from Mike's walkthrough on 2026-05-04. Original transcript wording:
