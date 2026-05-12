@@ -631,8 +631,16 @@ export function calculateSurface(config: ConfigInputs): CalculationResult {
     gasketDescription = stockLabel;
   }
 
-  // Setting block calculations
-  const totalSettingBlockPieces = q.midPosts * 2 + q.endPosts + q.outsideCornerPosts * 2 + q.insideCornerPosts * 2 + q.wallTracks + q.endPostsLeft25;
+  // Setting block calculations.
+  //
+  // The last term used to be `q.endPostsLeft25` — that was wrong (it was
+  // adding a phantom 1.5" setting block AND 1 glass wedge per EP25 Left post).
+  // Should be the count of 5×5 base plates assigned to 2.5" end posts: those
+  // posts get the 0.5"-base setting block instead of the 0.25"-base one.
+  // Matches Excel cell G20:
+  //   G20 = D43*2 + D44 + D45*2 + D46*2 + D47 + B60
+  //   where B60 = basePlate5x5_endPost25 qty.
+  const totalSettingBlockPieces = q.midPosts * 2 + q.endPosts + q.outsideCornerPosts * 2 + q.insideCornerPosts * 2 + q.wallTracks + addons.basePlate5x5_endPost25;
   // Only subtract 5x5 plates assigned specifically to 2.5" end posts — not the full add5x5BasePlate total
   const totalSettingBlock025Pieces = Math.max(0, q.endPostsRight25 + q.endPostsLeft25 - addons.basePlate5x5_endPost25);
 

@@ -329,6 +329,14 @@ def calculate_surface(config: dict) -> dict:
     add('2.5" End Right Posts', q['endPostsRight25'], end_post_25_unit)
     add('2.5" Post Caps', q['endPostsLeft25'] + q['endPostsRight25'], post_cap_25_unit)
 
+    # Add-on labor charges.
+    # Excel cells C55-D55 (Remove Track From Post): U7×(1-discount) × qty, where U7 = 75.27 in 2021.
+    # The React app uses the 2026 value 75.2902047. Use the React/2026 value here so the
+    # Python ref matches the React app's cost contribution.
+    remove_track_qty = addons.get('removeTrackFromPost', 0)
+    if remove_track_qty > 0:
+        add('Remove Track From Post', remove_track_qty, 75.2902047 * (1 - discount))
+
     # Base plate gaskets (optional)
     if bpg:
         add('Base Plate Gasket - Neoprene 1/8x4x4 (RPLBPG)', bpg_qty, PRICES['basePlateGasket'] * (1 - discount))
