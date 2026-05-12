@@ -288,12 +288,34 @@ const PAINT_PER_INCH_BASE = (2.3 / 40) * 1.15;
 const PAINT_PER_INCH = PAINT_PER_INCH_BASE * PAINT_MARKUP;
 
 export function postPaintCost(postHeightAboveDeck: number): number {
-  // From original: F29 = IF(H3<34,8.25,IF(H3<40,8.25+(H3-34)*(10.04-8.25)/6,IF(H3=40,10.04,10.04+(H3-40)*(11.97-10.04)/8)))
+  // Surface mount post paint formula. From Excel Surface Mount sheet F29:
+  //   F29 = IF(H3<34,8.25,IF(H3<40,8.25+(H3-34)*(10.04-8.25)/6,
+  //           IF(H3=40,10.04,10.04+(H3-40)*(11.97-10.04)/8)))
+  // where H3 = postHeightAboveDeck.
   const h = postHeightAboveDeck;
   if (h < 34) return 8.25;
   if (h < 40) return 8.25 + (h - 34) * ((10.04 - 8.25) / 6);
   if (h === 40) return 10.04;
   return 10.04 + (h - 40) * ((11.97 - 10.04) / 8);
+}
+
+export function fasciaPostPaintCost(physicalPostLength: number): number {
+  // Fascia post paint formula. Different from surface — keyed on PHYSICAL post
+  // length (not above-deck) with different anchor points and a 1.1 multiplier.
+  // From Excel Fascia Mount sheet J6:
+  //   J6 = IF($I$2<36,7.5,IF(I2<42,7.5+(I2-36)*((9.13-7.5)/6),
+  //          IF(I2=42,9.13,9.13+(I2-42)*((10.88-9.13)/6))))*1.1
+  // where I2 = physical post length.
+  // Calling postPaintCost(postHeightAboveDeck) for fascia (the previous behavior)
+  // under-reports the paint column on the BOM by ~$2/post — informational only,
+  // doesn't affect totals, but the breakdown a dealer sees is wrong.
+  const L = physicalPostLength;
+  let base: number;
+  if (L < 36) base = 7.5;
+  else if (L < 42) base = 7.5 + (L - 36) * ((9.13 - 7.5) / 6);
+  else if (L === 42) base = 9.13;
+  else base = 9.13 + (L - 42) * ((10.88 - 9.13) / 6);
+  return base * 1.1;
 }
 
 export function trackPaintCost(trackHeight: number): number {
@@ -1140,8 +1162,9 @@ export function calculateFascia(config: ConfigInputs): CalculationResult {
   const midInsidePlatePrice = (isStdOffset ? PRICES_2026.fascia.bplate_std_midInside : PRICES_2026.fascia.bplate_ext_midInside) * (1 - discount);
   const outsidePlatePrice = (isStdOffset ? PRICES_2026.fascia.bplate_std_outside : PRICES_2026.fascia.bplate_ext_outside) * (1 - discount);
 
-  // Paint costs
-  const postPaintEa = postPaintCost(postHeightAboveDeck);
+  // Paint costs — fascia uses a different formula than surface mount,
+  // keyed on physical post length with different anchors and a 1.1 multiplier.
+  const postPaintEa = fasciaPostPaintCost(physicalPostLength);
   const trackPaintEa = trackPaintCost(wallTrackHeight);
 
   const lineItems: MaterialLineItem[] = [];
