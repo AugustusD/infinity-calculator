@@ -6556,5 +6556,2766 @@
         "glassShelfKits": 2
       }
     }
+  },
+  {
+    "id": "s261",
+    "name": "F1: CA/36\"/12mm / fascia / 3mid / d=0%",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 36,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 12,
+      "discountLevel": 0,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 3,
+        "endPosts": 0,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s262",
+    "name": "F1: CA/36\"/12mm / fascia / 3mid / d=43%",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 36,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 12,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 3,
+        "endPosts": 0,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s263",
+    "name": "F1: CA/36\"/13mm / fascia / 3mid / d=0%",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 36,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 3,
+        "endPosts": 0,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s264",
+    "name": "F1: CA/36\"/13mm / fascia / 3mid / d=43%",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 36,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 3,
+        "endPosts": 0,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s265",
+    "name": "F1: CA/42\"/12mm / fascia / 3mid / d=0%",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 12,
+      "discountLevel": 0,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 3,
+        "endPosts": 0,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s266",
+    "name": "F1: CA/42\"/12mm / fascia / 3mid / d=43%",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 12,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 3,
+        "endPosts": 0,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s267",
+    "name": "F1: CA/42\"/13mm / fascia / 3mid / d=0%",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 3,
+        "endPosts": 0,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s268",
+    "name": "F1: CA/42\"/13mm / fascia / 3mid / d=43%",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 3,
+        "endPosts": 0,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s269",
+    "name": "F1: US/36\"/12mm / fascia / 3mid / d=0%",
+    "config": {
+      "country": "US",
+      "mountType": "fascia",
+      "railHeight": 36,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 12,
+      "discountLevel": 0,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 3,
+        "endPosts": 0,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s270",
+    "name": "F1: US/36\"/12mm / fascia / 3mid / d=43%",
+    "config": {
+      "country": "US",
+      "mountType": "fascia",
+      "railHeight": 36,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 12,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 3,
+        "endPosts": 0,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s271",
+    "name": "F1: US/36\"/13mm / fascia / 3mid / d=0%",
+    "config": {
+      "country": "US",
+      "mountType": "fascia",
+      "railHeight": 36,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 3,
+        "endPosts": 0,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s272",
+    "name": "F1: US/36\"/13mm / fascia / 3mid / d=43%",
+    "config": {
+      "country": "US",
+      "mountType": "fascia",
+      "railHeight": 36,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 3,
+        "endPosts": 0,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s273",
+    "name": "F1: US/42\"/12mm / fascia / 3mid / d=0%",
+    "config": {
+      "country": "US",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 12,
+      "discountLevel": 0,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 3,
+        "endPosts": 0,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s274",
+    "name": "F1: US/42\"/12mm / fascia / 3mid / d=43%",
+    "config": {
+      "country": "US",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 12,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 3,
+        "endPosts": 0,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s275",
+    "name": "F1: US/42\"/13mm / fascia / 3mid / d=0%",
+    "config": {
+      "country": "US",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 3,
+        "endPosts": 0,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s276",
+    "name": "F1: US/42\"/13mm / fascia / 3mid / d=43%",
+    "config": {
+      "country": "US",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 3,
+        "endPosts": 0,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s277",
+    "name": "F1: CA/36\"/12mm / fascia / 5mid+2end / d=0%",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 36,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 12,
+      "discountLevel": 0,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 5,
+        "endPosts": 2,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s278",
+    "name": "F1: CA/36\"/12mm / fascia / 5mid+2end / d=43%",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 36,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 12,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 5,
+        "endPosts": 2,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s279",
+    "name": "F1: CA/36\"/13mm / fascia / 5mid+2end / d=0%",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 36,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 5,
+        "endPosts": 2,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s280",
+    "name": "F1: CA/36\"/13mm / fascia / 5mid+2end / d=43%",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 36,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 5,
+        "endPosts": 2,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s281",
+    "name": "F1: CA/42\"/12mm / fascia / 5mid+2end / d=0%",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 12,
+      "discountLevel": 0,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 5,
+        "endPosts": 2,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s282",
+    "name": "F1: CA/42\"/12mm / fascia / 5mid+2end / d=43%",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 12,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 5,
+        "endPosts": 2,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s283",
+    "name": "F1: CA/42\"/13mm / fascia / 5mid+2end / d=0%",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 5,
+        "endPosts": 2,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s284",
+    "name": "F1: CA/42\"/13mm / fascia / 5mid+2end / d=43%",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 5,
+        "endPosts": 2,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s285",
+    "name": "F1: US/36\"/12mm / fascia / 5mid+2end / d=0%",
+    "config": {
+      "country": "US",
+      "mountType": "fascia",
+      "railHeight": 36,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 12,
+      "discountLevel": 0,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 5,
+        "endPosts": 2,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s286",
+    "name": "F1: US/36\"/12mm / fascia / 5mid+2end / d=43%",
+    "config": {
+      "country": "US",
+      "mountType": "fascia",
+      "railHeight": 36,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 12,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 5,
+        "endPosts": 2,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s287",
+    "name": "F1: US/36\"/13mm / fascia / 5mid+2end / d=0%",
+    "config": {
+      "country": "US",
+      "mountType": "fascia",
+      "railHeight": 36,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 5,
+        "endPosts": 2,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s288",
+    "name": "F1: US/36\"/13mm / fascia / 5mid+2end / d=43%",
+    "config": {
+      "country": "US",
+      "mountType": "fascia",
+      "railHeight": 36,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 5,
+        "endPosts": 2,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s289",
+    "name": "F1: US/42\"/12mm / fascia / 5mid+2end / d=0%",
+    "config": {
+      "country": "US",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 12,
+      "discountLevel": 0,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 5,
+        "endPosts": 2,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s290",
+    "name": "F1: US/42\"/12mm / fascia / 5mid+2end / d=43%",
+    "config": {
+      "country": "US",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 12,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 5,
+        "endPosts": 2,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s291",
+    "name": "F1: US/42\"/13mm / fascia / 5mid+2end / d=0%",
+    "config": {
+      "country": "US",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 5,
+        "endPosts": 2,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s292",
+    "name": "F1: US/42\"/13mm / fascia / 5mid+2end / d=43%",
+    "config": {
+      "country": "US",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 5,
+        "endPosts": 2,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s293",
+    "name": "F1: CA/36\"/12mm / fascia / 3mid+1end+1OC / d=0%",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 36,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 12,
+      "discountLevel": 0,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 3,
+        "endPosts": 1,
+        "outsideCornerPosts": 1,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s294",
+    "name": "F1: CA/36\"/12mm / fascia / 3mid+1end+1OC / d=43%",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 36,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 12,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 3,
+        "endPosts": 1,
+        "outsideCornerPosts": 1,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s295",
+    "name": "F1: CA/36\"/13mm / fascia / 3mid+1end+1OC / d=0%",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 36,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 3,
+        "endPosts": 1,
+        "outsideCornerPosts": 1,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s296",
+    "name": "F1: CA/36\"/13mm / fascia / 3mid+1end+1OC / d=43%",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 36,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 3,
+        "endPosts": 1,
+        "outsideCornerPosts": 1,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s297",
+    "name": "F1: CA/42\"/12mm / fascia / 3mid+1end+1OC / d=0%",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 12,
+      "discountLevel": 0,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 3,
+        "endPosts": 1,
+        "outsideCornerPosts": 1,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s298",
+    "name": "F1: CA/42\"/12mm / fascia / 3mid+1end+1OC / d=43%",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 12,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 3,
+        "endPosts": 1,
+        "outsideCornerPosts": 1,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s299",
+    "name": "F1: CA/42\"/13mm / fascia / 3mid+1end+1OC / d=0%",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 3,
+        "endPosts": 1,
+        "outsideCornerPosts": 1,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s300",
+    "name": "F1: CA/42\"/13mm / fascia / 3mid+1end+1OC / d=43%",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 3,
+        "endPosts": 1,
+        "outsideCornerPosts": 1,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s301",
+    "name": "F1: US/36\"/12mm / fascia / 3mid+1end+1OC / d=0%",
+    "config": {
+      "country": "US",
+      "mountType": "fascia",
+      "railHeight": 36,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 12,
+      "discountLevel": 0,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 3,
+        "endPosts": 1,
+        "outsideCornerPosts": 1,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s302",
+    "name": "F1: US/36\"/12mm / fascia / 3mid+1end+1OC / d=43%",
+    "config": {
+      "country": "US",
+      "mountType": "fascia",
+      "railHeight": 36,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 12,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 3,
+        "endPosts": 1,
+        "outsideCornerPosts": 1,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s303",
+    "name": "F1: US/36\"/13mm / fascia / 3mid+1end+1OC / d=0%",
+    "config": {
+      "country": "US",
+      "mountType": "fascia",
+      "railHeight": 36,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 3,
+        "endPosts": 1,
+        "outsideCornerPosts": 1,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s304",
+    "name": "F1: US/36\"/13mm / fascia / 3mid+1end+1OC / d=43%",
+    "config": {
+      "country": "US",
+      "mountType": "fascia",
+      "railHeight": 36,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 3,
+        "endPosts": 1,
+        "outsideCornerPosts": 1,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s305",
+    "name": "F1: US/42\"/12mm / fascia / 3mid+1end+1OC / d=0%",
+    "config": {
+      "country": "US",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 12,
+      "discountLevel": 0,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 3,
+        "endPosts": 1,
+        "outsideCornerPosts": 1,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s306",
+    "name": "F1: US/42\"/12mm / fascia / 3mid+1end+1OC / d=43%",
+    "config": {
+      "country": "US",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 12,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 3,
+        "endPosts": 1,
+        "outsideCornerPosts": 1,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s307",
+    "name": "F1: US/42\"/13mm / fascia / 3mid+1end+1OC / d=0%",
+    "config": {
+      "country": "US",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 3,
+        "endPosts": 1,
+        "outsideCornerPosts": 1,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s308",
+    "name": "F1: US/42\"/13mm / fascia / 3mid+1end+1OC / d=43%",
+    "config": {
+      "country": "US",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 3,
+        "endPosts": 1,
+        "outsideCornerPosts": 1,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s309",
+    "name": "F1: CA/36\"/12mm / fascia / 10mid+4end+2OC+1IC / d=0%",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 36,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 12,
+      "discountLevel": 0,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 10,
+        "endPosts": 4,
+        "outsideCornerPosts": 2,
+        "insideCornerPosts": 1,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s310",
+    "name": "F1: CA/36\"/12mm / fascia / 10mid+4end+2OC+1IC / d=43%",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 36,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 12,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 10,
+        "endPosts": 4,
+        "outsideCornerPosts": 2,
+        "insideCornerPosts": 1,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s311",
+    "name": "F1: CA/36\"/13mm / fascia / 10mid+4end+2OC+1IC / d=0%",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 36,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 10,
+        "endPosts": 4,
+        "outsideCornerPosts": 2,
+        "insideCornerPosts": 1,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s312",
+    "name": "F1: CA/36\"/13mm / fascia / 10mid+4end+2OC+1IC / d=43%",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 36,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 10,
+        "endPosts": 4,
+        "outsideCornerPosts": 2,
+        "insideCornerPosts": 1,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s313",
+    "name": "F1: CA/42\"/12mm / fascia / 10mid+4end+2OC+1IC / d=0%",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 12,
+      "discountLevel": 0,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 10,
+        "endPosts": 4,
+        "outsideCornerPosts": 2,
+        "insideCornerPosts": 1,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s314",
+    "name": "F1: CA/42\"/12mm / fascia / 10mid+4end+2OC+1IC / d=43%",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 12,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 10,
+        "endPosts": 4,
+        "outsideCornerPosts": 2,
+        "insideCornerPosts": 1,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s315",
+    "name": "F1: CA/42\"/13mm / fascia / 10mid+4end+2OC+1IC / d=0%",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 10,
+        "endPosts": 4,
+        "outsideCornerPosts": 2,
+        "insideCornerPosts": 1,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s316",
+    "name": "F1: CA/42\"/13mm / fascia / 10mid+4end+2OC+1IC / d=43%",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 10,
+        "endPosts": 4,
+        "outsideCornerPosts": 2,
+        "insideCornerPosts": 1,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s317",
+    "name": "F1: US/36\"/12mm / fascia / 10mid+4end+2OC+1IC / d=0%",
+    "config": {
+      "country": "US",
+      "mountType": "fascia",
+      "railHeight": 36,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 12,
+      "discountLevel": 0,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 10,
+        "endPosts": 4,
+        "outsideCornerPosts": 2,
+        "insideCornerPosts": 1,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s318",
+    "name": "F1: US/36\"/12mm / fascia / 10mid+4end+2OC+1IC / d=43%",
+    "config": {
+      "country": "US",
+      "mountType": "fascia",
+      "railHeight": 36,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 12,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 10,
+        "endPosts": 4,
+        "outsideCornerPosts": 2,
+        "insideCornerPosts": 1,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s319",
+    "name": "F1: US/36\"/13mm / fascia / 10mid+4end+2OC+1IC / d=0%",
+    "config": {
+      "country": "US",
+      "mountType": "fascia",
+      "railHeight": 36,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 10,
+        "endPosts": 4,
+        "outsideCornerPosts": 2,
+        "insideCornerPosts": 1,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s320",
+    "name": "F1: US/36\"/13mm / fascia / 10mid+4end+2OC+1IC / d=43%",
+    "config": {
+      "country": "US",
+      "mountType": "fascia",
+      "railHeight": 36,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 10,
+        "endPosts": 4,
+        "outsideCornerPosts": 2,
+        "insideCornerPosts": 1,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s321",
+    "name": "F1: US/42\"/12mm / fascia / 10mid+4end+2OC+1IC / d=0%",
+    "config": {
+      "country": "US",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 12,
+      "discountLevel": 0,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 10,
+        "endPosts": 4,
+        "outsideCornerPosts": 2,
+        "insideCornerPosts": 1,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s322",
+    "name": "F1: US/42\"/12mm / fascia / 10mid+4end+2OC+1IC / d=43%",
+    "config": {
+      "country": "US",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 12,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 10,
+        "endPosts": 4,
+        "outsideCornerPosts": 2,
+        "insideCornerPosts": 1,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s323",
+    "name": "F1: US/42\"/13mm / fascia / 10mid+4end+2OC+1IC / d=0%",
+    "config": {
+      "country": "US",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 10,
+        "endPosts": 4,
+        "outsideCornerPosts": 2,
+        "insideCornerPosts": 1,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s324",
+    "name": "F1: US/42\"/13mm / fascia / 10mid+4end+2OC+1IC / d=43%",
+    "config": {
+      "country": "US",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 10,
+        "endPosts": 4,
+        "outsideCornerPosts": 2,
+        "insideCornerPosts": 1,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s325",
+    "name": "F1: CA/36\"/12mm / fascia / ep25-2L+2R / d=0%",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 36,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 12,
+      "discountLevel": 0,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 0,
+        "endPosts": 0,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 2,
+        "endPostsRight25": 2
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s326",
+    "name": "F1: CA/36\"/12mm / fascia / ep25-2L+2R / d=43%",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 36,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 12,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 0,
+        "endPosts": 0,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 2,
+        "endPostsRight25": 2
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s327",
+    "name": "F1: CA/36\"/13mm / fascia / ep25-2L+2R / d=0%",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 36,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 0,
+        "endPosts": 0,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 2,
+        "endPostsRight25": 2
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s328",
+    "name": "F1: CA/36\"/13mm / fascia / ep25-2L+2R / d=43%",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 36,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 0,
+        "endPosts": 0,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 2,
+        "endPostsRight25": 2
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s329",
+    "name": "F1: CA/42\"/12mm / fascia / ep25-2L+2R / d=0%",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 12,
+      "discountLevel": 0,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 0,
+        "endPosts": 0,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 2,
+        "endPostsRight25": 2
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s330",
+    "name": "F1: CA/42\"/12mm / fascia / ep25-2L+2R / d=43%",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 12,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 0,
+        "endPosts": 0,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 2,
+        "endPostsRight25": 2
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s331",
+    "name": "F1: CA/42\"/13mm / fascia / ep25-2L+2R / d=0%",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 0,
+        "endPosts": 0,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 2,
+        "endPostsRight25": 2
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s332",
+    "name": "F1: CA/42\"/13mm / fascia / ep25-2L+2R / d=43%",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 0,
+        "endPosts": 0,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 2,
+        "endPostsRight25": 2
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s333",
+    "name": "F1: US/36\"/12mm / fascia / ep25-2L+2R / d=0%",
+    "config": {
+      "country": "US",
+      "mountType": "fascia",
+      "railHeight": 36,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 12,
+      "discountLevel": 0,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 0,
+        "endPosts": 0,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 2,
+        "endPostsRight25": 2
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s334",
+    "name": "F1: US/36\"/12mm / fascia / ep25-2L+2R / d=43%",
+    "config": {
+      "country": "US",
+      "mountType": "fascia",
+      "railHeight": 36,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 12,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 0,
+        "endPosts": 0,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 2,
+        "endPostsRight25": 2
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s335",
+    "name": "F1: US/36\"/13mm / fascia / ep25-2L+2R / d=0%",
+    "config": {
+      "country": "US",
+      "mountType": "fascia",
+      "railHeight": 36,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 0,
+        "endPosts": 0,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 2,
+        "endPostsRight25": 2
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s336",
+    "name": "F1: US/36\"/13mm / fascia / ep25-2L+2R / d=43%",
+    "config": {
+      "country": "US",
+      "mountType": "fascia",
+      "railHeight": 36,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 0,
+        "endPosts": 0,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 2,
+        "endPostsRight25": 2
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s337",
+    "name": "F1: US/42\"/12mm / fascia / ep25-2L+2R / d=0%",
+    "config": {
+      "country": "US",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 12,
+      "discountLevel": 0,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 0,
+        "endPosts": 0,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 2,
+        "endPostsRight25": 2
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s338",
+    "name": "F1: US/42\"/12mm / fascia / ep25-2L+2R / d=43%",
+    "config": {
+      "country": "US",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 12,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 0,
+        "endPosts": 0,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 2,
+        "endPostsRight25": 2
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s339",
+    "name": "F1: US/42\"/13mm / fascia / ep25-2L+2R / d=0%",
+    "config": {
+      "country": "US",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 0,
+        "endPosts": 0,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 2,
+        "endPostsRight25": 2
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s340",
+    "name": "F1: US/42\"/13mm / fascia / ep25-2L+2R / d=43%",
+    "config": {
+      "country": "US",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 0,
+        "endPosts": 0,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 2,
+        "endPostsRight25": 2
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s341",
+    "name": "F2: fascia offset=0.4375\" / CA 42 13mm / 5mid+2end+1OC",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 5,
+        "endPosts": 2,
+        "outsideCornerPosts": 1,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s342",
+    "name": "F2: fascia offset=1.5\" / CA 42 13mm / 5mid+2end+1OC",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 1.5,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 5,
+        "endPosts": 2,
+        "outsideCornerPosts": 1,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s343",
+    "name": "F3: distToDeck=1\" / CA 42 13mm fascia / 5mid+2end",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 1,
+      "quantities": {
+        "midPosts": 5,
+        "endPosts": 2,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s344",
+    "name": "F3: distToDeck=2\" / CA 42 13mm fascia / 5mid+2end",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 2,
+      "quantities": {
+        "midPosts": 5,
+        "endPosts": 2,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s345",
+    "name": "F3: distToDeck=3\" / CA 42 13mm fascia / 5mid+2end",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 5,
+        "endPosts": 2,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s346",
+    "name": "F3: distToDeck=4\" / CA 42 13mm fascia / 5mid+2end",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 4,
+      "quantities": {
+        "midPosts": 5,
+        "endPosts": 2,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s347",
+    "name": "F3: distToDeck=5\" / CA 42 13mm fascia / 5mid+2end",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 5,
+      "quantities": {
+        "midPosts": 5,
+        "endPosts": 2,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s348",
+    "name": "F3: distToDeck=6\" / CA 42 13mm fascia / 5mid+2end",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 6,
+      "quantities": {
+        "midPosts": 5,
+        "endPosts": 2,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s349",
+    "name": "F4: fascia gap=1.0\" / CA 42 13mm / 5mid+2end",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 1.0,
+      "glassThickness": 13,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 5,
+        "endPosts": 2,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s350",
+    "name": "F4: fascia gap=1.5\" / CA 42 13mm / 5mid+2end",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 1.5,
+      "glassThickness": 13,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 5,
+        "endPosts": 2,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s351",
+    "name": "F4: fascia gap=2.0\" / CA 42 13mm / 5mid+2end",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 5,
+        "endPosts": 2,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s352",
+    "name": "F4: fascia gap=2.5\" / CA 42 13mm / 5mid+2end",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.5,
+      "glassThickness": 13,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 5,
+        "endPosts": 2,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s353",
+    "name": "F4: fascia gap=3.0\" / CA 42 13mm / 5mid+2end",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 3.0,
+      "glassThickness": 13,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 5,
+        "endPosts": 2,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s354",
+    "name": "F4: fascia gap=4.0\" / CA 42 13mm / 5mid+2end",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 4.0,
+      "glassThickness": 13,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 5,
+        "endPosts": 2,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s355",
+    "name": "F5: fascia courier=True / CA 42 13mm / 5mid+2end+1OC",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 5,
+        "endPosts": 2,
+        "outsideCornerPosts": 1,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s356",
+    "name": "F5: fascia courier=False / CA 42 13mm / 5mid+2end+1OC",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0.435,
+      "shipViaCourier": false,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 5,
+        "endPosts": 2,
+        "outsideCornerPosts": 1,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s357",
+    "name": "F6a: BIG fascia \u2014 20 mid + 4 end + 2 OC + 1 IC",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 20,
+        "endPosts": 4,
+        "outsideCornerPosts": 2,
+        "insideCornerPosts": 1,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s358",
+    "name": "F6b: All post types fascia",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 5,
+        "endPosts": 2,
+        "outsideCornerPosts": 2,
+        "insideCornerPosts": 2,
+        "wallTracks": 2,
+        "endPostsLeft25": 1,
+        "endPostsRight25": 1
+      },
+      "addOns": {}
+    }
+  },
+  {
+    "id": "s359",
+    "name": "F7a: fascia + remove track 2 + cut down 1",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 4,
+        "endPosts": 4,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {
+        "removeTrackFromPost": 2,
+        "cutDownTrack": 1
+      }
+    }
+  },
+  {
+    "id": "s360",
+    "name": "F7b: fascia + welded extruded SM=2",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 5,
+        "endPosts": 2,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {
+        "addWeldedExtrudedSideMount": 2
+      }
+    }
+  },
+  {
+    "id": "s361",
+    "name": "F7c: fascia + glass shelf kits=2",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 2.0,
+      "glassThickness": 13,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 5,
+        "endPosts": 0,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {
+        "glassShelfKits": 2
+      }
+    }
+  },
+  {
+    "id": "s362",
+    "name": "F8a: fascia big bottom gap=3 + distToDeck=3 (sb=6\") \u2014 wedge territory",
+    "config": {
+      "country": "CA",
+      "mountType": "fascia",
+      "railHeight": 42,
+      "topGlassReveal": 2.125,
+      "bottomGlassGap": 3,
+      "glassThickness": 13,
+      "discountLevel": 0.435,
+      "shipViaCourier": true,
+      "basePlateGaskets": false,
+      "fasciaOffset": 0.4375,
+      "distTopBasePlateToDeck": 3,
+      "quantities": {
+        "midPosts": 3,
+        "endPosts": 0,
+        "outsideCornerPosts": 0,
+        "insideCornerPosts": 0,
+        "wallTracks": 0,
+        "endPostsLeft25": 0,
+        "endPostsRight25": 0
+      },
+      "addOns": {}
+    }
   }
 ]

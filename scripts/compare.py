@@ -102,10 +102,19 @@ def compare_one(s_excel, s_react):
                 "delta": round(rq_r - eq_r, 2),
             })
 
-    # Dimensional checks (just post height and glass insert)
+    # Dimensional checks
     e_dim = excel.get("dimensions", {}) or {}
     r_dim = react.get("dimensions", {}) or {}
-    for d in ["postHeightAboveDeck", "glassInsertLengthPost", "wallTrackHeight"]:
+    # For surface: postHeightAboveDeck and glassInsertLengthPost
+    # For fascia: physicalPostLength (Excel F61) and glassInsertLengthPost
+    # wallTrackHeight is common to both
+    is_fascia = config.get("mountType") == "fascia"
+    dims_to_check = (
+        ["physicalPostLength", "glassInsertLengthPost", "wallTrackHeight"]
+        if is_fascia
+        else ["postHeightAboveDeck", "glassInsertLengthPost", "wallTrackHeight"]
+    )
+    for d in dims_to_check:
         e_val = e_dim.get(d)
         r_val = r_dim.get(d)
         if e_val is None or r_val is None:

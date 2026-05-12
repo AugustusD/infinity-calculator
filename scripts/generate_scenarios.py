@@ -138,6 +138,74 @@ add("M10c: MIXED JOB — all post types + add-ons",
            add5x5BasePlate=3, basePlate5x5_midPost=2, basePlate5x5_outsideCorner=1,
            addWeldedSurfaceBase=1, removeTrackFromPost=1, glassShelfKits=2))
 
+
+# ===========================================================================
+# FASCIA MOUNT SCENARIOS
+# ===========================================================================
+def fascia_base(**overrides):
+    cfg = {
+        "country": "CA", "mountType": "fascia", "railHeight": 42,
+        "topGlassReveal": 2.125, "bottomGlassGap": 2.0, "glassThickness": 13,
+        "discountLevel": 0.435, "shipViaCourier": True, "basePlateGaskets": False,
+        "fasciaOffset": 0.4375, "distTopBasePlateToDeck": 3,
+        "quantities": dict(DEFAULT_QUANTITIES),
+        "addOns": {},
+    }
+    cfg.update(overrides)
+    return cfg
+
+# Fascia post mixes + country + rail + glass + discount
+fascia_post_mixes = [
+    ("3mid", {"midPosts": 3}),
+    ("5mid+2end", {"midPosts": 5, "endPosts": 2}),
+    ("3mid+1end+1OC", {"midPosts": 3, "endPosts": 1, "outsideCornerPosts": 1}),  # USER'S CONFIG
+    ("10mid+4end+2OC+1IC", {"midPosts": 10, "endPosts": 4, "outsideCornerPosts": 2, "insideCornerPosts": 1}),
+    ("ep25-2L+2R", {"endPostsLeft25": 2, "endPostsRight25": 2}),
+]
+for (qname, q), c, r, g, d in itertools.product(fascia_post_mixes, ["CA", "US"], [36, 42], [12, 13], [0, 0.435]):
+    name = f"F1: {c}/{r}\"/{g}mm / fascia / {qname} / d={int(d*100)}%"
+    cfg = with_q(fascia_base(country=c, railHeight=r, glassThickness=g, discountLevel=d), **q)
+    add(name, cfg)
+
+# Fascia offset sweep
+for offset in [0.4375, 1.5]:
+    add(f"F2: fascia offset={offset}\" / CA 42 13mm / 5mid+2end+1OC",
+        with_q(fascia_base(fasciaOffset=offset), midPosts=5, endPosts=2, outsideCornerPosts=1))
+
+# Distance-to-deck sweep
+for d2d in [1, 2, 3, 4, 5, 6]:
+    add(f"F3: distToDeck={d2d}\" / CA 42 13mm fascia / 5mid+2end",
+        with_q(fascia_base(distTopBasePlateToDeck=d2d), midPosts=5, endPosts=2))
+
+# Bottom gap sweep (fascia — same as surface)
+for g in [1.0, 1.5, 2.0, 2.5, 3.0, 4.0]:
+    add(f"F4: fascia gap={g}\" / CA 42 13mm / 5mid+2end",
+        with_q(fascia_base(bottomGlassGap=g), midPosts=5, endPosts=2))
+
+# Courier on/off
+for courier in [True, False]:
+    add(f"F5: fascia courier={courier} / CA 42 13mm / 5mid+2end+1OC",
+        with_q(fascia_base(shipViaCourier=courier), midPosts=5, endPosts=2, outsideCornerPosts=1))
+
+# Big fascia jobs
+add("F6a: BIG fascia — 20 mid + 4 end + 2 OC + 1 IC",
+    with_q(fascia_base(), midPosts=20, endPosts=4, outsideCornerPosts=2, insideCornerPosts=1))
+add("F6b: All post types fascia",
+    with_q(fascia_base(), midPosts=5, endPosts=2, outsideCornerPosts=2, insideCornerPosts=2,
+           wallTracks=2, endPostsLeft25=1, endPostsRight25=1))
+
+# Fascia with add-ons
+add("F7a: fascia + remove track 2 + cut down 1",
+    with_a(with_q(fascia_base(), midPosts=4, endPosts=4), removeTrackFromPost=2, cutDownTrack=1))
+add("F7b: fascia + welded extruded SM=2",
+    with_a(with_q(fascia_base(), midPosts=5, endPosts=2), addWeldedExtrudedSideMount=2))
+add("F7c: fascia + glass shelf kits=2",
+    with_a(with_q(fascia_base(), midPosts=5), glassShelfKits=2))
+
+# Custom large bottom gap on fascia (triggers wedge warning if > 5.125")
+add("F8a: fascia big bottom gap=3 + distToDeck=3 (sb=6\") — wedge territory",
+    with_q(fascia_base(bottomGlassGap=3, distTopBasePlateToDeck=3), midPosts=3))
+
 print(f"Generated {len(scenarios)} scenarios")
 with open("/Users/sunny/Desktop/Claude/infinity-calculator/scripts/scenarios.json", "w") as f:
     json.dump(scenarios, f, indent=2)

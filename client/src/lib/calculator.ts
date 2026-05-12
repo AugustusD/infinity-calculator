@@ -920,13 +920,21 @@ export function calculateFascia(config: ConfigInputs): CalculationResult {
   const wallTrackHeight = actualRailHeight - DEFAULT_TOP_REVEAL;
   const endPost25Height = postHeightAboveDeck + 1 + distToDeck + BASE_PLATE_HEIGHT;
 
-  // Glass insert lengths
-  // Post: post height above deck - 5 - distToDeck - bottom gap - 3
-  const glassInsertLength = postHeightAboveDeck - 5 - distToDeck - bottomGap - 3;
-  // End post: post height above deck - 0.25 - 5
-  const endPostInsertLength = postHeightAboveDeck - 0.25 - 5;
-  // Wall track: wall track height - 3 - distToDeck
-  const glassInsertLengthTrack = wallTrackHeight - 3 - distToDeck;
+  // Glass insert lengths.
+  //
+  // These three previously had a copy-paste-style bug — they used
+  // `postHeightAboveDeck` (the above-deck portion only) as the starting variable
+  // when they should have used `physicalPostLength` (which includes the part below
+  // the deck). The numeric off-set was 8" for a standard config (distToDeck=3,
+  // base plate=5). Cross-checked against the 2021 Excel Fascia Mount sheet:
+  //   F62 / I16 = $I$2 - 5 - $D$63 - $D$62 - 3       (post insert)
+  //   F63 / I18 = $I$2 - 1/4 - 5                      (end post insert)
+  //   F68 / I17 = $I$3 - 3 - $D$62                    (wall track insert)
+  // where I2 = physicalPostLength, I3 = wallTrackHeight, D62 = bottomGap,
+  // D63 = distToDeck. Re-stated against the React variables:
+  const glassInsertLength = physicalPostLength - BASE_PLATE_HEIGHT - distToDeck - bottomGap - 3;
+  const endPostInsertLength = physicalPostLength - 0.25 - BASE_PLATE_HEIGHT;
+  const glassInsertLengthTrack = wallTrackHeight - bottomGap - 3;
 
   // Setting block height = bottomGap + distToDeck
   const settingBlockHeight = bottomGap + distToDeck;
