@@ -410,6 +410,10 @@ export default function Home() {
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [revealUnlocked, setRevealUnlocked] = useState(false);
   const [bottomGapUnlocked, setBottomGapUnlocked] = useState(false);
+  const [showCustomBasePlateAlert, setShowCustomBasePlateAlert] = useState(false);
+  // Tracks the previous wedge-override state so we only pop the alert on a
+  // false→true transition (not every render while the condition stays true).
+  const [prevWedgeOverride, setPrevWedgeOverride] = useState(false);
 
   // Mark first visit done and persist discount
   useEffect(() => {
@@ -467,6 +471,19 @@ export default function Home() {
   );
 
   const result: CalculationResult = useMemo(() => calculate(config), [config]);
+
+  // Fascia wedge override pop-up: when setting block space exceeds the 5 1/8"
+  // maximum (post too tall or bottom gap too large), the install switches to a
+  // 3" wedge piece + reduced setting block. Mike + Bill confirmed this regime
+  // may require custom base plates — flag it to the dealer.
+  // We only fire on the false→true transition so the user isn't trapped by a
+  // repeating modal while they're adjusting inputs that keep the flag true.
+  useEffect(() => {
+    if (result.useWedgeInsteadOfBlock && !prevWedgeOverride) {
+      setShowCustomBasePlateAlert(true);
+    }
+    setPrevWedgeOverride(result.useWedgeInsteadOfBlock);
+  }, [result.useWedgeInsteadOfBlock, prevWedgeOverride]);
 
   const isUS = config.country === 'US';
   const isCA = config.country === 'CA';
@@ -548,6 +565,43 @@ export default function Home() {
               <span style={{ fontSize: '14px', lineHeight: '1' }}>&#8635;</span>
               <span className="hidden sm:inline">Reset</span>
             </button>
+            {/* Custom Base Plate Alert — fires when fascia setting block space
+                exceeds 5 1/8" (wedge-override regime). Click anywhere to dismiss. */}
+            {showCustomBasePlateAlert && (
+              <div
+                className="fixed inset-0 z-50 flex items-center justify-center cursor-pointer"
+                style={{ background: 'rgba(0,0,0,0.45)' }}
+                onClick={() => setShowCustomBasePlateAlert(false)}
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="custom-base-plate-alert-title"
+              >
+                <div
+                  className="bg-white rounded shadow-xl p-6 max-w-md w-full mx-4 cursor-default"
+                  style={{ border: '2px solid #B69A5A' }}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <div className="flex items-start gap-3 mb-3">
+                    <AlertTriangle size={22} style={{ color: '#B69A5A', flexShrink: 0, marginTop: '2px' }} />
+                    <h3 id="custom-base-plate-alert-title" className="font-bold text-base" style={{ color: '#111' }}>
+                      Custom Base Plates May Be Required
+                    </h3>
+                  </div>
+                  <p className="text-sm mb-5" style={{ color: '#333', lineHeight: '1.5' }}>
+                    This configuration exceeds the standard fascia setting block range.
+                    <strong> May require custom base plates — please contact Innovative Aluminum</strong> before
+                    finalizing this order.
+                  </p>
+                  <div className="flex justify-end">
+                    <button
+                      onClick={() => setShowCustomBasePlateAlert(false)}
+                      className="px-4 py-2 text-sm font-semibold"
+                      style={{ background: '#B69A5A', color: '#FFFFFF', borderRadius: '2px' }}
+                    >Dismiss</button>
+                  </div>
+                </div>
+              </div>
+            )}
             {/* Reset Confirmation Dialog */}
             {showResetConfirm && (
               <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.45)' }}>

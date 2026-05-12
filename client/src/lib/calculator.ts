@@ -972,14 +972,21 @@ export function calculateFascia(config: ConfigInputs): CalculationResult {
   // Check if setting block > 5 1/8" (5.125") → use wedge rule
   // Maximum fascia setting block is 5 1/8": 3 1/8" below deck + 2" above deck
   const MAX_FASCIA_SETTING_BLOCK = 5.125;
+  const EXTRA_WEDGE_PIECE = 3; // inches — fixed length per Mike's verbal spec (Otter transcript)
   const useWedgeInsteadOfBlock = settingBlockHeight > MAX_FASCIA_SETTING_BLOCK;
   let extraWedgeLength: number | undefined;
+  let reducedSettingBlockHeight: number | undefined;
   if (useWedgeInsteadOfBlock) {
-    extraWedgeLength = settingBlockHeight - 1.5;
+    // Per Mike: when setting block space exceeds 5 1/8", switch to 3" wedge +
+    // (space - 3") of setting block. The wedge piece is a fixed 3", and the
+    // setting block takes the remaining balance. Previous code had this inverted
+    // (1.5" setting block + variable wedge), which contradicts the install spec.
+    // See Otter transcript audio1313731771 for Mike's direct confirmation.
+    extraWedgeLength = EXTRA_WEDGE_PIECE;
+    reducedSettingBlockHeight = settingBlockHeight - EXTRA_WEDGE_PIECE;
     warnings.push(
-      `Setting block height (${settingBlockHeight.toFixed(3)}") exceeds maximum 5 1/8". ` +
-      `Extended fascia post height is not supported by the engineering. ` +
-      `Use 1.5" setting block + ${extraWedgeLength.toFixed(3)}" extra wedge piece per post side.`
+      `Setting block space (${settingBlockHeight.toFixed(3)}") exceeds maximum 5 1/8". ` +
+      `Use 3" extra wedge piece + ${reducedSettingBlockHeight.toFixed(3)}" setting block per post side.`
     );
   }
 
