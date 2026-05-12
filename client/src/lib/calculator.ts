@@ -1029,19 +1029,29 @@ export function calculateFascia(config: ConfigInputs): CalculationResult {
   const sbPieces_post = q.midPosts * 2 + q.endPosts + q.outsideCornerPosts * 2 + q.insideCornerPosts * 2;
   const sbPieces_track = q.wallTracks + q.endPostsLeft25 + q.endPostsRight25;
 
-  const sbFootage_post = sbHeight_post > 0 && sbPieces_post > 0
+  // Footage calc only applies when the setting block height isn't exactly 1.5"
+  // — at 1.5" we switch to the precut SKU instead, which is billed as a piece
+  // count not by the foot. Matches Excel K20/K21 = IF(F20=1.5, 0, ...) on the
+  // Fascia Mount sheet. Surface mount has the same conditional; fascia was
+  // missing it, causing both the precut piece line AND a phantom per-ft line
+  // to appear together for the EP25-only case.
+  const sbFootage_post = (sbHeight_post > 0 && sbHeight_post !== 1.5 && sbPieces_post > 0)
     ? sbPieces_post / (12 / (sbHeight_post + 0.25))
     : 0;
-  const sbFootage_track = sbHeight_track > 0 && sbPieces_track > 0
+  const sbFootage_track = (sbHeight_track > 0 && sbHeight_track !== 1.5 && sbPieces_track > 0)
     ? sbPieces_track / (12 / (sbHeight_track + 0.25))
     : 0;
   const totalSBFootage = sbFootage_post + sbFootage_track;
 
-  // 1.5" precut SKU is selected when the setting block height is exactly 1.5".
-  // Only the wall-track side ever hits that here, because the post side is
-  // bottomGap + distToDeck which can't naturally equal 1.5" with the standard
-  // distToDeck = 3".
-  const sb15Pieces = sbHeight_track === 1.5 ? sbPieces_track : 0;
+  // 1.5" precut SKU applies when EITHER the post-side OR the track-side
+  // setting block height is exactly 1.5". Both contribute their piece count
+  // independently. Post side uses `bottomGap + distToDeck` so it only equals
+  // 1.5" in unusual configs (e.g. bottomGap=0.5, distToDeck=1). Track side
+  // uses `bottomGap - 0.5` so it equals 1.5" at the standard bottomGap=2,
+  // which is the common case.
+  const sb15Pieces =
+    (sbHeight_post === 1.5 ? sbPieces_post : 0) +
+    (sbHeight_track === 1.5 ? sbPieces_track : 0);
 
   const settingBlockLengths10ft = Math.floor(totalSBFootage / 10);
   const settingBlockLeftover = totalSBFootage - settingBlockLengths10ft * 10;
@@ -1082,7 +1092,30 @@ export function calculateFascia(config: ConfigInputs): CalculationResult {
   // ---- PRICING ----
   const postPriceEa = fasciaPostPrice(physicalPostLength) * (1 - discount);
   const wallTrackPriceEa = fasciaWallTrackPrice(actualRailHeight) * (1 - discount);
-  const endPost25PriceEa = fasciaEndPostPrice(endPost25Height) * (1 - discount);
+
+  // 2.5" end post: Excel applies a "custom offset" surcharge when the fascia
+  // offset isn't exactly 0.5". Per the 2021 Fascia Mount sheet cell G84:
+  //   G84 = IF(D64 = 0.5,
+  //            M4 × (1 - discount),
+  //            (M4 + K37) × (1 - discount))
+  //   K37 = H37(108.53) - I37
+  //   I37 = (2.5" post base price) - 136.43 + 59.85
+  // Mike confirmed (2026-05-05) this logic is the current source of truth.
+  // The surcharge effectively pins the non-standard 2.5" end post list price
+  // at ~$185.11 regardless of which non-standard offset is selected.
+  // Note: React's UI offers only 7/16" (0.4375) and 1.5"; neither equals 0.5",
+  // so the surcharge path is always taken. The standard-offset branch exists
+  // for completeness in case 1/2" is added back as a UI option.
+  const FASCIA_OFFSET_STANDARD = 0.5;
+  // Cast: FasciaOffset type currently only allows 0.4375 | 1.5, but the Excel's
+  // canonical "standard" is 0.5 (not in the current UI). Cast to number so the
+  // comparison stays correct if 0.5 is ever added as a FasciaOffset option.
+  const isOffsetStandard = (fasciaOffset as number) === FASCIA_OFFSET_STANDARD;
+  const endPost25BaseListPrice = fasciaEndPostPrice(endPost25Height);
+  const endPost25CustomOffsetSurcharge = 108.53 - (endPost25BaseListPrice - 136.43 + 59.85);
+  const endPost25PriceEa = isOffsetStandard
+    ? endPost25BaseListPrice * (1 - discount)
+    : (endPost25BaseListPrice + endPost25CustomOffsetSurcharge) * (1 - discount);
 
   const baseGasketPrice = thickness === 13 ? PRICES_2026.parts.glassInsert_13mm_10ft : PRICES_2026.parts.glassInsert_12mm_12ft;
   const gasketUnitPrice = baseGasketPrice * (isCourier ? courierMultiplier : 1) * (1 - discount);
@@ -1127,8 +1160,10 @@ export function calculateFascia(config: ConfigInputs): CalculationResult {
   addLine(`Infinity Mid/Inside Plates (${offsetLabel})`, midInsidePlatesQty, midInsidePlatePrice, undefined, undefined);
   addLine(`Infinity Outside Plates (${offsetLabel})`, outsidePlatesQty, outsidePlatePrice, undefined, undefined);
   addLine('End Caps', q.endPosts - addons.removeTrackFromPost, endCapPrice);
-  addLine('2.5" End Left Posts', q.endPostsLeft25, endPost25PriceEa, postPaintEa);
-  addLine('2.5" End Right Posts', q.endPostsRight25, endPost25PriceEa, postPaintEa);
+  // Label mirrors Excel: "Custom Offset" appears when the surcharge path is taken.
+  const ep25LabelPrefix = isOffsetStandard ? '2.5"' : '2.5" Custom Offset';
+  addLine(`${ep25LabelPrefix} End Left Posts`, q.endPostsLeft25, endPost25PriceEa, postPaintEa);
+  addLine(`${ep25LabelPrefix} End Right Posts`, q.endPostsRight25, endPost25PriceEa, postPaintEa);
   addLine('2.5" Post Caps', q.endPostsLeft25 + q.endPostsRight25, postCap25Price);
   // Aluminum add-ons
   if (addons.removeTrackFromPost > 0) {
