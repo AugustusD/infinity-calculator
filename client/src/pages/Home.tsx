@@ -33,8 +33,9 @@ const MARKET_STORAGE_KEY = 'ias-infinity-market';
 const FIRST_VISIT_KEY = 'ias-infinity-visited';
 
 // CDN URLs for logos
-const IAS_LOGO_URL = 'https://d2xsxph8kpxj0f.cloudfront.net/310519663093943154/Vxc6ufyoD2HuhTpJtdEazX/ias-logo-2024_bbb213b4.webp';
+const IAS_LOGO_URL = 'https://www.innovativealuminum.com/images/ias-newgold.svg';
 const INFINITY_LOGO_URL = 'https://d2xsxph8kpxj0f.cloudfront.net/310519663093943154/Vxc6ufyoD2HuhTpJtdEazX/infinity-logo_2a84a66e.png';
+const IAS_WEBSITE_URL = 'https://www.innovativealuminum.com/';
 
 // ============================================================
 // HELPERS
@@ -69,8 +70,8 @@ function FieldRow({ label, children, hint }: { label: string; children: React.Re
   return (
     <div className="flex items-center gap-3 py-2.5 border-b border-[#EBEBEB] last:border-0">
       <div className="w-44 flex-shrink-0">
-        <span className="text-sm text-[#3A3A3A]">{label}</span>
-        {hint && <p className="text-xs text-[#6B6B6B] mt-0.5">{hint}</p>}
+        <span className="text-sm text-[#7A7A7A]">{label}</span>
+        {hint && <p className="text-xs text-[#9A9A9A] mt-0.5">{hint}</p>}
       </div>
       <div className="flex-1">{children}</div>
     </div>
@@ -252,9 +253,14 @@ function Toggle({
     <label className="flex items-center gap-2 cursor-pointer select-none">
       <div
         onClick={() => onChange(!checked)}
-        className={`relative w-10 h-5 rounded-full transition-colors ${checked ? 'bg-[#B69A5A]' : 'bg-[#D8D8D8]'}`}
+        className={`relative w-10 h-5 rounded-full transition-all duration-200 ${checked ? 'bg-[#B69A5A]' : 'bg-[#D8D8D8]'}`}
+        style={{
+          boxShadow: checked
+            ? '0 0 0 1px rgba(182,154,90,0.35), 0 1px 4px rgba(182,154,90,0.35)'
+            : 'inset 0 1px 2px rgba(0,0,0,0.12)',
+        }}
       >
-        <div className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform ${checked ? 'translate-x-5' : 'translate-x-0'}`} />
+        <div className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white transition-transform ${checked ? 'translate-x-5' : 'translate-x-0'}`} style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.2)' }} />
       </div>
       {label && <span className="text-sm text-[#3A3A3A]">{label}</span>}
     </label>
@@ -408,6 +414,7 @@ export default function Home() {
   const [jobInfo, setJobInfo] = useState({ dealerName: savedDealer, jobReference: '', color: '', notes: '' });
   const [showAddOns, setShowAddOns] = useState(false);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [showLeaveConfirm, setShowLeaveConfirm] = useState(false);
   const [revealUnlocked, setRevealUnlocked] = useState(false);
   const [bottomGapUnlocked, setBottomGapUnlocked] = useState(false);
   const [showCustomBasePlateAlert, setShowCustomBasePlateAlert] = useState(false);
@@ -430,6 +437,39 @@ export default function Home() {
   useEffect(() => {
     try { localStorage.setItem(MARKET_STORAGE_KEY, config.country); } catch {}
   }, [config.country]);
+
+  // Dirty-state detection — true when user has entered job-specific info that
+  // would be lost on navigation. Dealer name + discount + market are persisted,
+  // so they don't count.
+  const isDirty = useMemo(() => {
+    const q = config.quantities;
+    const totalPosts = q.midPosts + q.endPosts + q.outsideCornerPosts + q.insideCornerPosts +
+      q.wallTracks + q.endPostsLeft25 + q.endPostsRight25;
+    if (totalPosts > 0) return true;
+    if (jobInfo.jobReference.trim() || jobInfo.color.trim() || jobInfo.notes.trim()) return true;
+    const addOnEntries = Object.entries(config.addOns);
+    for (const [, v] of addOnEntries) {
+      if (typeof v === 'number' && v > 0) return true;
+      if (typeof v === 'boolean' && v) return true;
+      if (typeof v === 'string' && v.trim() !== '') return true;
+    }
+    return false;
+  }, [config.quantities, config.addOns, jobInfo.jobReference, jobInfo.color, jobInfo.notes]);
+
+  // Native browser leave-prompt for tab close / refresh when there's unsaved work.
+  useEffect(() => {
+    if (!isDirty) return;
+    const handler = (e: BeforeUnloadEvent) => { e.preventDefault(); e.returnValue = ''; };
+    window.addEventListener('beforeunload', handler);
+    return () => window.removeEventListener('beforeunload', handler);
+  }, [isDirty]);
+
+  const handleLogoClick = useCallback((e: React.MouseEvent) => {
+    if (isDirty) {
+      e.preventDefault();
+      setShowLeaveConfirm(true);
+    }
+  }, [isDirty]);
 
   const update = useCallback(<K extends keyof ConfigInputs>(key: K, value: ConfigInputs[K]) => {
     setConfig(prev => ({ ...prev, [key]: value }));
@@ -535,25 +575,34 @@ export default function Home() {
   const requireColorMsg = 'Please select a powder coat color in Job Information before exporting or printing.';
 
   return (
-    <div className="min-h-screen" style={{ background: '#F5F5F5', fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif" }}>
+    <div className="min-h-screen" style={{ background: '#F4F1EA', fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif" }}>
 
       {/* ====== HEADER ====== */}
-      <header className="no-print" style={{ background: '#FFFFFF', borderBottom: '3px solid #B69A5A', borderTop: '3px solid #B69A5A' }}>
+      <header className="no-print" style={{ background: '#FAF8F3', borderBottom: '3px solid #B69A5A', borderTop: '3px solid #B69A5A' }}>
         <div className="container py-2 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <img
-              src={IAS_LOGO_URL}
-              alt="Innovative Aluminum Systems"
-              style={{ height: '68px', width: 'auto', objectFit: 'contain', display: 'block' }}
-            />
-            <div className="flex flex-col justify-center gap-1">
+          <div className="flex items-center">
+            <a
+              href={IAS_WEBSITE_URL}
+              onClick={handleLogoClick}
+              title="Return to innovativealuminum.com"
+              className="transition-opacity duration-150 hover:opacity-80"
+              style={{ display: 'block', cursor: 'pointer' }}
+            >
               <img
-                src={INFINITY_LOGO_URL}
-                alt="Infinity"
-                style={{ height: 'auto', width: '200px', objectFit: 'contain' }}
+                src={IAS_LOGO_URL}
+                alt="Innovative Aluminum Systems"
+                style={{ height: '68px', width: 'auto', objectFit: 'contain', display: 'block' }}
               />
-
-            </div>
+            </a>
+            <div
+              aria-hidden="true"
+              style={{ width: '1px', height: '52px', background: '#B69A5A', opacity: 0.55, marginLeft: '32px', marginRight: '32px' }}
+            />
+            <img
+              src={INFINITY_LOGO_URL}
+              alt="Infinity"
+              style={{ height: 'auto', width: '200px', objectFit: 'contain', display: 'block' }}
+            />
           </div>
           <div className="flex items-center gap-3 flex-wrap justify-end ml-auto">
             <button
@@ -636,6 +685,28 @@ export default function Home() {
                 </div>
               </div>
             )}
+            {/* Leave Page Confirmation Dialog — appears when IAS logo is clicked
+                with unsaved configuration. */}
+            {showLeaveConfirm && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.45)' }}>
+                <div className="bg-white rounded shadow-xl p-6 max-w-sm w-full mx-4" style={{ border: '2px solid #B69A5A' }}>
+                  <h3 className="font-bold text-base mb-2" style={{ color: '#111' }}>Leave the calculator?</h3>
+                  <p className="text-sm mb-4" style={{ color: '#555' }}>You have unsaved configuration on this estimate. Leaving will discard your current quantities, color, job reference, and notes.</p>
+                  <div className="flex gap-3 justify-end">
+                    <button
+                      onClick={() => setShowLeaveConfirm(false)}
+                      className="px-4 py-2 text-sm font-semibold"
+                      style={{ background: '#F0F0F0', color: '#333', borderRadius: '2px' }}
+                    >Stay</button>
+                    <button
+                      onClick={() => { window.location.href = IAS_WEBSITE_URL; }}
+                      className="px-4 py-2 text-sm font-semibold"
+                      style={{ background: '#B69A5A', color: '#FFFFFF', borderRadius: '2px' }}
+                    >Leave</button>
+                  </div>
+                </div>
+              </div>
+            )}
             <button
               onClick={async () => {
                 if (!colorSelected) { toast.error(requireColorMsg); return; }
@@ -665,7 +736,7 @@ export default function Home() {
                 window.location.href = `mailto:orders@innovativealuminum.com?subject=${encodeURIComponent(subject)}&body=${body}`;
               }}
               className="flex items-center gap-2 px-3 py-2 text-sm font-semibold transition-all no-print"
-              style={{ background: '#B69A5A', color: '#FFFFFF', borderRadius: '2px', letterSpacing: '0.04em' }}
+              style={{ background: '#1A5C2A', color: '#FFFFFF', borderRadius: '2px', letterSpacing: '0.04em' }}
               title="Email estimate"
             >
               <Mail size={13} />
@@ -862,7 +933,7 @@ export default function Home() {
                     options={[{ value: '', label: '— Choose a color —' }, ...COLOR_OPTIONS.map(c => ({ value: c, label: c }))]}
                   />
                   {!colorSelected && (
-                    <p className="text-xs mt-1 flex items-center gap-1 font-semibold" style={{ color: '#C0392B' }}>
+                    <p className="text-xs mt-1 flex items-center gap-1 font-semibold" style={{ color: '#B85C2D' }}>
                       <AlertTriangle size={11} /> Color selection required before printing or exporting
                     </p>
                   )}
@@ -1032,8 +1103,8 @@ export default function Home() {
                         style={{
                           borderRadius: '2px',
                           border: config.postConfig === pc ? '2px solid #B69A5A' : '2px solid #D8D8D8',
-                          background: config.postConfig === pc ? '#B69A5A' : '#FFFFFF',
-                          color: config.postConfig === pc ? '#111111' : '#3A3A3A',
+                          background: config.postConfig === pc ? '#111111' : '#FFFFFF',
+                          color: config.postConfig === pc ? '#f4ce47' : '#3A3A3A',
                         }}
                       >
                         {pc} Post
@@ -1152,7 +1223,16 @@ export default function Home() {
                 </div>
                 <div className="text-right">
                   <div className="text-[10px] font-bold uppercase tracking-widest mb-0.5" style={{ color: '#6B6B6B' }}>Job Cost</div>
-                  <div className="mono text-2xl font-black" style={{ color: '#111111' }}>
+                  <div
+                    className="mono text-4xl font-black leading-none inline-block"
+                    style={{
+                      color: '#111111',
+                      letterSpacing: '-0.02em',
+                      background: '#FAF6EC',
+                      padding: '6px 12px',
+                      borderRadius: '4px',
+                    }}
+                  >
                     {fmtCurrency(result.jobCost)}
                   </div>
                   {config.discountLevel > 0 && (
