@@ -370,6 +370,7 @@ DEFAULT_QUANTITIES = {
 }
 
 SCENARIOS = [
+    # === Original 5 baseline scenarios (do not change — used as smoke tests) ===
     {
         'name': 'US surface, 42" rail, 12mm glass, 5 mid + 2 end posts, no discount, courier',
         'config': {
@@ -404,7 +405,7 @@ SCENARIOS = [
         'name': 'CA surface, 42" rail, SHORT POST, 12mm glass, 4 mid + 1 end',
         'config': {
             'country': 'CA', 'mountType': 'surface', 'railHeight': 42,
-            'topGlassReveal': 18.125,  # short post
+            'topGlassReveal': 18.125,
             'bottomGlassGap': 2.0, 'glassThickness': 12,
             'discountLevel': 0.435, 'shipViaCourier': True, 'basePlateGaskets': False,
             'quantities': {**DEFAULT_QUANTITIES, 'midPosts': 4, 'endPosts': 1},
@@ -415,11 +416,200 @@ SCENARIOS = [
         'name': 'US surface, 42" rail, custom 0.5" reveal (clamped to 2"), 6 mid + 2 OC',
         'config': {
             'country': 'US', 'mountType': 'surface', 'railHeight': 42,
-            'topGlassReveal': 2.0,  # US cap
+            'topGlassReveal': 2.0,
             'bottomGlassGap': 2.0, 'glassThickness': 12,
             'discountLevel': 0.435, 'shipViaCourier': True, 'basePlateGaskets': False,
             'quantities': {**DEFAULT_QUANTITIES, 'midPosts': 6, 'outsideCornerPosts': 2},
             'addOns': {},
+        },
+    },
+
+    # === Edge case sweep ===
+
+    # Single post, minimum job
+    {
+        'name': 'EDGE: minimum job — US, 42" rail, 12mm, 1 mid post, no discount',
+        'config': {
+            'country': 'US', 'mountType': 'surface', 'railHeight': 42,
+            'topGlassReveal': 2.0, 'bottomGlassGap': 2.0, 'glassThickness': 12,
+            'discountLevel': 0, 'shipViaCourier': True, 'basePlateGaskets': False,
+            'quantities': {**DEFAULT_QUANTITIES, 'midPosts': 1},
+            'addOns': {},
+        },
+    },
+
+    # Large job
+    {
+        'name': 'EDGE: large job — CA, 42" rail, 13mm, 30 mid + 4 end + 4 OC, 43.5% discount',
+        'config': {
+            'country': 'CA', 'mountType': 'surface', 'railHeight': 42,
+            'topGlassReveal': 2.125, 'bottomGlassGap': 2.0, 'glassThickness': 13,
+            'discountLevel': 0.435, 'shipViaCourier': True, 'basePlateGaskets': True,
+            'quantities': {**DEFAULT_QUANTITIES, 'midPosts': 30, 'endPosts': 4, 'outsideCornerPosts': 4},
+            'addOns': {},
+        },
+    },
+
+    # All post types at once (kitchen sink)
+    {
+        'name': 'EDGE: all post types — CA, 42", 13mm, 5 mid + 2 end + 2 OC + 2 IC + 3 wall + 1 EP25L + 1 EP25R',
+        'config': {
+            'country': 'CA', 'mountType': 'surface', 'railHeight': 42,
+            'topGlassReveal': 2.125, 'bottomGlassGap': 2.0, 'glassThickness': 13,
+            'discountLevel': 0.435, 'shipViaCourier': True, 'basePlateGaskets': False,
+            'quantities': {'midPosts': 5, 'endPosts': 2, 'outsideCornerPosts': 2,
+                           'insideCornerPosts': 2, 'wallTracks': 3,
+                           'endPostsLeft25': 1, 'endPostsRight25': 1},
+            'addOns': {},
+        },
+    },
+
+    # Glass thickness parity check (same config, different glass)
+    {
+        'name': 'PARITY: 12mm vs 13mm — US, 42" rail, 4 mid + 1 end, 43.5% (12mm version)',
+        'config': {
+            'country': 'US', 'mountType': 'surface', 'railHeight': 42,
+            'topGlassReveal': 2.0, 'bottomGlassGap': 2.0, 'glassThickness': 12,
+            'discountLevel': 0.435, 'shipViaCourier': True, 'basePlateGaskets': False,
+            'quantities': {**DEFAULT_QUANTITIES, 'midPosts': 4, 'endPosts': 1},
+            'addOns': {},
+        },
+    },
+    {
+        'name': 'PARITY: 12mm vs 13mm — US, 42" rail, 4 mid + 1 end, 43.5% (13mm version)',
+        'config': {
+            'country': 'US', 'mountType': 'surface', 'railHeight': 42,
+            'topGlassReveal': 2.0, 'bottomGlassGap': 2.0, 'glassThickness': 13,
+            'discountLevel': 0.435, 'shipViaCourier': True, 'basePlateGaskets': False,
+            'quantities': {**DEFAULT_QUANTITIES, 'midPosts': 4, 'endPosts': 1},
+            'addOns': {},
+        },
+    },
+
+    # Discount sweep
+    {
+        'name': 'DISCOUNT: 0% — CA, 42", 13mm, 5 mid',
+        'config': {
+            'country': 'CA', 'mountType': 'surface', 'railHeight': 42,
+            'topGlassReveal': 2.125, 'bottomGlassGap': 2.0, 'glassThickness': 13,
+            'discountLevel': 0, 'shipViaCourier': True, 'basePlateGaskets': False,
+            'quantities': {**DEFAULT_QUANTITIES, 'midPosts': 5},
+            'addOns': {},
+        },
+    },
+    {
+        'name': 'DISCOUNT: 50% — CA, 42", 13mm, 5 mid (max realistic dealer)',
+        'config': {
+            'country': 'CA', 'mountType': 'surface', 'railHeight': 42,
+            'topGlassReveal': 2.125, 'bottomGlassGap': 2.0, 'glassThickness': 13,
+            'discountLevel': 0.50, 'shipViaCourier': True, 'basePlateGaskets': False,
+            'quantities': {**DEFAULT_QUANTITIES, 'midPosts': 5},
+            'addOns': {},
+        },
+    },
+
+    # Reveal sweep (custom non-default values)
+    {
+        'name': 'REVEAL: custom 5" reveal — CA, 42" rail, 13mm, 3 mid',
+        'config': {
+            'country': 'CA', 'mountType': 'surface', 'railHeight': 42,
+            'topGlassReveal': 5.0, 'bottomGlassGap': 2.0, 'glassThickness': 13,
+            'discountLevel': 0.435, 'shipViaCourier': True, 'basePlateGaskets': False,
+            'quantities': {**DEFAULT_QUANTITIES, 'midPosts': 3},
+            'addOns': {},
+        },
+    },
+    {
+        'name': 'REVEAL: zero reveal — CA, 42" rail, 13mm, 3 mid (post extends to top of glass)',
+        'config': {
+            'country': 'CA', 'mountType': 'surface', 'railHeight': 42,
+            'topGlassReveal': 0, 'bottomGlassGap': 2.0, 'glassThickness': 13,
+            'discountLevel': 0.435, 'shipViaCourier': True, 'basePlateGaskets': False,
+            'quantities': {**DEFAULT_QUANTITIES, 'midPosts': 3},
+            'addOns': {},
+        },
+    },
+
+    # Bottom gap sweep
+    {
+        'name': 'GAP: large 4" bottom gap — CA, 42", 13mm, 3 mid (close to deck)',
+        'config': {
+            'country': 'CA', 'mountType': 'surface', 'railHeight': 42,
+            'topGlassReveal': 2.125, 'bottomGlassGap': 4.0, 'glassThickness': 13,
+            'discountLevel': 0.435, 'shipViaCourier': True, 'basePlateGaskets': False,
+            'quantities': {**DEFAULT_QUANTITIES, 'midPosts': 3},
+            'addOns': {},
+        },
+    },
+    {
+        'name': 'GAP: minimum 0.5" bottom gap — CA, 42", 13mm, 3 mid',
+        'config': {
+            'country': 'CA', 'mountType': 'surface', 'railHeight': 42,
+            'topGlassReveal': 2.125, 'bottomGlassGap': 0.5, 'glassThickness': 13,
+            'discountLevel': 0.435, 'shipViaCourier': True, 'basePlateGaskets': False,
+            'quantities': {**DEFAULT_QUANTITIES, 'midPosts': 3},
+            'addOns': {},
+        },
+    },
+
+    # Wall track only (no posts at all)
+    {
+        'name': 'WALL TRACK ONLY: 4 wall tracks, no posts',
+        'config': {
+            'country': 'CA', 'mountType': 'surface', 'railHeight': 42,
+            'topGlassReveal': 2.125, 'bottomGlassGap': 2.0, 'glassThickness': 13,
+            'discountLevel': 0.435, 'shipViaCourier': True, 'basePlateGaskets': False,
+            'quantities': {**DEFAULT_QUANTITIES, 'wallTracks': 4},
+            'addOns': {},
+        },
+    },
+
+    # 2.5" end posts only
+    {
+        'name': 'EP25 ONLY: 2 left + 2 right 2.5" end posts',
+        'config': {
+            'country': 'CA', 'mountType': 'surface', 'railHeight': 42,
+            'topGlassReveal': 2.125, 'bottomGlassGap': 2.0, 'glassThickness': 13,
+            'discountLevel': 0.435, 'shipViaCourier': True, 'basePlateGaskets': False,
+            'quantities': {**DEFAULT_QUANTITIES, 'endPostsLeft25': 2, 'endPostsRight25': 2},
+            'addOns': {},
+        },
+    },
+
+    # Non-courier shipping
+    {
+        'name': 'NON-COURIER: full lengths — CA, 42", 13mm, 5 mid + 2 end',
+        'config': {
+            'country': 'CA', 'mountType': 'surface', 'railHeight': 42,
+            'topGlassReveal': 2.125, 'bottomGlassGap': 2.0, 'glassThickness': 13,
+            'discountLevel': 0.435, 'shipViaCourier': False, 'basePlateGaskets': False,
+            'quantities': {**DEFAULT_QUANTITIES, 'midPosts': 5, 'endPosts': 2},
+            'addOns': {},
+        },
+    },
+
+    # Short post 36" rail (different math from 42" short post)
+    {
+        'name': 'SHORT POST: 36" rail, 12mm, 3 mid + 1 end',
+        'config': {
+            'country': 'CA', 'mountType': 'surface', 'railHeight': 36,
+            'topGlassReveal': 12.125,  # 36.125 - 24 = 12.125 → drives post to 24"
+            'bottomGlassGap': 2.0, 'glassThickness': 12,
+            'discountLevel': 0.435, 'shipViaCourier': True, 'basePlateGaskets': False,
+            'quantities': {**DEFAULT_QUANTITIES, 'midPosts': 3, 'endPosts': 1},
+            'addOns': {},
+        },
+    },
+
+    # removeTrackFromPost > 0 (changes end-cap & end-post-insert qty)
+    {
+        'name': 'REMOVE TRACK: 4 end posts with 2 tracks removed — CA, 42", 13mm',
+        'config': {
+            'country': 'CA', 'mountType': 'surface', 'railHeight': 42,
+            'topGlassReveal': 2.125, 'bottomGlassGap': 2.0, 'glassThickness': 13,
+            'discountLevel': 0.435, 'shipViaCourier': True, 'basePlateGaskets': False,
+            'quantities': {**DEFAULT_QUANTITIES, 'midPosts': 4, 'endPosts': 4},
+            'addOns': {'removeTrackFromPost': 2},
         },
     },
 ]

@@ -656,9 +656,12 @@ export function calculateSurface(config: ConfigInputs): CalculationResult {
 
   let settingBlockFt: number;
   if (isCourier) {
-    settingBlockFt = totalSBFootage;
+    // Round up to whole feet — IAS doesn't sell fractional feet of setting block.
+    // The supplier cuts in whole-foot increments from a 10-ft stick. Matches Excel
+    // cell M20 = ROUNDUP(K20+K21, 0).
+    settingBlockFt = Math.ceil(totalSBFootage);
   } else {
-    settingBlockFt = settingBlockLeftover < 7 ? settingBlockLeftover : 0;
+    settingBlockFt = settingBlockLeftover < 7 ? Math.ceil(settingBlockLeftover) : 0;
   }
 
   let settingBlockLengthsOrdered: number;
@@ -824,7 +827,9 @@ export function calculateSurface(config: ConfigInputs): CalculationResult {
     }
   }
   addLine('Setting Block (10 Ft Length)', settingBlockLengthsOrdered, sbLengthPrice);
-  addLine('Setting Block (Per Ft)', isCourier ? totalSBFootage : (settingBlockLeftover < 7 ? settingBlockLeftover : 0), sbFtPrice);
+  // Use the rounded-up settingBlockFt variable defined earlier (not a re-computation
+  // — keeps surface mount consistent with the fascia branch and avoids duplicate logic).
+  addLine('Setting Block (Per Ft)', settingBlockFt, sbFtPrice);
   addLine('Setting Block (1.5" Pieces)', settingBlock15Pieces, sb15Price);
   addLine(thickness === 12 ? 'Glass Wedge 12mm (3 Inch Piece)' : 'Glass Wedge 13mm (3 Inch Piece)', glassWedgeQty, wedgePrice);
   addLine('Base Plate Gasket - Neoprene 1/8x4x4 (RPLBPG)', basePlateGasketQty, basePlateGasketPrice);
@@ -997,17 +1002,38 @@ export function calculateFascia(config: ConfigInputs): CalculationResult {
     gasketDescription = stockLabel;
   }
 
-  // Setting block footage
-  const sbHeight_post = distToDeck - 0.5;
-  const sbHeight_track = distToDeck - 0.5;
+  // Setting block footage.
+  //
+  // Per-piece height differs by mount geometry:
+  //   - Post setting blocks fill the full fascia gap = bottomGap + distToDeck
+  //     (top of base plate is `distToDeck` below the deck; bottom of glass is
+  //      `bottomGap` above the deck; setting block fills the whole span).
+  //     This matches Excel cell I23 = D62 + D63 on the Fascia Mount sheet.
+  //   - Wall track setting blocks sit inside a wall track that's mounted at deck
+  //     level (not below), so the gap follows the surface mount convention:
+  //     bottomGap - 0.5". Matches Excel cell I24 = D62 - 1/2.
+  //
+  // Previous code mistakenly used `distToDeck - 0.5` for both. That under-counts
+  // post-side setting blocks by ~50% — the dealer would show up on the install
+  // short of material. See docs/handoff/TEST_REPORT.md for the bug trace.
+  const sbHeight_post = settingBlockHeight; // = bottomGap + distToDeck
+  const sbHeight_track = bottomGap - 0.5;
   const sbPieces_post = q.midPosts * 2 + q.endPosts + q.outsideCornerPosts * 2 + q.insideCornerPosts * 2;
   const sbPieces_track = q.wallTracks + q.endPostsLeft25 + q.endPostsRight25;
 
-  const sbFootage_post = 12 / (sbHeight_post + 0.25) > 0 ? sbPieces_post / (12 / (sbHeight_post + 0.25)) : 0;
-  const sbFootage_track = 12 / (sbHeight_track + 0.25) > 0 ? sbPieces_track / (12 / (sbHeight_track + 0.25)) : 0;
+  const sbFootage_post = sbHeight_post > 0 && sbPieces_post > 0
+    ? sbPieces_post / (12 / (sbHeight_post + 0.25))
+    : 0;
+  const sbFootage_track = sbHeight_track > 0 && sbPieces_track > 0
+    ? sbPieces_track / (12 / (sbHeight_track + 0.25))
+    : 0;
   const totalSBFootage = sbFootage_post + sbFootage_track;
 
-  const sb15Pieces = sbHeight_post === 1.5 ? sbPieces_post : 0;
+  // 1.5" precut SKU is selected when the setting block height is exactly 1.5".
+  // Only the wall-track side ever hits that here, because the post side is
+  // bottomGap + distToDeck which can't naturally equal 1.5" with the standard
+  // distToDeck = 3".
+  const sb15Pieces = sbHeight_track === 1.5 ? sbPieces_track : 0;
 
   const settingBlockLengths10ft = Math.floor(totalSBFootage / 10);
   const settingBlockLeftover = totalSBFootage - settingBlockLengths10ft * 10;
@@ -1016,10 +1042,13 @@ export function calculateFascia(config: ConfigInputs): CalculationResult {
   let settingBlockFt: number;
   if (isCourier) {
     settingBlockLengthsOrdered = 0;
-    settingBlockFt = totalSBFootage;
+    // Round up to whole feet — IAS doesn't sell fractional feet of setting block.
+    // The supplier cuts in whole-foot increments from a 10-ft stick. Matches Excel
+    // cell M20 = ROUNDUP(K20+K21, 0).
+    settingBlockFt = Math.ceil(totalSBFootage);
   } else {
     settingBlockLengthsOrdered = settingBlockLeftover < 7 ? settingBlockLengths10ft : settingBlockLengths10ft + 1;
-    settingBlockFt = settingBlockLeftover < 7 ? settingBlockLeftover : 0;
+    settingBlockFt = settingBlockLeftover < 7 ? Math.ceil(settingBlockLeftover) : 0;
   }
 
   // Glass wedge
