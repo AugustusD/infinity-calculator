@@ -22,7 +22,7 @@ import {
   type GlassThickness,
   type FasciaOffset,
 } from '@/lib/calculator';
-import { Lock, Unlock, AlertTriangle, AlertCircle, Printer, ChevronDown, ChevronUp, Info, FileSpreadsheet, Mail, RotateCcw } from 'lucide-react';
+import { Lock, Unlock, AlertTriangle, AlertCircle, Printer, ChevronDown, ChevronUp, Info, FileSpreadsheet, Mail, RotateCcw, Save } from 'lucide-react';
 import { exportToExcel } from '@/lib/exportExcel';
 import { toast } from 'sonner';
 import PostDiagram from '@/components/PostDiagram';
@@ -31,6 +31,50 @@ const DISCOUNT_STORAGE_KEY = 'ias-infinity-discount';
 const DEALER_STORAGE_KEY = 'ias-infinity-dealer';
 const MARKET_STORAGE_KEY = 'ias-infinity-market';
 const FIRST_VISIT_KEY = 'ias-infinity-visited';
+const DRAFT_STORAGE_KEY = 'ias-infinity-current-draft';
+const SAVED_JOBS_KEY = 'ias-infinity-saved-jobs';
+
+interface SavedJob {
+  id: string;
+  savedAt: number;
+  jobReference: string;
+  dealerName: string;
+  color: string;
+  mountType: 'surface' | 'fascia';
+  railHeight: number;
+  glassThickness: number;
+  jobCost: number;
+  config: ConfigInputs;
+  jobInfo: { dealerName: string; jobReference: string; color: string; notes: string };
+  revealUnlocked: boolean;
+  bottomGapUnlocked: boolean;
+}
+
+interface DraftSnapshot {
+  config: ConfigInputs;
+  jobInfo: { dealerName: string; jobReference: string; color: string; notes: string };
+  revealUnlocked: boolean;
+  bottomGapUnlocked: boolean;
+}
+
+function loadDraft(): DraftSnapshot | null {
+  try {
+    const raw = localStorage.getItem(DRAFT_STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== 'object' || !parsed.config) return null;
+    return parsed as DraftSnapshot;
+  } catch { return null; }
+}
+
+function loadSavedJobs(): SavedJob[] {
+  try {
+    const raw = localStorage.getItem(SAVED_JOBS_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch { return []; }
+}
 
 // CDN URLs for logos
 const IAS_LOGO_URL = 'https://www.innovativealuminum.com/images/ias-newgold.svg';
@@ -405,18 +449,28 @@ export default function Home() {
 
   const savedDealer = (() => { try { return localStorage.getItem(DEALER_STORAGE_KEY) || ''; } catch { return ''; } })();
   const savedMarket = (() => { try { return (localStorage.getItem('ias-infinity-market') as 'US' | 'CA') || 'CA'; } catch { return 'CA' as const; } })();
-  const [config, setConfig] = useState<ConfigInputs>(() => ({
-    ...defaultConfig(),
-    discountLevel: savedDiscount,
-    country: savedMarket,
-    glassThickness: savedMarket === 'US' ? 12 : 13,
-  }));
-  const [jobInfo, setJobInfo] = useState({ dealerName: savedDealer, jobReference: '', color: '', notes: '' });
+  const initialDraft = loadDraft();
+  const [config, setConfig] = useState<ConfigInputs>(() =>
+    initialDraft?.config ?? ({
+      ...defaultConfig(),
+      discountLevel: savedDiscount,
+      country: savedMarket,
+      glassThickness: savedMarket === 'US' ? 12 : 13,
+    })
+  );
+  const [jobInfo, setJobInfo] = useState(() =>
+    initialDraft?.jobInfo ?? { dealerName: savedDealer, jobReference: '', color: '', notes: '' }
+  );
   const [showAddOns, setShowAddOns] = useState(false);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [showLeaveConfirm, setShowLeaveConfirm] = useState(false);
-  const [revealUnlocked, setRevealUnlocked] = useState(false);
-  const [bottomGapUnlocked, setBottomGapUnlocked] = useState(false);
+  const [showJobsModal, setShowJobsModal] = useState(false);
+  const [savedJobs, setSavedJobs] = useState<SavedJob[]>(() => loadSavedJobs());
+  const [customerFacingPrint, setCustomerFacingPrint] = useState(false);
+  const [showExportMenu, setShowExportMenu] = useState(false);
+  const [hoverDetails, setHoverDetails] = useState<{ idx: number; top: number; left: number; height: number } | null>(null);
+  const [revealUnlocked, setRevealUnlocked] = useState(() => initialDraft?.revealUnlocked ?? false);
+  const [bottomGapUnlocked, setBottomGapUnlocked] = useState(() => initialDraft?.bottomGapUnlocked ?? false);
   const [showCustomBasePlateAlert, setShowCustomBasePlateAlert] = useState(false);
   // Tracks the previous wedge-override state so we only pop the alert on a
   // false→true transition (not every render while the condition stays true).
@@ -437,6 +491,20 @@ export default function Home() {
   useEffect(() => {
     try { localStorage.setItem(MARKET_STORAGE_KEY, config.country); } catch {}
   }, [config.country]);
+
+  // Auto-save the current draft on every change — refresh-proof workflow.
+  // The draft is one snapshot; archived jobs live in SAVED_JOBS_KEY.
+  useEffect(() => {
+    try {
+      const snapshot: DraftSnapshot = { config, jobInfo, revealUnlocked, bottomGapUnlocked };
+      localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(snapshot));
+    } catch {}
+  }, [config, jobInfo, revealUnlocked, bottomGapUnlocked]);
+
+  // Persist the saved-jobs list whenever it changes.
+  useEffect(() => {
+    try { localStorage.setItem(SAVED_JOBS_KEY, JSON.stringify(savedJobs)); } catch {}
+  }, [savedJobs]);
 
   // Dirty-state detection — true when user has entered job-specific info that
   // would be lost on navigation. Dealer name + discount + market are persisted,
@@ -511,6 +579,104 @@ export default function Home() {
   );
 
   const result: CalculationResult = useMemo(() => calculate(config), [config]);
+
+  // ── Saved jobs handlers ──
+  // archiveCurrentJob captures the current state into the saved-jobs list.
+  // Used by "New Job" and when loading a different job from the list.
+  // Skips if the current state is empty (no posts entered, no job ref/color/notes),
+  // so we don't pollute the list with blank entries.
+  const archiveCurrentJob = useCallback(() => {
+    if (!isDirty) return;
+    // If the current job reference already exists in the list, update that
+    // entry in place instead of creating a new one (case-insensitive match on
+    // trimmed ref). Empty refs always create new entries since there's no
+    // unique key to match on.
+    const currentRef = jobInfo.jobReference.trim().toLowerCase();
+    setSavedJobs(prev => {
+      const existingIdx = currentRef
+        ? prev.findIndex(j => j.jobReference.trim().toLowerCase() === currentRef)
+        : -1;
+      const baseEntry: Omit<SavedJob, 'id'> = {
+        savedAt: Date.now(),
+        jobReference: jobInfo.jobReference || '',
+        dealerName: jobInfo.dealerName || '',
+        color: jobInfo.color || '',
+        mountType: config.mountType,
+        railHeight: config.railHeight,
+        glassThickness: config.glassThickness,
+        jobCost: result.jobCost,
+        config,
+        jobInfo,
+        revealUnlocked,
+        bottomGapUnlocked,
+      };
+      if (existingIdx >= 0) {
+        // Preserve the existing id so refs stay stable; bump it to the top.
+        const updated: SavedJob = { ...baseEntry, id: prev[existingIdx].id };
+        const next = prev.slice();
+        next.splice(existingIdx, 1);
+        return [updated, ...next];
+      }
+      const id = `job-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+      return [{ ...baseEntry, id }, ...prev].slice(0, 50);
+    });
+  }, [isDirty, config, jobInfo, result.jobCost, revealUnlocked, bottomGapUnlocked]);
+
+  const startNewJob = useCallback(() => {
+    archiveCurrentJob();
+    const country = config.country;
+    setConfig({
+      ...defaultConfig(),
+      discountLevel: config.discountLevel,
+      country,
+      glassThickness: country === 'CA' ? 13 : 12,
+    });
+    setJobInfo(prev => ({ dealerName: prev.dealerName, jobReference: '', color: '', notes: '' }));
+    setRevealUnlocked(false);
+    setBottomGapUnlocked(false);
+    setShowJobsModal(false);
+    toast.success('Started new job');
+  }, [archiveCurrentJob, config.country, config.discountLevel]);
+
+  // Save current state to the Recent Jobs list without clearing the form.
+  // Use this when the dealer wants a checkpoint but plans to keep working.
+  const saveCurrentJob = useCallback(() => {
+    if (!isDirty) {
+      toast.error('Nothing to save yet — add some quantities or job info first.');
+      return;
+    }
+    archiveCurrentJob();
+    setShowJobsModal(false);
+    toast.success(jobInfo.jobReference ? `Saved "${jobInfo.jobReference}"` : 'Saved snapshot');
+  }, [isDirty, archiveCurrentJob, jobInfo.jobReference]);
+
+  const loadJob = useCallback((id: string) => {
+    const job = savedJobs.find(j => j.id === id);
+    if (!job) return;
+    archiveCurrentJob();
+    setConfig(job.config);
+    setJobInfo(job.jobInfo);
+    setRevealUnlocked(job.revealUnlocked);
+    setBottomGapUnlocked(job.bottomGapUnlocked);
+    setShowJobsModal(false);
+    toast.success(`Loaded ${job.jobReference || 'job'}`);
+  }, [savedJobs, archiveCurrentJob]);
+
+  const duplicateJob = useCallback((id: string) => {
+    const job = savedJobs.find(j => j.id === id);
+    if (!job) return;
+    archiveCurrentJob();
+    setConfig(job.config);
+    setJobInfo({ ...job.jobInfo, jobReference: `${job.jobReference || 'Job'} (copy)`, notes: '' });
+    setRevealUnlocked(job.revealUnlocked);
+    setBottomGapUnlocked(job.bottomGapUnlocked);
+    setShowJobsModal(false);
+    toast.success('Duplicated to new draft');
+  }, [savedJobs, archiveCurrentJob]);
+
+  const deleteJob = useCallback((id: string) => {
+    setSavedJobs(prev => prev.filter(j => j.id !== id));
+  }, []);
 
   // Fascia wedge override pop-up: when setting block space exceeds the 5 1/8"
   // maximum (post too tall or bottom gap too large), the install switches to a
@@ -606,12 +772,30 @@ export default function Home() {
           </div>
           <div className="flex items-center gap-3 flex-wrap justify-end ml-auto">
             <button
+              onClick={saveCurrentJob}
+              className="flex items-center gap-1.5 px-3 py-2 text-sm font-semibold transition-all no-print hover:opacity-90"
+              style={{ background: '#1F3A60', color: '#FFFFFF', borderRadius: '4px', letterSpacing: '0.04em' }}
+              title="Save the current job to your Recent Jobs list (keeps you on the form)"
+            >
+              <Save size={13} />
+              <span className="hidden sm:inline">Save</span>
+            </button>
+            <button
+              onClick={() => setShowJobsModal(true)}
+              className="flex items-center gap-1.5 px-3 py-2 text-sm font-semibold transition-all no-print hover:opacity-90"
+              style={{ background: '#3A3A3A', color: '#FFFFFF', borderRadius: '4px', letterSpacing: '0.04em' }}
+              title="Recent jobs"
+            >
+              <span style={{ fontSize: '14px', lineHeight: '1' }}>&#9776;</span>
+              <span className="hidden sm:inline">Jobs{savedJobs.length > 0 ? ` (${savedJobs.length})` : ''}</span>
+            </button>
+            <button
               onClick={() => setShowResetConfirm(true)}
-              className="flex items-center gap-1.5 px-3 py-2 text-sm font-semibold transition-all no-print"
-              style={{ background: '#3A3A3A', color: '#FFFFFF', borderRadius: '2px', letterSpacing: '0.04em' }}
+              className="flex items-center gap-1.5 px-3 py-2 text-sm font-semibold transition-all no-print hover:bg-[#FAF6EC]"
+              style={{ background: 'transparent', color: '#3A3A3A', border: '1px solid #D8CDA8', borderRadius: '4px', letterSpacing: '0.04em' }}
               title="Reset configuration to defaults"
             >
-              <span style={{ fontSize: '14px', lineHeight: '1' }}>&#8635;</span>
+              <RotateCcw size={13} />
               <span className="hidden sm:inline">Reset</span>
             </button>
             {/* Custom Base Plate Alert — fires when fascia setting block space
@@ -686,70 +870,236 @@ export default function Home() {
               </div>
             )}
             {/* Leave Page Confirmation Dialog — appears when IAS logo is clicked
-                with unsaved configuration. */}
+                with unsaved configuration. Offers a Save-then-leave option. */}
             {showLeaveConfirm && (
               <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.45)' }}>
-                <div className="bg-white rounded shadow-xl p-6 max-w-sm w-full mx-4" style={{ border: '2px solid #B69A5A' }}>
+                <div className="bg-white rounded-md shadow-xl p-6 max-w-md w-full mx-4" style={{ border: '2px solid #B69A5A' }}>
                   <h3 className="font-bold text-base mb-2" style={{ color: '#111' }}>Leave the calculator?</h3>
-                  <p className="text-sm mb-4" style={{ color: '#555' }}>You have unsaved configuration on this estimate. Leaving will discard your current quantities, color, job reference, and notes.</p>
-                  <div className="flex gap-3 justify-end">
+                  <p className="text-sm mb-5" style={{ color: '#555', lineHeight: 1.5 }}>
+                    You have unsaved progress on this estimate. Would you like to save it before leaving?
+                  </p>
+                  <div className="flex flex-col gap-2">
                     <button
-                      onClick={() => setShowLeaveConfirm(false)}
-                      className="px-4 py-2 text-sm font-semibold"
-                      style={{ background: '#F0F0F0', color: '#333', borderRadius: '2px' }}
-                    >Stay</button>
+                      onClick={() => {
+                        archiveCurrentJob();
+                        toast.success(jobInfo.jobReference ? `Saved "${jobInfo.jobReference}"` : 'Saved snapshot');
+                        window.location.href = IAS_WEBSITE_URL;
+                      }}
+                      className="w-full px-4 py-2.5 text-sm font-semibold transition-all hover:opacity-90"
+                      style={{ background: '#1A5C2A', color: '#FFFFFF', borderRadius: '4px' }}
+                    >Save and Leave</button>
                     <button
                       onClick={() => { window.location.href = IAS_WEBSITE_URL; }}
-                      className="px-4 py-2 text-sm font-semibold"
-                      style={{ background: '#B69A5A', color: '#FFFFFF', borderRadius: '2px' }}
-                    >Leave</button>
+                      className="w-full px-4 py-2.5 text-sm font-semibold transition-all hover:opacity-90"
+                      style={{ background: '#B85C2D', color: '#FFFFFF', borderRadius: '4px' }}
+                    >Leave Without Saving</button>
+                    <button
+                      onClick={() => setShowLeaveConfirm(false)}
+                      className="w-full px-4 py-2.5 text-sm font-semibold transition-all hover:opacity-90"
+                      style={{ background: '#F0F0F0', color: '#333', borderRadius: '4px' }}
+                    >Stay</button>
                   </div>
                 </div>
               </div>
             )}
-            <button
-              onClick={async () => {
-                if (!colorSelected) { toast.error(requireColorMsg); return; }
-                try {
-                  await exportToExcel(config, result, jobInfo);
-                  toast.success('Excel file downloaded');
-                } catch (e) {
-                  toast.error('Excel export failed');
-                  console.error(e);
-                }
-              }}
-              className="flex items-center gap-2 px-3 py-2 text-sm font-semibold transition-all no-print"
-              style={{ background: '#1A5C2A', color: '#FFFFFF', borderRadius: '2px', letterSpacing: '0.04em' }}
-              title="Export to Excel"
-            >
-              <FileSpreadsheet size={13} />
-              <span className="hidden sm:inline">Export Excel</span>
-            </button>
-            <button
-              onClick={() => {
-                if (!colorSelected) { toast.error(requireColorMsg); return; }
-                const subject = [jobInfo.jobReference, jobInfo.color, jobInfo.dealerName]
-                  .filter(Boolean).join(' - ');
-                const body = encodeURIComponent(
-                  `Please find attached the Material Estimate and Excel file for:\n\nJob Reference: ${jobInfo.jobReference || '—'}\nDealer: ${jobInfo.dealerName || '—'}\nColor: ${jobInfo.color || '—'}\nMount: ${config.mountType === 'surface' ? 'Surface Mount' : 'Fascia Mount'}\nRail Height: ${config.railHeight}"\nGlass: ${config.glassThickness}mm\nJob Cost: $${result.jobCost.toFixed(2)}\n\nPlease use the Print Estimate button to save the PDF, and the Export Excel button to download the Excel file, then attach both to this email before sending.`
-                );
-                window.location.href = `mailto:orders@innovativealuminum.com?subject=${encodeURIComponent(subject)}&body=${body}`;
-              }}
-              className="flex items-center gap-2 px-3 py-2 text-sm font-semibold transition-all no-print"
-              style={{ background: '#1A5C2A', color: '#FFFFFF', borderRadius: '2px', letterSpacing: '0.04em' }}
-              title="Email estimate"
-            >
-              <Mail size={13} />
-              <span className="hidden sm:inline">Email Estimate</span>
-            </button>
-            <button
-              onClick={() => { if (!colorSelected) { toast.error(requireColorMsg); return; } window.print(); }}
-              className="flex items-center gap-2 px-3 py-2 text-sm font-semibold transition-all no-print"
-              style={{ background: '#111111', color: '#FFFFFF', borderRadius: '2px', letterSpacing: '0.04em' }}
-            >
-              <Printer size={13} />
-              <span className="hidden sm:inline">Print Estimate</span>
-            </button>
+            {/* Recent Jobs panel — lists archived jobs from this device.
+                Current draft auto-saves to a separate key so it survives refresh. */}
+            {showJobsModal && (
+              <div
+                className="fixed inset-0 z-50 flex items-center justify-center"
+                style={{ background: 'rgba(0,0,0,0.45)' }}
+                onClick={() => setShowJobsModal(false)}
+              >
+                <div
+                  className="bg-white rounded shadow-xl w-full max-w-2xl mx-4 max-h-[80vh] overflow-hidden flex flex-col"
+                  style={{ border: '2px solid #B69A5A' }}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <div className="flex items-center justify-between p-5 pb-3" style={{ borderBottom: '1px solid #E8E2D2' }}>
+                    <div>
+                      <h3 className="font-bold text-base" style={{ color: '#111' }}>Recent Jobs</h3>
+                      <p className="text-xs mt-0.5" style={{ color: '#7A7A7A' }}>
+                        Current draft auto-saves on every change. Use "New Job" to archive the current one and start fresh.
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => setShowJobsModal(false)}
+                      className="text-2xl leading-none px-2"
+                      style={{ color: '#7A7A7A' }}
+                      title="Close"
+                    >&times;</button>
+                  </div>
+                  <div className="p-5 pt-3 overflow-y-auto flex-1">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
+                      <button
+                        onClick={saveCurrentJob}
+                        className="flex items-center justify-center gap-2 px-3 py-2.5 text-sm font-semibold transition-all hover:opacity-90"
+                        style={{ background: '#1A5C2A', color: '#FFFFFF', borderRadius: '4px', letterSpacing: '0.04em' }}
+                        title="Save the current job to the list. Keeps working on it — does not clear the form."
+                      >
+                        Save This Job
+                      </button>
+                      <button
+                        onClick={startNewJob}
+                        className="flex items-center justify-center gap-2 px-3 py-2.5 text-sm font-semibold transition-all hover:opacity-90"
+                        style={{ background: '#B69A5A', color: '#FFFFFF', borderRadius: '4px', letterSpacing: '0.04em' }}
+                        title="Archive the current job to the list AND clear the form to start a new one."
+                      >
+                        + New Job
+                      </button>
+                    </div>
+                    <p className="text-[11px] mb-3" style={{ color: '#9A9A9A' }}>
+                      Your current work auto-saves on every change, so a refresh won't lose anything. Use "Save This Job" to snapshot it into the list, or "New Job" to archive + start fresh.
+                    </p>
+                    {savedJobs.length === 0 ? (
+                      <p className="text-sm text-center py-8" style={{ color: '#9A9A9A' }}>
+                        No archived jobs yet. Click "New Job" above to archive your current configuration.
+                      </p>
+                    ) : (
+                      <div className="space-y-2">
+                        {savedJobs.map(job => {
+                          const date = new Date(job.savedAt);
+                          const dateStr = date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+                          const timeStr = date.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
+                          return (
+                            <div
+                              key={job.id}
+                              className="flex items-center gap-3 p-3 transition-all hover:bg-[#FAF6EC]"
+                              style={{ border: '1px solid #E8E2D2', borderRadius: '6px' }}
+                            >
+                              <div className="flex-1 min-w-0">
+                                <div className="font-semibold text-sm truncate" style={{ color: '#111' }}>
+                                  {job.jobReference || <em style={{ color: '#9A9A9A', fontWeight: 'normal' }}>Untitled job</em>}
+                                </div>
+                                <div className="text-xs mt-0.5" style={{ color: '#7A7A7A' }}>
+                                  {job.dealerName ? `${job.dealerName} · ` : ''}
+                                  {job.mountType === 'surface' ? 'Surface' : 'Fascia'} · {job.railHeight}" rail · {job.glassThickness}mm
+                                  {job.color ? ` · ${job.color}` : ''}
+                                </div>
+                                <div className="text-[10px] mt-0.5" style={{ color: '#9A9A9A' }}>
+                                  {dateStr} at {timeStr}
+                                </div>
+                              </div>
+                              <div className="text-right shrink-0">
+                                <div className="mono font-bold text-sm" style={{ color: '#111' }}>
+                                  {fmtCurrency(job.jobCost)}
+                                </div>
+                              </div>
+                              <div className="flex flex-col gap-1 shrink-0">
+                                <button
+                                  onClick={() => loadJob(job.id)}
+                                  className="text-xs font-semibold px-2 py-1 transition-all hover:opacity-90"
+                                  style={{ background: '#B69A5A', color: '#FFFFFF', borderRadius: '3px' }}
+                                >Load</button>
+                                <button
+                                  onClick={() => duplicateJob(job.id)}
+                                  className="text-xs font-semibold px-2 py-1 transition-all hover:opacity-90"
+                                  style={{ background: '#F0F0F0', color: '#333', borderRadius: '3px' }}
+                                >Duplicate</button>
+                                <button
+                                  onClick={() => deleteJob(job.id)}
+                                  className="text-xs font-semibold px-2 py-1 transition-all hover:opacity-90"
+                                  style={{ background: '#FFFFFF', color: '#B85C2D', border: '1px solid #B85C2D', borderRadius: '3px' }}
+                                  title="Remove this job from the list"
+                                >Delete</button>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+            <div className="relative no-print">
+              <button
+                onClick={() => setShowExportMenu(v => !v)}
+                className="flex items-center gap-2 px-3 py-2 text-sm font-semibold transition-all hover:opacity-90"
+                style={{ background: '#111111', color: '#FFFFFF', borderRadius: '4px', letterSpacing: '0.04em' }}
+                title="Export, email, or print this estimate"
+              >
+                <FileSpreadsheet size={13} />
+                <span className="hidden sm:inline">Export</span>
+                <ChevronDown size={12} style={{ marginLeft: '-2px', transition: 'transform 150ms', transform: showExportMenu ? 'rotate(180deg)' : 'rotate(0deg)' }} />
+              </button>
+              {showExportMenu && (
+                <>
+                  <div
+                    className="fixed inset-0 z-40"
+                    onClick={() => setShowExportMenu(false)}
+                  />
+                  <div
+                    className="absolute right-0 mt-2 z-50 bg-white shadow-xl"
+                    style={{ width: '240px', border: '1px solid #E8E2D2', borderRadius: '6px', overflow: 'hidden' }}
+                  >
+                    <div className="px-3 py-2 text-[10px] font-bold uppercase tracking-widest" style={{ color: '#9A9A9A', borderBottom: '1px solid #F0EBDD' }}>
+                      Export estimate
+                    </div>
+                    <button
+                      onClick={async () => {
+                        setShowExportMenu(false);
+                        if (!colorSelected) { toast.error(requireColorMsg); return; }
+                        try {
+                          await exportToExcel(config, result, jobInfo);
+                          toast.success('Excel file downloaded');
+                        } catch (e) {
+                          toast.error('Excel export failed');
+                          console.error(e);
+                        }
+                      }}
+                      className="w-full flex items-center gap-2 px-3 py-2.5 text-sm text-left transition-colors hover:bg-[#FAF6EC]"
+                      style={{ color: '#111' }}
+                    >
+                      <FileSpreadsheet size={14} style={{ color: '#1A5C2A' }} />
+                      Download Excel
+                    </button>
+                    <button
+                      onClick={() => {
+                        setShowExportMenu(false);
+                        if (!colorSelected) { toast.error(requireColorMsg); return; }
+                        const subject = [jobInfo.jobReference, jobInfo.color, jobInfo.dealerName]
+                          .filter(Boolean).join(' - ');
+                        const body = encodeURIComponent(
+                          `Please find attached the Material Estimate and Excel file for:\n\nJob Reference: ${jobInfo.jobReference || '—'}\nDealer: ${jobInfo.dealerName || '—'}\nColor: ${jobInfo.color || '—'}\nMount: ${config.mountType === 'surface' ? 'Surface Mount' : 'Fascia Mount'}\nRail Height: ${config.railHeight}"\nGlass: ${config.glassThickness}mm\nJob Cost: $${result.jobCost.toFixed(2)}\n\nPlease use the Print Estimate button to save the PDF, and the Export Excel button to download the Excel file, then attach both to this email before sending.`
+                        );
+                        window.location.href = `mailto:orders@innovativealuminum.com?subject=${encodeURIComponent(subject)}&body=${body}`;
+                      }}
+                      className="w-full flex items-center gap-2 px-3 py-2.5 text-sm text-left transition-colors hover:bg-[#FAF6EC]"
+                      style={{ color: '#111' }}
+                    >
+                      <Mail size={14} style={{ color: '#1A5C2A' }} />
+                      Email estimate
+                    </button>
+                    <button
+                      onClick={() => {
+                        setShowExportMenu(false);
+                        if (!colorSelected) { toast.error(requireColorMsg); return; }
+                        window.print();
+                      }}
+                      className="w-full flex items-center gap-2 px-3 py-2.5 text-sm text-left transition-colors hover:bg-[#FAF6EC]"
+                      style={{ color: '#111' }}
+                    >
+                      <Printer size={14} style={{ color: '#111' }} />
+                      Print estimate
+                    </button>
+                    <div style={{ borderTop: '1px solid #F0EBDD' }} />
+                    <label className="flex items-center gap-2 px-3 py-2.5 text-sm cursor-pointer hover:bg-[#FAF6EC]" style={{ color: '#111' }}>
+                      <input
+                        type="checkbox"
+                        checked={customerFacingPrint}
+                        onChange={(e) => setCustomerFacingPrint(e.target.checked)}
+                        className="h-3.5 w-3.5 accent-[#B69A5A] cursor-pointer"
+                      />
+                      <span>Hide prices on print</span>
+                    </label>
+                    <div className="px-3 pb-2.5 pt-0 text-[10px]" style={{ color: '#9A9A9A', lineHeight: '1.4' }}>
+                      Hides per-line prices and the Job Cost on the printed estimate. Useful for customer-facing materials lists.
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         </div>
       </header>
@@ -822,11 +1172,15 @@ export default function Home() {
               )}
             </div>
             <div className="text-right">
-              <div className="text-[10px] font-bold uppercase tracking-widest mb-0.5" style={{ color: '#6B6B6B' }}>Job Cost</div>
-              <div className="mono text-2xl font-black" style={{ color: '#111111' }}>
-                {fmtCurrency(result.jobCost)}
-              </div>
-              {config.discountLevel > 0 && (
+              {!customerFacingPrint && (
+                <>
+                  <div className="text-[10px] font-bold uppercase tracking-widest mb-0.5" style={{ color: '#6B6B6B' }}>Job Cost</div>
+                  <div className="mono text-2xl font-black" style={{ color: '#111111' }}>
+                    {fmtCurrency(result.jobCost)}
+                  </div>
+                </>
+              )}
+              {!customerFacingPrint && config.discountLevel > 0 && (
                 <div className="text-xs" style={{ color: '#B69A5A' }}>
                   {(config.discountLevel * 100).toFixed(1)}% discount applied
                 </div>
@@ -856,8 +1210,8 @@ export default function Home() {
                   <tr style={{ background: '#111111' }}>
                     <th style={{ color: '#B69A5A' }}>Description</th>
                     <th className="text-right" style={{ color: '#B69A5A' }}>QTY</th>
-                    <th className="text-right" style={{ color: '#B69A5A' }}>Unit</th>
-                    <th className="text-right" style={{ color: '#B69A5A' }}>Total</th>
+                    {!customerFacingPrint && <th className="text-right" style={{ color: '#B69A5A' }}>Unit</th>}
+                    {!customerFacingPrint && <th className="text-right" style={{ color: '#B69A5A' }}>Total</th>}
                   </tr>
                 </thead>
                 <tbody>
@@ -868,20 +1222,22 @@ export default function Home() {
                         {item.note && <div className="text-[10px] text-amber-700 mt-0.5 italic">{item.note}</div>}
                       </td>
                       <td className="mono text-right text-xs">{item.qty % 1 === 0 ? item.qty : fmt(item.qty, 2)}</td>
-                      <td className="mono text-right text-xs">{fmtCurrency(item.unitCost)}</td>
-                      <td className="mono text-right text-xs font-bold">{fmtCurrency(item.total)}</td>
+                      {!customerFacingPrint && <td className="mono text-right text-xs">{fmtCurrency(item.unitCost)}</td>}
+                      {!customerFacingPrint && <td className="mono text-right text-xs font-bold">{fmtCurrency(item.total)}</td>}
                     </tr>
                   ))}
 
                 </tbody>
-                <tfoot>
-                  <tr className="total-row">
-                    <td colSpan={3} className="text-sm font-black uppercase tracking-wide" style={{ color: '#111111' }}>
-                      {config.glassThickness === 12 ? '12mm' : '13mm'} Job Cost
-                    </td>
-                    <td className="mono text-right text-sm font-black" style={{ color: '#111111' }}>{fmtCurrency(result.jobCost)}</td>
-                  </tr>
-                </tfoot>
+                {!customerFacingPrint && (
+                  <tfoot>
+                    <tr className="total-row">
+                      <td colSpan={3} className="text-sm font-black uppercase tracking-wide" style={{ color: '#111111' }}>
+                        {config.glassThickness === 12 ? '12mm' : '13mm'} Job Cost
+                      </td>
+                      <td className="mono text-right text-sm font-black" style={{ color: '#111111' }}>{fmtCurrency(result.jobCost)}</td>
+                    </tr>
+                  </tfoot>
+                )}
               </table>
             </div>
           ) : (
@@ -1247,7 +1603,7 @@ export default function Home() {
 
               {/* Bill of Materials */}
               {hasContent ? (
-                <div className="overflow-x-auto">
+                <div className="overflow-x-auto relative">
                   <table className="results-table w-full text-left">
                     <thead>
                       <tr style={{ background: '#111111' }}>
@@ -1258,17 +1614,33 @@ export default function Home() {
                       </tr>
                     </thead>
                     <tbody>
-                      {result.lineItems.map((item, i) => (
-                        <tr key={i}>
-                          <td className="text-xs">
-                            <div>{item.description}</div>
-                            {item.note && <div className="text-[10px] text-amber-700 mt-0.5 italic">{item.note}</div>}
-                          </td>
-                          <td className="mono text-right text-xs">{item.qty % 1 === 0 ? item.qty : fmt(item.qty, 2)}</td>
-                          <td className="mono text-right text-xs">{fmtCurrency(item.unitCost)}</td>
-                          <td className="mono text-right text-xs font-bold">{fmtCurrency(item.total)}</td>
-                        </tr>
-                      ))}
+                      {result.lineItems.map((item, i) => {
+                        const isHovered = hoverDetails?.idx === i;
+                        const qtyDisplay = item.qty % 1 === 0 ? String(item.qty) : fmt(item.qty, 2);
+                        return (
+                          <tr
+                            key={i}
+                            onMouseEnter={(e) => {
+                              const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+                              setHoverDetails({ idx: i, top: rect.top, left: rect.right, height: rect.height });
+                            }}
+                            onMouseLeave={() => setHoverDetails(prev => prev?.idx === i ? null : prev)}
+                            style={{
+                              cursor: 'help',
+                              background: isHovered ? '#FAF6EC' : 'transparent',
+                              transition: 'background 120ms',
+                            }}
+                          >
+                            <td className="text-xs">
+                              <div>{item.description}</div>
+                              {item.note && <div className="text-[10px] text-amber-700 mt-0.5 italic">{item.note}</div>}
+                            </td>
+                            <td className="mono text-right text-xs">{qtyDisplay}</td>
+                            <td className="mono text-right text-xs">{fmtCurrency(item.unitCost)}</td>
+                            <td className="mono text-right text-xs font-bold">{fmtCurrency(item.total)}</td>
+                          </tr>
+                        );
+                      })}
 
                     </tbody>
                     <tfoot>
@@ -1658,6 +2030,48 @@ export default function Home() {
           </div>
           </div>
         </div>
+
+        {/* Floating BOM row breakdown popover — appears next to a hovered line item.
+            Built inline (no Radix) so the show/hide is instant and brand-styled. */}
+        {hoverDetails && result.lineItems[hoverDetails.idx] && (() => {
+          const item = result.lineItems[hoverDetails.idx];
+          const qtyDisplay = item.qty % 1 === 0 ? String(item.qty) : fmt(item.qty, 2);
+          const viewportRight = typeof window !== 'undefined' ? window.innerWidth : 1440;
+          const popoverWidth = 280;
+          const showOnLeft = hoverDetails.left + popoverWidth + 16 > viewportRight;
+          return (
+            <div
+              className="fixed z-50 pointer-events-none no-print"
+              style={{
+                top: hoverDetails.top + hoverDetails.height / 2,
+                left: showOnLeft ? undefined : hoverDetails.left + 12,
+                right: showOnLeft ? viewportRight - hoverDetails.left + 12 + 'px' : undefined,
+                transform: 'translateY(-50%)',
+                width: popoverWidth,
+                background: '#111111',
+                color: '#FFFFFF',
+                borderRadius: '6px',
+                padding: '10px 12px',
+                boxShadow: '0 8px 24px rgba(0,0,0,0.25)',
+                fontSize: '12px',
+                lineHeight: 1.5,
+              }}
+            >
+              <div className="font-bold mb-1" style={{ color: '#f4ce47', letterSpacing: '0.02em' }}>{item.description}</div>
+              {item.note && <div className="italic mb-2" style={{ color: '#D8CDA8', fontSize: '11px' }}>{item.note}</div>}
+              <div className="mono flex justify-between"><span style={{ color: '#9A9A9A' }}>Unit price:</span><span>{fmtCurrency(item.unitCost)}</span></div>
+              <div className="mono flex justify-between"><span style={{ color: '#9A9A9A' }}>Quantity:</span><span>{qtyDisplay}</span></div>
+              <div className="mono flex justify-between font-bold mt-1 pt-1" style={{ borderTop: '1px solid #3A3A3A', color: '#f4ce47' }}>
+                <span>Line total:</span><span>{fmtCurrency(item.total)}</span>
+              </div>
+              {config.discountLevel > 0 && (
+                <div className="mt-2 pt-1" style={{ borderTop: '1px solid #3A3A3A', fontSize: '10px', color: '#9A9A9A' }}>
+                  Your {(config.discountLevel * 100).toFixed(1)}% dealer discount is already applied to most items. Fasteners are NET.
+                </div>
+              )}
+            </div>
+          );
+        })()}
       </div>
   );
 }
