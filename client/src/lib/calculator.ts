@@ -607,7 +607,12 @@ export function calculateSurface(config: ConfigInputs): CalculationResult {
   const stockLength = thickness === 12 ? 144 : 120;
   const stockLabel = thickness === 12 ? 'Gasket 12mm 12 Ft Lengths' : 'Gasket 13mm 10 Ft Lengths';
   // Courier price multiplier (from Patrick's original workbook)
-  const courierMultiplier = thickness === 12 ? 1.181 : 1.337;
+  // Courier-cut labor multiplier. 12mm uses 1.281 (matches 2021 Excel + 2023-2026
+  // sales orders); 13mm uses 1.337 (also from 2021 Excel). 13mm is higher because
+  // the laminated glass insert is thicker and slower to cut precisely.
+  // Previous value of 1.181 for 12mm produced an underquote of ~$1.35 per stick
+  // after applying dealer discount; verified against 21 sales orders in May 2026.
+  const courierMultiplier = thickness === 12 ? 1.281 : 1.337;
 
   // Manufacturer-standard cut specs (lookup table, not dynamic optimization)
   // postOpt is keyed on postHeightAboveDeck; trackOpt uses wallTrackHeight (= actualRailHeight - topReveal)
@@ -998,7 +1003,12 @@ export function calculateFascia(config: ConfigInputs): CalculationResult {
   // Stock lengths: 12mm = 144" (12 ft), 13mm = 120" (10 ft)
   const stockLength = thickness === 12 ? 144 : 120;
   const stockLabel = thickness === 12 ? 'Gasket 12mm 12 Ft Lengths' : 'Gasket 13mm 10 Ft Lengths';
-  const courierMultiplier = thickness === 12 ? 1.181 : 1.337;
+  // Courier-cut labor multiplier. 12mm uses 1.281 (matches 2021 Excel + 2023-2026
+  // sales orders); 13mm uses 1.337 (also from 2021 Excel). 13mm is higher because
+  // the laminated glass insert is thicker and slower to cut precisely.
+  // Previous value of 1.181 for 12mm produced an underquote of ~$1.35 per stick
+  // after applying dealer discount; verified against 21 sales orders in May 2026.
+  const courierMultiplier = thickness === 12 ? 1.281 : 1.337;
 
   // Gasket quantities
   const totalPostPieces = q.midPosts * 2 + q.endPosts * 2 + q.outsideCornerPosts * 2 + q.insideCornerPosts * 2;
