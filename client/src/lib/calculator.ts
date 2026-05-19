@@ -464,6 +464,23 @@ const DEFAULT_BOTTOM_GAP = 2.0;   // 2"
 const DEFAULT_DIST_TO_DECK = 3.0; // 3" (fascia)
 const BASE_PLATE_HEIGHT = 5.0;    // 5" standard fascia base plate
 
+/**
+ * The 1 1/2" setting block piece SKU (RPLINFSB15) is supplied any time the
+ * calculated setting block height lands in a small tolerance band around 1.5".
+ *
+ * Per Bill (May 2026 email): "supplied them with a 1 1/2" Setting block unless
+ * they asked for longer sizes to allow for deck slopes or a different bottom
+ * gap." A 1/8" slack at the top accounts for thermal expansion, matching Bill's
+ * "1/8" allowance" pattern used elsewhere in the system.
+ *
+ * Outside this band (smaller than 1 1/2" or significantly larger), the dealer
+ * receives per-foot setting block material for custom cutting.
+ */
+const SB_15_PIECE_MIN = 1.5;
+const SB_15_PIECE_MAX = 1.625;
+const fitsStandard15Piece = (sbHeight: number): boolean =>
+  sbHeight >= SB_15_PIECE_MIN && sbHeight <= SB_15_PIECE_MAX;
+
 // Minimum post heights
 const MIN_POST_HEIGHT_ABOVE_DECK = 24.0; // absolute minimum
 const MIN_FASCIA_PHYSICAL_LENGTH = 32.0; // minimum fascia post length
@@ -676,14 +693,14 @@ export function calculateSurface(config: ConfigInputs): CalculationResult {
   const sb05Pieces = totalSettingBlockPieces;
   const sb025Pieces = totalSettingBlock025Pieces;
 
-  // 1.5" pieces (when setting block height = 1.5")
-  const sb15Pieces_05 = sb05Length === 1.5 ? sb05Pieces : 0;
-  const sb15Pieces_025 = settingBlock025Height === 1.5 ? sb025Pieces : 0;
+  // 1.5" pieces (when setting block height fits the standard tolerance band)
+  const sb15Pieces_05 = fitsStandard15Piece(sb05Length) ? sb05Pieces : 0;
+  const sb15Pieces_025 = fitsStandard15Piece(settingBlock025Height) ? sb025Pieces : 0;
   const settingBlock15Pieces = sb15Pieces_05 + sb15Pieces_025;
 
-  // Footage needed for setting blocks
-  const sbFootage_05 = sb05Length !== 1.5 ? (sb05Pieces * (sb05Length + 0.125)) / 12 : 0;
-  const sbFootage_025 = settingBlock025Height !== 1.5 ? (sb025Pieces * (settingBlock025Height + 0.125)) / 12 : 0;
+  // Footage needed for setting blocks (only when the standard 1.5" piece doesn't fit)
+  const sbFootage_05 = !fitsStandard15Piece(sb05Length) ? (sb05Pieces * (sb05Length + 0.125)) / 12 : 0;
+  const sbFootage_025 = !fitsStandard15Piece(settingBlock025Height) ? (sb025Pieces * (settingBlock025Height + 0.125)) / 12 : 0;
   const totalSBFootage = sbFootage_05 + sbFootage_025;
 
   const settingBlockLengths = Math.floor(totalSBFootage / 10);
@@ -1087,29 +1104,29 @@ export function calculateFascia(config: ConfigInputs): CalculationResult {
   const sbPieces_post = q.midPosts * 2 + q.endPosts + q.outsideCornerPosts * 2 + q.insideCornerPosts * 2;
   const sbPieces_track = q.wallTracks + q.endPostsLeft25 + q.endPostsRight25;
 
-  // Footage calc only applies when the setting block height isn't exactly 1.5"
-  // — at 1.5" we switch to the precut SKU instead, which is billed as a piece
-  // count not by the foot. Matches Excel K20/K21 = IF(F20=1.5, 0, ...) on the
-  // Fascia Mount sheet. Surface mount has the same conditional; fascia was
-  // missing it, causing both the precut piece line AND a phantom per-ft line
-  // to appear together for the EP25-only case.
-  const sbFootage_post = (sbHeight_post > 0 && sbHeight_post !== 1.5 && sbPieces_post > 0)
+  // Footage calc only applies when the setting block height doesn't fit a
+  // standard 1 1/2" piece (tolerance band 1.5"–1.625" — see fitsStandard15Piece).
+  // When it does fit, we switch to the precut SKU which is billed by piece
+  // count not by the foot. Matches Excel K20/K21 = IF(F20=1.5, 0, ...) but
+  // generalized so a 2 1/8" bottom gap (which yields sb height 1.625") still
+  // ships a 1 1/2" piece instead of falling through to per-foot material.
+  const sbFootage_post = (sbHeight_post > 0 && !fitsStandard15Piece(sbHeight_post) && sbPieces_post > 0)
     ? sbPieces_post / (12 / (sbHeight_post + 0.25))
     : 0;
-  const sbFootage_track = (sbHeight_track > 0 && sbHeight_track !== 1.5 && sbPieces_track > 0)
+  const sbFootage_track = (sbHeight_track > 0 && !fitsStandard15Piece(sbHeight_track) && sbPieces_track > 0)
     ? sbPieces_track / (12 / (sbHeight_track + 0.25))
     : 0;
   const totalSBFootage = sbFootage_post + sbFootage_track;
 
   // 1.5" precut SKU applies when EITHER the post-side OR the track-side
-  // setting block height is exactly 1.5". Both contribute their piece count
-  // independently. Post side uses `bottomGap + distToDeck` so it only equals
-  // 1.5" in unusual configs (e.g. bottomGap=0.5, distToDeck=1). Track side
-  // uses `bottomGap - 0.5` so it equals 1.5" at the standard bottomGap=2,
-  // which is the common case.
+  // setting block height falls in the standard tolerance band. Both contribute
+  // their piece count independently. Post side uses `bottomGap + distToDeck`
+  // so it only fits in unusual configs (e.g. bottomGap=0.5, distToDeck=1).
+  // Track side uses `bottomGap - 0.5` so it fits at the standard bottomGap=2
+  // (gives 1.5", in band) AND at a 2 1/8" bottom gap (gives 1.625", still in band).
   const sb15Pieces =
-    (sbHeight_post === 1.5 ? sbPieces_post : 0) +
-    (sbHeight_track === 1.5 ? sbPieces_track : 0);
+    (fitsStandard15Piece(sbHeight_post) ? sbPieces_post : 0) +
+    (fitsStandard15Piece(sbHeight_track) ? sbPieces_track : 0);
 
   const settingBlockLengths10ft = Math.floor(totalSBFootage / 10);
   const settingBlockLeftover = totalSBFootage - settingBlockLengths10ft * 10;
