@@ -968,11 +968,22 @@ export function calculateFascia(config: ConfigInputs): CalculationResult {
   // where I2 = physicalPostLength, I3 = wallTrackHeight, D62 = bottomGap,
   // D63 = distToDeck. Re-stated against the React variables:
   const glassInsertLength = physicalPostLength - BASE_PLATE_HEIGHT - distToDeck - bottomGap - 3;
-  const endPostInsertLength = physicalPostLength - 0.25 - BASE_PLATE_HEIGHT;
   const glassInsertLengthTrack = wallTrackHeight - bottomGap - 3;
 
   // Setting block height = bottomGap + distToDeck
   const settingBlockHeight = bottomGap + distToDeck;
+
+  // End post (termination side) insert length, per Bill's clarification (May 2026):
+  //   48" post = 5 1/8" Setting Block + 4 7/8" Fascia Plate + 1/4" Cap + Insert
+  //   → Insert = physicalPostLength - settingBlockHeight - 4.875 - 0.25
+  //              = physicalPostLength - settingBlockHeight - 5.125
+  // For a 42" RH 3" drop end post: 48 - 5.125 - 5.125 = 37 3/4"
+  // (Previous formula `physicalPostLength - 0.25 - BASE_PLATE_HEIGHT` produced
+  //  42 3/4", 5" too long. Bill confirmed his original spec value of 38 3/4"
+  //  was also a typo; correct value is 37 3/4".)
+  const FASCIA_PLATE_HEIGHT = 4.875;  // 4 7/8" — per Bill
+  const FASCIA_CAP_HEIGHT = 0.25;     // 1/4"  — per Bill
+  const endPostInsertLength = physicalPostLength - settingBlockHeight - FASCIA_PLATE_HEIGHT - FASCIA_CAP_HEIGHT;
 
   // Check if setting block > 5 1/8" (5.125") → use wedge rule
   // Maximum fascia setting block is 5 1/8": 3 1/8" below deck + 2" above deck
