@@ -434,7 +434,20 @@ function DimBadge({ label, value }: { label: string; value: string }) {
 // MAIN COMPONENT
 // ============================================================
 
+// Soft access gate. Not real security — the password is shipped in the JS bundle
+// and anyone can read it via DevTools. Purpose is to make stakeholders comfortable
+// publishing the URL during private testing. Once entered, persists in localStorage.
+const ACCESS_PASSWORD = 'innovative2026';
+const ACCESS_STORAGE_KEY = 'ias-infinity-access';
+
 export default function Home() {
+  // Access gate state
+  const [accessGranted, setAccessGranted] = useState(() => {
+    try { return localStorage.getItem(ACCESS_STORAGE_KEY) === ACCESS_PASSWORD; } catch { return false; }
+  });
+  const [passwordInput, setPasswordInput] = useState('');
+  const [passwordError, setPasswordError] = useState(false);
+
   // Load saved discount from localStorage on first render
   const savedDiscount = (() => {
     try {
@@ -739,6 +752,82 @@ export default function Home() {
     config.quantities.endPostsLeft25 + config.quantities.endPostsRight25;
   const colorSelected = !!jobInfo.color && jobInfo.color !== '';
   const requireColorMsg = 'Please select a powder coat color in Job Information before exporting or printing.';
+
+  // ── Soft access gate (private testing) ──
+  if (!accessGranted) {
+    return (
+      <div
+        className="min-h-screen flex items-center justify-center"
+        style={{ background: '#F4F1EA', fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif" }}
+      >
+        <div
+          className="bg-white shadow-xl px-8 py-10 mx-4"
+          style={{ border: '2px solid #B69A5A', borderRadius: '4px', maxWidth: '420px', width: '100%' }}
+        >
+          <img
+            src={IAS_LOGO_URL}
+            alt="Innovative Aluminum Systems"
+            style={{ height: '52px', width: 'auto', display: 'block', margin: '0 auto 12px' }}
+          />
+          <img
+            src={INFINITY_LOGO_URL}
+            alt="Infinity"
+            style={{ height: 'auto', width: '160px', display: 'block', margin: '0 auto 22px' }}
+          />
+          <h2 className="font-bold text-lg text-center mb-1" style={{ color: '#111' }}>
+            Calculator Access
+          </h2>
+          <p className="text-sm text-center mb-6" style={{ color: '#666' }}>
+            This tool is currently in private testing.
+          </p>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (passwordInput.trim() === ACCESS_PASSWORD) {
+                try { localStorage.setItem(ACCESS_STORAGE_KEY, ACCESS_PASSWORD); } catch {}
+                setAccessGranted(true);
+                setPasswordError(false);
+              } else {
+                setPasswordError(true);
+                setPasswordInput('');
+              }
+            }}
+          >
+            <input
+              type="password"
+              autoFocus
+              value={passwordInput}
+              onChange={(e) => { setPasswordInput(e.target.value); if (passwordError) setPasswordError(false); }}
+              placeholder="Enter password"
+              className="w-full px-3 py-2 mb-3 text-sm"
+              style={{
+                border: passwordError ? '1.5px solid #A03434' : '1.5px solid #D8CDA8',
+                borderRadius: '3px',
+                outline: 'none',
+                background: '#FFFFFF',
+                color: '#111',
+              }}
+            />
+            {passwordError && (
+              <div className="text-xs mb-3" style={{ color: '#A03434' }}>
+                Incorrect password.
+              </div>
+            )}
+            <button
+              type="submit"
+              className="w-full px-4 py-2 text-sm font-semibold transition-opacity"
+              style={{ background: '#B69A5A', color: '#FFFFFF', borderRadius: '2px', letterSpacing: '0.04em' }}
+            >
+              Continue
+            </button>
+          </form>
+          <p className="text-xs text-center mt-6" style={{ color: '#999' }}>
+            Contact Innovative Aluminum Systems for access.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen" style={{ background: '#F4F1EA', fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif" }}>
