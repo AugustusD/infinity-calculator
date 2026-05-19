@@ -1127,8 +1127,28 @@ export function calculateFascia(config: ConfigInputs): CalculationResult {
     settingBlockFt = settingBlockLeftover < 7 ? Math.ceil(settingBlockLeftover) : 0;
   }
 
-  // Glass wedge
-  const glassWedgeQty = 2 * q.midPosts + q.endPosts + 2 * q.outsideCornerPosts + 2 * q.insideCornerPosts + q.wallTracks + q.endPostsLeft25 + q.endPostsRight25;
+  // Glass wedge.
+  // Base case (non-override): each post side that holds glass gets one 3" wedge piece.
+  //   Mid/OC/IC: 2 sides each → 2 wedges per post
+  //   End post: 1 glass side → 1 wedge per post
+  //   Wall track: 1 wedge
+  //   2.5" end post: 1 wedge each side
+  // Override case (Bill's Rule 3, May 2026): when setting block space exceeds 5 1/8",
+  // each post side gets an EXTRA 3" wedge piece below the standard one (replacing part
+  // of the over-tall setting block). So:
+  //   Mid: 2 → 4 (+2)
+  //   End: 1 → 3 (+2, the termination side also gets a wedge here)
+  //   IC:  2 → 4 (+2)
+  //   OC:  2 → 4 (+2)
+  // Bill confirmed Outside Corner gets the same +2 as the others — the "OC unchanged"
+  // in his original spec was a typo.
+  const overrideExtraWedges = useWedgeInsteadOfBlock
+    ? (q.midPosts + q.endPosts + q.outsideCornerPosts + q.insideCornerPosts) * 2
+    : 0;
+  const glassWedgeQty =
+    2 * q.midPosts + q.endPosts + 2 * q.outsideCornerPosts + 2 * q.insideCornerPosts
+    + q.wallTracks + q.endPostsLeft25 + q.endPostsRight25
+    + overrideExtraWedges;
 
   // Mid/inside plates and outside plates
   const midInsidePlatesQty = 2 * (q.midPosts + q.endPosts + q.insideCornerPosts);
