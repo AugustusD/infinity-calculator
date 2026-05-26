@@ -378,7 +378,25 @@ function UnlockableField({
   );
 }
 
-function DiscountInput({ value, onChange }: { value: number; onChange: (v: number) => void }) {
+function DiscountInput({ value, onChange, locked, lockReason }: { value: number; onChange: (v: number) => void; locked?: boolean; lockReason?: string }) {
+  if (locked) {
+    return (
+      <div
+        className="relative"
+        title={lockReason || "Discount set by Innovative Aluminum admin."}
+      >
+        <div
+          className="mono w-full rounded border border-[#B69A5A] bg-[#FAF8F2] px-3 py-1.5 pr-8 text-sm text-[#3D2E14] cursor-not-allowed select-none"
+          aria-readonly="true"
+        >
+          {value > 0 ? (value * 100).toFixed(3).replace(/\.?0+$/, '') : '0'}
+        </div>
+        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm font-bold pointer-events-none" style={{ color: '#B69A5A' }}>%</span>
+        <p className="text-[10px] uppercase tracking-wider text-[#B69A5A] font-bold mt-1">Set by IAS admin</p>
+      </div>
+    );
+  }
+
   // Display as percentage string while editing; accept both "43.5" and "0.435" on blur
   const [raw, setRaw] = useState(() => value > 0 ? (value * 100).toFixed(3).replace(/\.?0+$/, '') : '');
   const [focused, setFocused] = useState(false);
@@ -440,6 +458,26 @@ function DimBadge({ label, value }: { label: string; value: string }) {
 const ACCESS_PASSWORD = 'innovative2026';
 const ACCESS_STORAGE_KEY = 'ias-infinity-access';
 
+// Read the dealer's Infinity discount from the URL hash, if the portal
+// dropped them here via the Calculator tile. Format: #d=43.5 (percentage,
+// 0-100). Returns a decimal in 0..0.99 to match the calculator's existing
+// internal representation, or null if no hash discount is present.
+//
+// When set, this overrides any locally-saved discount and the DiscountInput
+// is rendered as read-only — admin is the source of truth.
+function readDiscountFromHash(): number | null {
+  if (typeof window === 'undefined' || !window.location.hash) return null;
+  const raw = window.location.hash.startsWith('#') ? window.location.hash.slice(1) : window.location.hash;
+  // Accept both #d=43.5 and #d=43.5&other=...
+  const params = new URLSearchParams(raw);
+  const d = params.get('d');
+  if (d === null) return null;
+  const n = parseFloat(d);
+  if (!Number.isFinite(n) || n < 0 || n > 100) return null;
+  // Treat 0 as "explicitly no discount, set by admin" — still locked.
+  return Math.min(0.99, n / 100);
+}
+
 export default function Home() {
   // Access gate state
   const [accessGranted, setAccessGranted] = useState(() => {
@@ -448,8 +486,14 @@ export default function Home() {
   const [passwordInput, setPasswordInput] = useState('');
   const [passwordError, setPasswordError] = useState(false);
 
+  // Discount source priority: URL hash (portal admin) > localStorage > 0.
+  // The hash value also locks the input so dealers can't override it.
+  const hashDiscount = readDiscountFromHash();
+  const [discountLocked, setDiscountLocked] = useState(hashDiscount !== null);
+
   // Load saved discount from localStorage on first render
   const savedDiscount = (() => {
+    if (hashDiscount !== null) return hashDiscount;
     try {
       const v = localStorage.getItem(DISCOUNT_STORAGE_KEY);
       if (v !== null) {
@@ -1429,6 +1473,8 @@ export default function Home() {
                   <DiscountInput
                     value={config.discountLevel}
                     onChange={v => update('discountLevel', v)}
+                    locked={discountLocked}
+                    lockReason="Set by Innovative Aluminum admin via the Dealer Portal."
                   />
                 </FieldRow>
 
