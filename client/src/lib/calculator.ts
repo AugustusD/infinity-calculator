@@ -622,7 +622,8 @@ export function calculateSurface(config: ConfigInputs): CalculationResult {
   // ── COURIER / VINYL CUT OPTIMIZATION ──
   // Stock lengths: 12mm = 144" (12 ft), 13mm = 120" (10 ft)
   const stockLength = thickness === 12 ? 144 : 120;
-  const stockLabel = thickness === 12 ? 'Gasket 12mm 12 Ft Lengths' : 'Gasket 13mm 10 Ft Lengths';
+  // Mike: always label gasket as "12mm" in BOM, even when shipping 13mm stock.
+  const stockLabel = thickness === 12 ? 'Gasket 12mm 12 Ft Lengths' : 'Gasket 12mm 10 Ft Lengths';
   // Courier price multiplier (from Patrick's original workbook)
   // Courier-cut labor multiplier. 12mm uses 1.281 (matches 2021 Excel + 2023-2026
   // sales orders); 13mm uses 1.337 (also from 2021 Excel). 13mm is higher because
@@ -674,6 +675,9 @@ export function calculateSurface(config: ConfigInputs): CalculationResult {
     gasketLengths = stockLengths_post + stockLengths_track;
     gasketDescription = stockLabel;
   }
+  // End-post termination side is folded into the main gasket count
+  // (Mike's request: single BOM line, no separate "End Post Termination Side").
+  gasketLengths += stockLengths_endVinyl;
 
   // Setting block calculations.
   //
@@ -861,29 +865,19 @@ export function calculateSurface(config: ConfigInputs): CalculationResult {
       const trackCutNote = `Cut to ${trackOpt.cutSize}" — ${trackOpt.cutsPerLength} piece${trackOpt.cutsPerLength > 1 ? 's' : ''} per length (wall tracks)`;
       addLine(gasketDescription + ' (Wall Tracks)', stockLengths_track, gasketUnitPrice, undefined, trackCutNote);
     }
-    // End post glass side is merged into the main post group (same cut spec)
-    // No separate line item needed
-    // End post vinyl-only side
-    if (stockLengths_endVinyl > 0) {
-      const vinylCutNote = `Cut to ${endPostVinylOpt.cutSize}" — ${endPostVinylOpt.cutsPerLength} piece${endPostVinylOpt.cutsPerLength > 1 ? 's' : ''} per length`
-        + (endPostVinylOpt.cutSize !== postOpt.cutSize ? ' (end post termination side — different length)' : '');
-      addLine(gasketDescription + ' (End Post Termination Side)', stockLengths_endVinyl, gasketUnitPrice, undefined, vinylCutNote);
-    }
+    // End-post termination side is folded into the main gasket line above
+    // (Mike's request: single BOM line, no separate split).
   } else {
-    // Non-courier: single line, full lengths
+    // Non-courier: single line, full lengths (end-vinyl already folded into gasketLengths)
     addLine(gasketDescription, gasketLengths, gasketUnitPrice);
-    // End post vinyl-only side (non-courier)
-    const nonCourierEndVinylLengths = endPostVinylQty > 0 ? Math.ceil(endPostVinylQty / endPostVinylOpt.cutsPerLength) : 0;
-    if (nonCourierEndVinylLengths > 0) {
-      addLine(gasketDescription + ' (End Post Termination Side)', nonCourierEndVinylLengths, gasketUnitPrice);
-    }
   }
   addLine('Setting Block (10 Ft Length)', settingBlockLengthsOrdered, sbLengthPrice);
   // Use the rounded-up settingBlockFt variable defined earlier (not a re-computation
   // — keeps surface mount consistent with the fascia branch and avoids duplicate logic).
   addLine('Setting Block (Per Ft)', settingBlockFt, sbFtPrice);
   addLine('Setting Block (1.5" Pieces)', settingBlock15Pieces, sb15Price);
-  addLine(thickness === 12 ? 'Glass Wedge 12mm (3 Inch Piece)' : 'Glass Wedge 13mm (3 Inch Piece)', glassWedgeQty, wedgePrice);
+  // Mike: always call it "Glass Wedge" — no thickness suffix.
+  addLine('Glass Wedge (3 Inch Piece)', glassWedgeQty, wedgePrice);
   addLine('Base Plate Gasket - Neoprene 1/8x4x4 (RPLBPG)', basePlateGasketQty, basePlateGasketPrice);
   // ── 3. SCREWS (net price) ──
   if (addons.deckFastenerOption !== 'none') {
@@ -1030,7 +1024,8 @@ export function calculateFascia(config: ConfigInputs): CalculationResult {
   // ── COURIER / VINYL CUT OPTIMIZATION ──
   // Stock lengths: 12mm = 144" (12 ft), 13mm = 120" (10 ft)
   const stockLength = thickness === 12 ? 144 : 120;
-  const stockLabel = thickness === 12 ? 'Gasket 12mm 12 Ft Lengths' : 'Gasket 13mm 10 Ft Lengths';
+  // Mike: always label gasket as "12mm" in BOM, even when shipping 13mm stock.
+  const stockLabel = thickness === 12 ? 'Gasket 12mm 12 Ft Lengths' : 'Gasket 12mm 10 Ft Lengths';
   // Courier-cut labor multiplier. 12mm uses 1.281 (matches 2021 Excel + 2023-2026
   // sales orders); 13mm uses 1.337 (also from 2021 Excel). 13mm is higher because
   // the laminated glass insert is thicker and slower to cut precisely.
@@ -1084,6 +1079,9 @@ export function calculateFascia(config: ConfigInputs): CalculationResult {
     gasketLengths = stockLengths_post + stockLengths_track;
     gasketDescription = stockLabel;
   }
+  // End-post termination side is folded into the main gasket count
+  // (Mike's request: single BOM line, no separate "End Post Termination Side").
+  gasketLengths += stockLengths_endVinyl;
 
   // Setting block footage.
   //
@@ -1299,24 +1297,16 @@ export function calculateFascia(config: ConfigInputs): CalculationResult {
       const trackCutNote = `Cut to ${trackOpt.cutSize}" — ${trackOpt.cutsPerLength} piece${trackOpt.cutsPerLength > 1 ? 's' : ''} per length (wall tracks)`;
       addLine(gasketDescription + ' (Wall Tracks)', stockLengths_track, gasketUnitPrice, undefined, trackCutNote);
     }
-    // End post glass side is merged into the main post group (same cut spec)
-    // No separate line item needed
-    if (stockLengths_endVinyl > 0) {
-      const vinylCutNote = `Cut to ${endPostVinylOpt.cutSize}" — ${endPostVinylOpt.cutsPerLength} piece${endPostVinylOpt.cutsPerLength > 1 ? 's' : ''} per length`
-        + (endPostVinylOpt.cutSize !== postOpt.cutSize ? ' (end post termination side — different length)' : '');
-      addLine(gasketDescription + ' (End Post Termination Side)', stockLengths_endVinyl, gasketUnitPrice, undefined, vinylCutNote);
-    }
+    // End-post termination side is folded into the main gasket line above
+    // (Mike's request: single BOM line, no separate split).
   } else {
     addLine(gasketDescription, gasketLengths, gasketUnitPrice);
-    const nonCourierEndVinylLengths = endPostVinylQty > 0 ? Math.ceil(endPostVinylQty / endPostVinylOpt.cutsPerLength) : 0;
-    if (nonCourierEndVinylLengths > 0) {
-      addLine(gasketDescription + ' (End Post Termination Side)', nonCourierEndVinylLengths, gasketUnitPrice);
-    }
   }
   addLine('Setting Block (10 Ft Length)', settingBlockLengthsOrdered, sbLengthPrice);
   addLine('Setting Block (Per Ft)', settingBlockFt, sbFtPrice);
   addLine('Setting Block (1.5" Pieces)', sb15Pieces, sb15Price);
-  addLine(thickness === 12 ? 'Glass Wedge 12mm (3 Inch Pieces)' : 'Glass Wedge 13mm (3 Inch Pieces)', glassWedgeQty, wedgePrice);
+  // Mike: always call it "Glass Wedge" — no thickness suffix.
+  addLine('Glass Wedge (3 Inch Piece)', glassWedgeQty, wedgePrice);
   // ── 3. SCREWS (net price) ──
   addLine('#10 × 3/4" S.S. Tek Screws (box/100)', tekScrewBoxes, PRICES_2026.fasteners.tekScrew_10x075);
   if (addons.deckFastenerOption === 'hexHead516x5') {
