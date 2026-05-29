@@ -465,6 +465,10 @@ const ACCESS_STORAGE_KEY = 'ias-infinity-access';
 //
 // When set, this overrides any locally-saved discount and the DiscountInput
 // is rendered as read-only — admin is the source of truth.
+//
+// Out-of-range values get clamped (not rejected) so a malformed admin
+// link doesn't silently fall back to the dealer's local value — they'd
+// be told they have 0% instead. Clamping surfaces the intent.
 function readDiscountFromHash(): number | null {
   if (typeof window === 'undefined' || !window.location.hash) return null;
   const raw = window.location.hash.startsWith('#') ? window.location.hash.slice(1) : window.location.hash;
@@ -473,9 +477,11 @@ function readDiscountFromHash(): number | null {
   const d = params.get('d');
   if (d === null) return null;
   const n = parseFloat(d);
-  if (!Number.isFinite(n) || n < 0 || n > 100) return null;
-  // Treat 0 as "explicitly no discount, set by admin" — still locked.
-  return Math.min(0.99, n / 100);
+  if (!Number.isFinite(n)) return null;
+  // Clamp to the calculator's representable range. Anything ≥99% becomes
+  // 99% (the existing max), anything ≤0% becomes 0%. Treat 0 as
+  // "explicitly no discount, set by admin" — still locked.
+  return Math.min(0.99, Math.max(0, n / 100));
 }
 
 export default function Home() {
@@ -488,8 +494,9 @@ export default function Home() {
 
   // Discount source priority: URL hash (portal admin) > localStorage > 0.
   // The hash value also locks the input so dealers can't override it.
+  // No setter is exposed — there is no in-app unlock affordance today.
   const hashDiscount = readDiscountFromHash();
-  const [discountLocked, setDiscountLocked] = useState(hashDiscount !== null);
+  const [discountLocked] = useState(hashDiscount !== null);
 
   // Load saved discount from localStorage on first render
   const savedDiscount = (() => {
@@ -533,13 +540,20 @@ export default function Home() {
   // false→true transition (not every render while the condition stays true).
   const [prevWedgeOverride, setPrevWedgeOverride] = useState(false);
 
-  // Mark first visit done and persist discount
+  // Mark first visit done and persist discount.
+  // If the dealer arrived via the portal's #d=... hash, their actual
+  // manual-entry discount lives in localStorage from a prior standalone
+  // session; we must NOT overwrite it with the admin-set value, otherwise
+  // a later standalone visit (no hash) would load the admin number instead
+  // of what they last typed in.
   useEffect(() => {
     try {
       localStorage.setItem(FIRST_VISIT_KEY, '1');
-      localStorage.setItem(DISCOUNT_STORAGE_KEY, String(config.discountLevel));
+      if (!discountLocked) {
+        localStorage.setItem(DISCOUNT_STORAGE_KEY, String(config.discountLevel));
+      }
     } catch {}
-  }, [config.discountLevel]);
+  }, [config.discountLevel, discountLocked]);
   // Persist dealer name
   useEffect(() => {
     try { localStorage.setItem(DEALER_STORAGE_KEY, jobInfo.dealerName); } catch {}
