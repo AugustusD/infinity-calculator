@@ -107,15 +107,15 @@
         "glassInsertLengthPost": 29.0,
         "glassInsertLengthEndPost": 33.25,
         "glassInsertLengthTrack": 29.0,
-        "settingBlockHeight05": 1.5,
-        "settingBlockHeight025": 1.75,
+        "settingBlockHeight05": 1.375,
+        "settingBlockHeight025": 1.625,
         "cutSize": 40
       },
       "quantities": {
         "gasketLengths": 4,
         "settingBlock10ft": 0,
-        "settingBlockPerFt": 0,
-        "settingBlock15in": 9,
+        "settingBlockPerFt": 2,
+        "settingBlock15in": 0,
         "glassWedge": 9,
         "endCaps": 1,
         "basePlateGasket": 5
@@ -128,10 +128,10 @@
           "total": 61.9939
         },
         {
-          "description": "Setting Block (1.5\" Pieces)",
-          "qty": 9,
-          "unitCost": 1.4838,
-          "total": 13.3546
+          "description": "Setting Block (Per Ft)",
+          "qty": 2,
+          "unitCost": 3.4996,
+          "total": 6.9992
         },
         {
           "description": "Glass Wedge 12mm (3 Inch Piece)",
@@ -164,7 +164,7 @@
           "total": 10.5655
         }
       ],
-      "subtotal": 724.19
+      "subtotal": 717.85
     }
   },
   {
@@ -509,15 +509,15 @@
         "glassInsertLengthPost": 35.0,
         "glassInsertLengthEndPost": 39.25,
         "glassInsertLengthTrack": 35.0,
-        "settingBlockHeight05": 1.5,
-        "settingBlockHeight025": 1.75,
+        "settingBlockHeight05": 1.375,
+        "settingBlockHeight025": 1.625,
         "cutSize": 40
       },
       "quantities": {
         "gasketLengths": 26,
         "settingBlock10ft": 0,
-        "settingBlockPerFt": 0,
-        "settingBlock15in": 72,
+        "settingBlockPerFt": 9,
+        "settingBlock15in": 0,
         "glassWedge": 72,
         "endCaps": 4,
         "basePlateGasket": 38
@@ -530,10 +530,10 @@
           "total": 402.9606
         },
         {
-          "description": "Setting Block (1.5\" Pieces)",
-          "qty": 72,
-          "unitCost": 1.4838,
-          "total": 106.8369
+          "description": "Setting Block (Per Ft)",
+          "qty": 9,
+          "unitCost": 3.4996,
+          "total": 31.4965
         },
         {
           "description": "Glass Wedge 12mm (3 Inch Piece)",
@@ -566,7 +566,7 @@
           "total": 80.2978
         }
       ],
-      "subtotal": 5723.61
+      "subtotal": 5648.38
     }
   },
   {

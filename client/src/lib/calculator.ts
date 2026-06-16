@@ -476,10 +476,15 @@ const BASE_PLATE_HEIGHT = 5.0;    // 5" standard fascia base plate
  * Outside this band (smaller than 1 1/2" or significantly larger), the dealer
  * receives per-foot setting block material for custom cutting.
  */
-const SB_15_PIECE_MIN = 1.5;
-const SB_15_PIECE_MAX = 1.625;
+// Bill's spec (May 2026): the 1 1/2" piece only ships when the physical
+// setting block lands at exactly 1.5". Any other height — including the
+// 1.625" we'd get at a 2 1/8" gap WITHOUT a gasket — ships as a custom
+// per-foot cut. The previous tolerance band [1.5, 1.625] was incorrect:
+// it masked the no-gasket case by shipping a 1.5" piece anyway, when the
+// dealer actually needs a 1 5/8" custom cut to make up the missing 1/8".
+const SB_15_PIECE_EXACT = 1.5;
 const fitsStandard15Piece = (sbHeight: number): boolean =>
-  sbHeight >= SB_15_PIECE_MIN && sbHeight <= SB_15_PIECE_MAX;
+  Math.abs(sbHeight - SB_15_PIECE_EXACT) < 1e-9;
 
 // Minimum post heights
 const MIN_POST_HEIGHT_ABOVE_DECK = 24.0; // absolute minimum
@@ -610,9 +615,17 @@ export function calculateSurface(config: ConfigInputs): CalculationResult {
   // Wall track panel: wall track height - bottom gap - 3
   const glassInsertLengthTrack = wallTrackHeight - bottomGap - 3;
 
-  // Setting block heights
-  const settingBlock05Height = bottomGap - 0.5;  // 0.5" base plate setting block
-  const settingBlock025Height = bottomGap - 0.25; // 0.25" base plate setting block
+  // Setting block heights.
+  // Bill (May 2026): when the base plate gasket is NOT shipped, the missing
+  // 1/8" must be made up by a taller setting block — the gasket and the
+  // setting block share the same vertical channel above the deck. So the
+  // physical SB height only loses the 1/8" gasket when the gasket actually
+  // ships. With gasket at gap=2 1/8": SB = 2.125 - 0.5 - 0.125 = 1.5" (ships
+  // standard 1 1/2" piece). Without gasket at the same gap: SB = 1.625" (ships
+  // a custom per-foot cut).
+  const gasketComp = config.basePlateGaskets ? 0.125 : 0;
+  const settingBlock05Height = bottomGap - 0.5 - gasketComp;   // 0.5" base plate setting block
+  const settingBlock025Height = bottomGap - 0.25 - gasketComp; // 0.25" base plate setting block
 
   // Total pieces needing glass inserts
   const totalPostPieces = q.midPosts * 2 + q.endPosts + q.outsideCornerPosts * 2 + q.insideCornerPosts * 2;
